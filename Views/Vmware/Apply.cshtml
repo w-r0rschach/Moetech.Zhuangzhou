@@ -1,0 +1,63 @@
+@model Moetech.Zhuangzhou.Models.MachineInfo
+@{
+    ViewData["Title"] = "确认申请";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="alert alert-info" role="alert" style="margin-top:20px;">
+            提示：申请虚拟机总数量超过<strong>@ViewBag.User.AppMaxCount</strong>台后，需要管理员审批。<br />请合理申请虚拟机！！！
+        </div>
+
+        <hr />
+
+        <form asp-action="SubmitApply" method="post">
+            <div class="form-group">
+                <label class="control-label">操作系统</label>
+                @if (int.Parse(ViewData["MachineSystem"].ToString()) == 0)
+                {
+                    <input class="form-control" type="text" readonly="readonly" value="Windows" />
+                }
+                else
+                {
+                    <input class="form-control" type="text" readonly="readonly" value="Linux" />
+                }
+                <input name="machineSystem" type="text" readonly="readonly" hidden value="@ViewData["MachineSystem"]" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">硬盘大小/G</label>
+                <input name="machineDiskCount" class="form-control" type="text" readonly="readonly" value="@ViewData["MachineDiskCount"]" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">内存大小/G</label>
+                <input name="machineMemory" class="form-control" type="text" readonly="readonly" value="@ViewData["MachineMemory"]" />
+            </div>
+            <div class="form-group">
+                <label class="control-label">申请数量</label>
+                <select name="applyNumber" class="form-control">
+                    @for (int i = 1; i <= int.Parse(ViewData["FreeNumber"].ToString()); i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">申请原因</label>
+                <textarea name="remark"  class="form-control"></textarea> 
+            </div> 
+            <div class="form-group">
+                <input type="submit" value="提交" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">返回列表</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,171 @@
+﻿@model Moetech.Zhuangzhou.Models.CommonPersonnelInfo
+
+@{
+    ViewData["Title"] = "新增员工";
+}
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PersonnelNo" class="control-label"></label>
+                <input asp-for="PersonnelNo" class="form-control" />
+                <span asp-validation-for="PersonnelNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PersonnelName" class="control-label"></label>
+                <input asp-for="PersonnelName" class="form-control" />
+                <span asp-validation-for="PersonnelName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DepId" class="control-label"></label>
+                <select asp-for="DepId" class="form-control">
+                    <option value="0">普通</option>
+                    <option value="1">管理</option>
+                </select>
+                <span asp-validation-for="DepId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PersonnelSex" class="control-label"></label>
+                <select asp-for="PersonnelSex" class="form-control">
+                    <option value="0">男</option>
+                    <option value="1">女</option>
+                </select>
+                <span asp-validation-for="PersonnelSex" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdentityCard" class="control-label"></label>
+                <input asp-for="IdentityCard" class="form-control" />
+                <span asp-validation-for="IdentityCard" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsWork" class="control-label"></label>
+                <select asp-for="IsWork" class="form-control">
+                    <option value="0">离职</option>
+                    <option value="1" selected>在职</option>
+                    <option value="2">实习</option>
+                </select>
+                <span asp-validation-for="IsWork" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nation" class="control-label"></label>
+                <select asp-for="Nation" class="form-control">
+                    <option value="汉族">汉族</option>
+                    <option value="其他">其他</option>
+                </select>
+                <span asp-validation-for="Nation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaritalStatus" class="control-label"></label>
+                <select asp-for="MaritalStatus" class="form-control">
+                    <option value="0">未婚</option>
+                    <option value="1">已婚</option>
+                </select>
+                <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LiveAddress" class="control-label"></label>
+                <input asp-for="LiveAddress" class="form-control" />
+                <span asp-validation-for="LiveAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WeChatAccount" class="control-label"></label>
+                <input asp-for="WeChatAccount" class="form-control" />
+                <span asp-validation-for="WeChatAccount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mailbox" class="control-label"></label>
+                <input asp-for="Mailbox" class="form-control" />
+                <span asp-validation-for="Mailbox" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Degree" class="control-label"></label>
+                <select asp-for="Degree" class="form-control">
+                    <option value="0">未知</option>
+                    <option value="1">小学</option>
+                    <option value="2">初中</option>
+                    <option value="3">高中</option>
+                    <option value="4">大专</option>
+                    <option value="5">本科</option>
+                    <option value="6">研究生</option>
+                    <option value="7">博士</option>
+                </select>
+                <span asp-validation-for="Degree" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OnboardingTime" class="control-label"></label>
+                <input asp-for="OnboardingTime" class="form-control" />
+                <span asp-validation-for="OnboardingTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DepartureTime" class="control-label"></label>
+                <input asp-for="DepartureTime" class="form-control" />
+                <span asp-validation-for="DepartureTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrialTime" class="control-label"></label>
+                <input asp-for="TrialTime" class="form-control" />
+                <span asp-validation-for="TrialTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsStruggle" class="control-label"></label>
+                <select asp-for="IsStruggle" class="form-control">
+                    <option value="0">非奋斗者</option>
+                    <option value="1">奋斗者</option>
+                </select>
+                <span asp-validation-for="IsStruggle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IsSecrecy" class="control-label"></label>
+                <select asp-for="IsSecrecy" class="form-control">
+                    <option value="0">非保密人员</option>
+                    <option value="1">保密人员</option>
+                </select>
+                <span asp-validation-for="IsSecrecy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AppMaxCount" class="control-label"></label>
+                <input asp-for="AppMaxCount" class="form-control" value="3" />
+                <span asp-validation-for="AppMaxCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="提交" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">返回列表</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

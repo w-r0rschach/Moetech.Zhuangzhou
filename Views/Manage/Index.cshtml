@@ -1,0 +1,206 @@
+@using Moetech.Zhuangzhou.Return;
+@model PaginatedList<ReturnMachineInfoApplyData>
+@{
+    ViewData["Title"] = "管理虚拟机";
+
+    var name = ViewBag.name;
+    var type = ViewBag.type;
+    var status = ViewBag.status;
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="alert alert-info" role="alert" style="margin-top:20px;">
+    提示：回收虚拟机请谨慎操作，以免造成数据丢失。
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-3">
+        <label>操作系统</label>
+        <select class="form-control" asp-for="@type" name="type">
+            <option value="-1">全部</option>
+            <option value="0">Windows</option>
+            <option value="1">Linux</option>
+        </select>
+    </div>
+    <div class="form-group col-md-3">
+        <label>状态</label>
+        <select class="form-control" asp-for="@status" name="status">
+            <option value="-1">全部</option>
+            <option value="0">空闲</option>
+            <option value="1">申请中</option>
+            <option value="2">使用中</option>
+        </select>
+    </div>
+
+    <div class="form-group col-md-3">
+        <label>申请人员</label>
+        <input class="form-control" type="text" asp-for="@name" name="name" />
+    </div>
+
+    <div class="form-group col-md-3">
+        <label>操作</label>
+        <div>
+            <button class="btn btn-success" onclick="select()">查询数据</button>
+            <a class="btn btn-primary" asp-action="Create">新增虚拟机</a>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>虚拟机IP</th>
+            <th>操作系统</th>
+            <th>硬盘大小/G</th>
+            <th>内存大小/G</th>
+            <th>虚拟机状态</th>
+            <th>申请人员</th>
+            <th>归还时间</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.MachineInfo.MachineIP</td>
+
+                @if (item.MachineInfo.MachineSystem == 0)
+                {
+                    <td>Windows</td>
+                }
+                else
+                {
+                    <td>Linux</td>
+                }
+
+                <td>@item.MachineInfo.MachineDiskCount</td>
+                <td>@item.MachineInfo.MachineMemory</td>
+
+                @if (item.MachineInfo.MachineState == 0)
+                {
+                    <td>空闲</td>
+                }
+                else if (item.MachineInfo.MachineState == 1)
+                {
+                    <td>申请中</td>
+                }
+                else
+                {
+                    <td>使用中</td>
+                }
+
+                @if (item.CommonPersonnelInfo != null)
+                {
+                    <td>@item.CommonPersonnelInfo.PersonnelName</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                @if (@item.MachApplyAndReturn != null)
+                {
+                    <td>@item.MachApplyAndReturn.ResultTime</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.MachineInfo.MachineId">编辑</a>
+                    <a class="btn btn-primary btn-sm" asp-action="Details" asp-route-id="@item.MachineInfo.MachineId">详情</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.MachineInfo.MachineId">删除</a>
+
+                    @if (item.MachineInfo.MachineState == 2 && item.MachApplyAndReturn != null)
+                    {
+                        <button class="btn btn-warning btn-sm" onclick="modal(@item.MachineInfo.MachineId,@item.MachApplyAndReturn.ApplyAndReturnId)">回收</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPages != 0)
+{
+    <div class="row justify-content-center mt-4">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link btn @prevDisabled" asp-action="Index" asp-route-name="@name" asp-route-type="@type" asp-route-status="@status" asp-route-pageIndex="@(Model.PageIndex - 1)">上一页</a></li>
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(Model.PageIndex == i ? "active":"")"><a class="page-link" asp-action="Index" asp-route-name="@name" asp-route-type="@type" asp-route-status="@status" asp-route-pageIndex="@i">@i</a></li>
+            }
+
+            <li class="page-item"><a class="page-link btn @nextDisabled" asp-action="Index" asp-route-name="@name" asp-route-type="@type" asp-route-status="@status" asp-route-pageIndex="@(Model.PageIndex + 1)">下一页</a></li>
+        </ul>
+    </div>
+}
+
+<!-- 模态框 -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">确定要回收虚拟机？</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <div>回收后系统将清空虚拟机所有数据，系统账号与密码将重置。</div>
+                    <div>如果同意以上操作，请在下面输入框"<span style="color:red;">我同意</span>"点击确定，将完成回收。</div>
+                </div>
+                <div class="form-group" style="margin-top:20px;">
+                    <input class="form-control" type="text" placeholder='请输入"我同意"' name="content" />
+                </div>
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="agree()">确定</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var mid = 0;
+    var rid = 0;
+
+    // 显示模态框
+    function modal(mid, rid) {
+        this.mid = mid;
+        this.rid = rid;
+
+        $('#myModal').modal("show");
+    };
+
+    // 确定归还虚拟机
+    function agree() {
+        var content = $('[name=content]').val().trim();
+        if (content == "我同意") {
+            window.location.href = "/Manage/Recycle?mid=" + mid + "&rid=" + rid;
+        } else {
+            alert('输入不正确，请输入"我同意"。');
+        }
+    };
+
+    // 查询数据
+    function select() {
+        var type = $('select[name=type]').val().trim();
+        var status = $('select[name=status]').val().trim();
+        var name = $('input[name=name]').val().trim();
+        window.location.href = "/Manage/Index?name=" + name + "&type=" + type + "&status=" + status + "&pageIndex=" + @Model.PageIndex;
+    };
+</script>

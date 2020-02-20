@@ -1,0 +1,235 @@
+﻿@model Moetech.Zhuangzhou.Models.CommonPersonnelInfo
+
+@{
+    ViewData["Title"] = "删除员工信息";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h3>你确定要删除这个吗?</h3>
+
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PersonnelNo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PersonnelNo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PersonnelName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PersonnelName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DepId)
+        </dt>
+
+        @if (Model.DepId == 0)
+        {
+            <dd class="col-sm-10">普通</dd>
+        }
+        else
+        {
+            <dd class="col-sm-10">管理</dd>
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PersonnelSex)
+        </dt>
+
+        @if (Model.PersonnelSex == 0)
+        {
+            <dd class="col-sm-10">男</dd>
+        }
+        else
+        {
+            <dd class="col-sm-10">女</dd>
+        }
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BirthDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IdentityCard)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IdentityCard)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsWork)
+        </dt>
+
+        @switch (Model.IsWork)
+        {
+            case 0:
+                <dd class="col-sm-10">离职</dd>
+                break;
+            case 1:
+                <dd class="col-sm-10">在职</dd>
+                break;
+            case 2:
+                <dd class="col-sm-10">实现</dd>
+                break;
+            default:
+                <dd class="col-sm-10">未知</dd>
+                break;
+        }
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Nation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Nation)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MaritalStatus)
+        </dt>
+
+        @if (Model.MaritalStatus == 0)
+        {
+            <dd class="col-sm-10">未婚</dd>
+        }
+        else
+        {
+            <dd class="col-sm-10">已婚</dd>
+        }
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LiveAddress)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LiveAddress)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WeChatAccount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WeChatAccount)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Mailbox)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Mailbox)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Degree)
+        </dt>
+
+        @switch (Model.Degree)
+        {
+            case 0:
+                <dd class="col-sm-10">未知</dd>
+                break;
+            case 1:
+                <dd class="col-sm-10">小学</dd>
+                break;
+            case 2:
+                <dd class="col-sm-10">初中</dd>
+                break;
+            case 3:
+                <dd class="col-sm-10">高中</dd>
+                break;
+            case 4:
+                <dd class="col-sm-10">大专</dd>
+                break;
+            case 5:
+                <dd class="col-sm-10">本科</dd>
+                break;
+            case 6:
+                <dd class="col-sm-10">研究生</dd>
+                break;
+            case 7:
+                <dd class="col-sm-10">博士</dd>
+                break;
+            default:
+                <dd class="col-sm-10">未知</dd>
+                break;
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.OnboardingTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.OnboardingTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DepartureTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DepartureTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TrialTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TrialTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsStruggle)
+        </dt>
+
+        @if (Model.IsStruggle == 0)
+        {
+            <dd class="col-sm-10">非奋斗者</dd>
+        }
+        else
+        {
+            <dd class="col-sm-10">奋斗者</dd>
+        }
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsSecrecy)
+        </dt>
+
+        @if (Model.IsSecrecy == 0)
+        {
+            <dd class="col-sm-10">非保密人员</dd>
+        }
+        else
+        {
+            <dd class="col-sm-10">保密人员</dd>
+        }
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AppMaxCount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AppMaxCount)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="PersonnelId" />
+        <input type="submit" value="删除" class="btn btn-danger" /> |
+        <a asp-action="Index">返回列表</a>
+    </form>
+</div>

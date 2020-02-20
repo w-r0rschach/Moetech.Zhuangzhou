@@ -1,0 +1,127 @@
+﻿@model IEnumerable<Moetech.Zhuangzhou.Return.ReturnMachineInfoApplyData>
+@{
+    ViewData["Title"] = "我的虚拟机";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="alert alert-info" role="alert" style="margin-top:20px;">
+    提示：只显示可使用的虚拟机，其他功能正在开发中。
+</div>
+
+<hr />
+
+<div class="row font-weight-bold">
+    <div class="col">虚拟机IP</div>
+    <div class="col">操作系统</div>
+    <div class="col">硬盘大小/G</div>
+    <div class="col">内存大小/G</div>
+    <div class="col">审批状态</div>
+    <div class="col">登录账号</div>
+    <div class="col">登录密码</div>
+    <div class="col">申请时间</div>
+    <div class="col">归还时间</div>
+    <div class="col">备注</div>
+    <div class="col col-sm-2">操作</div>
+</div>
+
+@foreach (var item in Model)
+{
+
+    <hr />
+    <div class="row">
+        <div class="col">@item.MachineInfo.MachineIP</div>
+        @if (item.MachineInfo.MachineSystem == 0)
+        {
+            <div class="col">Windows</div>
+        }
+        else
+        {
+            <div class="col">Linux</div>
+        }
+        <div class="col">@item.MachineInfo.MachineDiskCount</div>
+        <div class="col">@item.MachineInfo.MachineMemory</div>
+
+        @if (item.MachApplyAndReturn.ExamineResult == 0)
+        {
+            <div class="col">待审批</div>
+            <div class="col">******</div>
+            <div class="col">******</div>
+        }
+        else if (item.MachApplyAndReturn.ExamineResult == 1)
+        {
+            <div class="col">拒绝</div>
+            <div class="col">******</div>
+            <div class="col">******</div>
+        }
+        else
+        {
+            <div class="col">同意</div>
+            <div class="col">@item.MachineInfo.MachineUser</div>
+            <div class="col">@item.MachineInfo.MachinePassword</div>
+        }
+
+        <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+        <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+        <div class="col">@item.MachApplyAndReturn.Remark</div>
+        <div class="col col-sm-2">
+            @if (item.MachApplyAndReturn.ExamineResult == 2)
+            {
+                <button class="btn btn-primary btn-sm" onclick="modal(@item.MachApplyAndReturn.ApplyAndReturnId)">归还</button>
+                <a asp-action="Relet" asp-route-id="@item.MachApplyAndReturn.ApplyAndReturnId" class="btn btn-primary btn-sm">续租</a>
+            }
+        </div>
+    </div>
+}
+
+<!-- 模态框 -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">确定要归还虚拟机？</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <div>归还后系统将清空虚拟机所有数据，系统账号与密码将重置。</div>
+                    <div>如果同意以上操作，请在下面输入框"<span style="color:red;">我同意</span>"点击确定，将完成归还。</div>
+                </div>
+                <div class="form-group" style="margin-top:20px;">
+                    <input class="form-control" type="text" placeholder='请输入"我同意"' name="content" />
+                </div>
+            </div>
+
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="agree()">确定</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var rid = 0;
+
+    // 显示模态框
+    function modal(id) {
+        rid = id;
+        $('#myModal').modal("show");
+    };
+
+    // 确定归还虚拟机
+    function agree() {
+        var content = $('[name=content]').val().trim();
+        if (content == "我同意") {
+            window.location.href = "EarlyReturn/" + rid;
+        } else {
+            alert('输入不正确，请输入"我同意"。');
+        }
+    };
+</script>

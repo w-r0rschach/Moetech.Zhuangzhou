@@ -1,0 +1,115 @@
+﻿@using Moetech.Zhuangzhou.Return;
+
+@model PaginatedList<CommonPersonnelInfo>
+
+@{
+    ViewData["Title"] = "员工管理";
+
+    var name = ViewBag.name;
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="form-row">
+    <div class="form-group col-md-3">
+        <label>员工名称</label>
+        <input class="form-control" type="text" asp-for="@name" name="name" />
+    </div>
+
+    <div class="form-group col-md-3">
+        <label>操作</label>
+        <div>
+            <button class="btn btn-success" onclick="select()">查询数据</button>
+            <a class="btn btn-primary" asp-action="Create">新增员工</a>
+        </div>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>工号</th>
+            <th>员工名称</th>
+            <th>角色</th>
+            <th>手机号码</th>
+            <th>邮箱</th>
+            <th>登录账号</th>
+            <th>登录密码</th>
+            <th>自动审批数量</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersonnelNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersonnelName)
+                </td>
+
+                @if (item.DepId == 0)
+                {
+                    <td>
+                        普通
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        管理
+                    </td>
+                }
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mailbox)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AppMaxCount)
+                </td>
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-action="Edit" asp-route-id="@item.PersonnelId">编辑</a>
+                    <a class="btn btn-primary btn-sm" asp-action="Details" asp-route-id="@item.PersonnelId">详情</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.PersonnelId">删除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPages != 0)
+{
+    <div class="row justify-content-center mt-4">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link btn @prevDisabled" asp-action="Index" asp-route-name="@name" asp-route-pageIndex="@(Model.PageIndex - 1)">上一页</a></li>
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(Model.PageIndex == i ? "active":"")"><a class="page-link" asp-route-name="@name" asp-route-pageIndex="@i">@i</a></li>
+            }
+
+            <li class="page-item"><a class="page-link btn @nextDisabled" asp-action="Index" asp-route-name="@name" asp-route-pageIndex="@(Model.PageIndex + 1)">下一页</a></li>
+        </ul>
+    </div>
+}
+
+<script type="text/javascript">
+    // 查询数据
+    function select() {
+        var name = $('input[name=name]').val().trim();
+        window.location.href = "/PersonnelInfo/Index?name=" + name + "&pageIndex=" + @Model.PageIndex;
+    };
+</script>
