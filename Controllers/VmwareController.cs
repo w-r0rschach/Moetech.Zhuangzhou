@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
-using Moetech.Zhuangzhou.Return;
+using Moetech.Zhuangzhou.Common;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -27,7 +27,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 角色 
         /// </summary>
-        public override int Role { get; set; } = 0;
+        public override int[] Role { get; set; } = { 0, 1 };
 
         public VmwareController(VirtualMachineDB context)
         {

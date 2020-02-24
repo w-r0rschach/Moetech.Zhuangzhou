@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Moetech.Zhuangzhou.Return
+namespace Moetech.Zhuangzhou.Common
 {
     public class PaginatedList<T> : List<T>
     {

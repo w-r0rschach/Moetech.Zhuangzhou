@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
@@ -13,7 +16,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 数据量上下文
         /// </summary>
-        private readonly VirtualMachineDB _db;
+        private VirtualMachineDB _db;
 
         public UserController(VirtualMachineDB context)
         {

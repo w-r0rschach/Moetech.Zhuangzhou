@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moetech.Zhuangzhou.Models;
 
-namespace Moetech.Zhuangzhou.Return
+namespace Moetech.Zhuangzhou.Common
 {
     /// <summary>
     /// 虚拟机信息审批数据

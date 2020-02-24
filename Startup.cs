@@ -34,20 +34,17 @@ namespace Moetech.Zhuangzhou
             // 注册数据库上下文
             //services.AddDbContext<VirtualMachineDB>(options => options.UseSqlServer(Configuration.GetConnectionString("SqlServerDefault")));
             services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
+            // HTML编码
             services.Configure<WebEncoderOptions>(options => options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             // 添加Session
             services.AddSession();
+
             services.Configure<CookiePolicyOptions>(options =>
-           {
+            {
                //这个lambda决定对于一个给定的请求是否需要用户对非必需cookie的同意。
                options.CheckConsentNeeded = context => false;//默认为true，改为false
                options.MinimumSameSitePolicy = SameSiteMode.None;
-           });
-
-            //在这里你已经拦截器FilterController注入到全局请求中
-            //services.AddMvc(options => {
-            //    options.Filters.Add<FilterController>();
-            //});
+            });
         }
 
         // 此方法由运行时调用。使用此方法配置HTTP请求管道。
@@ -63,15 +60,12 @@ namespace Moetech.Zhuangzhou
                 // 默认的HSTS值是30天。您可能希望针对生产场景更改此设置，请参见https://aka.ms/aspnetcore-hsts。
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
-            app.UseAuthorization();
-
+            app.UseAuthorization(); // 身份验证
             app.UseSession();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

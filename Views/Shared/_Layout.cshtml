@@ -22,24 +22,16 @@
                         {
                             @if (ViewBag.User.DepId == 0)
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Vmware" asp-action="Index">申请虚拟机</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Vmware" asp-action="MyVmware">我的虚拟机</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Vmware" asp-action="Index">申请虚拟机</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Vmware" asp-action="MyVmware">我的虚拟机</a></li>
                             }
                             else
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="Index">管理虚拟机</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="Approve">审批虚拟机</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="PersonnelInfo" asp-action="Index">员工管理</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Vmware" asp-action="Index">申请虚拟机</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Vmware" asp-action="MyVmware">我的虚拟机</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="Index">管理虚拟机</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="Approve">审批虚拟机</a></li>
+                                <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="PersonnelInfo" asp-action="Index">员工管理</a></li>
                             }
                         }
                     </ul>

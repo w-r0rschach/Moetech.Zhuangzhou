@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
-using Moetech.Zhuangzhou.Return;
+using Moetech.Zhuangzhou.Common;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -31,7 +31,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 角色 
         /// </summary>
-        public override int Role { get; set; } = 1;
+        public override int[] Role { get; set; } = { 1 };
 
         public ManageController(VirtualMachineDB context)
         {
@@ -148,20 +148,22 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 return NotFound("数据非法，操作终止!");
             }
-
-            foreach (var item in list)
+            else
             {
-                item.MachApplyAndReturn.ExamineUserID = adminID;        // 修改审批人员ID
-                item.MachApplyAndReturn.ExamineResult = state;          // 修改审批结果
-                item.MachineInfo.MachineState = state == 2 ? 2 : 0;     // 修改虚拟机状态
+                foreach (var item in list)
+                {
+                    item.MachApplyAndReturn.ExamineUserID = adminID;        // 修改审批人员ID
+                    item.MachApplyAndReturn.ExamineResult = state;          // 修改审批结果
+                    item.MachineInfo.MachineState = state == 2 ? 2 : 0;     // 修改虚拟机状态
 
-                _db.MachApplyAndReturn.Update(item.MachApplyAndReturn);
-                _db.MachineInfo.Update(item.MachineInfo);
+                    _db.MachApplyAndReturn.Update(item.MachApplyAndReturn);
+                    _db.MachineInfo.Update(item.MachineInfo);
+                }
+
+                await _db.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Approve));
             }
-
-            await _db.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Approve));
         }
 
 
@@ -186,32 +188,34 @@ namespace Moetech.Zhuangzhou.Controllers
                 ViewData["Message"] = "数据非法，操作终止！";
                 return View("Views/Vmware/Error.cshtml");
             }
-
-            foreach (var item in list)
+            else
             {
-                if (item.MachineInfo.MachineState == 2)
+                foreach (var item in list)
                 {
-                    item.MachineInfo.MachineState = 0;
-                    item.MachApplyAndReturn.OprationType = 1;
-                    item.MachApplyAndReturn.ResultTime = DateTime.Now;
+                    if (item.MachineInfo.MachineState == 2)
+                    {
+                        item.MachineInfo.MachineState = 0;
+                        item.MachApplyAndReturn.OprationType = 1;
+                        item.MachApplyAndReturn.ResultTime = DateTime.Now;
 
-                    _db.MachineInfo.Update(item.MachineInfo);
-                    _db.MachApplyAndReturn.Update(item.MachApplyAndReturn);
+                        _db.MachineInfo.Update(item.MachineInfo);
+                        _db.MachApplyAndReturn.Update(item.MachApplyAndReturn);
 
+                    }
+                    else
+                    {
+                        ViewData["Title"] = "回收失败";
+                        ViewData["Message"] = $"回收失败，虚拟机未在使用！";
+                        return View("Views/Vmware/Error.cshtml");
+                    }
                 }
-                else
-                {
-                    ViewData["Title"] = "回收失败";
-                    ViewData["Message"] = $"回收失败，虚拟机未在使用！";
-                    return View("Views/Vmware/Error.cshtml");
-                }
+
+                await _db.SaveChangesAsync();
+
+                ViewData["Title"] = "回收成功";
+                ViewData["Message"] = "回收成功";
+                return View("Views/Manage/Succeed.cshtml");
             }
-
-            await _db.SaveChangesAsync();
-
-            ViewData["Title"] = "回收成功";
-            ViewData["Message"] = "回收成功";
-            return View("Views/Manage/Succeed.cshtml");
         }
 
         // GET: MachineInfoes/Details/5
@@ -221,15 +225,19 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 return NotFound();
             }
-
-            var machineInfo = await _db.MachineInfo
-                .FirstOrDefaultAsync(m => m.MachineId == id);
-            if (machineInfo == null)
+            else
             {
-                return NotFound();
-            }
+                var machineInfo = await _db.MachineInfo.FirstOrDefaultAsync(m => m.MachineId == id);
 
-            return View(machineInfo);
+                if (machineInfo == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return View(machineInfo);
+                }
+            }
         }
 
         // GET: MachineInfoes/Create
@@ -251,7 +259,10 @@ namespace Moetech.Zhuangzhou.Controllers
                 await _db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(machineInfo);
+            else
+            {
+                return View(machineInfo);
+            }
         }
 
         // GET: MachineInfoes/Edit/5
@@ -261,13 +272,18 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 return NotFound();
             }
-
-            var machineInfo = await _db.MachineInfo.FindAsync(id);
-            if (machineInfo == null)
+            else
             {
-                return NotFound();
+                var machineInfo = await _db.MachineInfo.FindAsync(id);
+                if (machineInfo == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return View(machineInfo);
+                }
             }
-            return View(machineInfo);
         }
 
         // POST: MachineInfoes/Edit/5
@@ -281,28 +297,33 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            else
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _db.Update(machineInfo);
-                    await _db.SaveChangesAsync();
+                    try
+                    {
+                        _db.Update(machineInfo);
+                        await _db.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!MachineInfoExists(machineInfo.MachineId))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                else
                 {
-                    if (!MachineInfoExists(machineInfo.MachineId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return View(machineInfo);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(machineInfo);
         }
 
         // GET: MachineInfoes/Delete/5
@@ -312,15 +333,18 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 return NotFound();
             }
-
-            var machineInfo = await _db.MachineInfo
-                .FirstOrDefaultAsync(m => m.MachineId == id);
-            if (machineInfo == null)
+            else
             {
-                return NotFound();
+                var machineInfo = await _db.MachineInfo.FirstOrDefaultAsync(m => m.MachineId == id);
+                if (machineInfo == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return View(machineInfo);
+                }
             }
-
-            return View(machineInfo);
         }
 
         // POST: MachineInfoes/Delete/5

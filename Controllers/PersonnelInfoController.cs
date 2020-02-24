@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
-using Moetech.Zhuangzhou.Return;
+using Moetech.Zhuangzhou.Common;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -26,7 +26,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 角色 
         /// </summary>
-        public override int Role { get; set; } = 1;
+        public override int[] Role { get; set; } = { 1 };
 
         public PersonnelInfoController(VirtualMachineDB context)
         {
