@@ -41,7 +41,7 @@
         <div class="col">@item.CommonPersonnelInfo.PersonnelName</div>
         <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
         <div class="col">@item.MachApplyAndReturn.ResultTime</div>
-        <div class="col">@item.MachApplyAndReturn.Remark</div>
+        <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
         <div class="col">
             <a href="SubmitApprove?mid=@item.MachineInfo.MachineId&aid=@item.MachApplyAndReturn.ApplyAndReturnId&state=2" class="btn btn-primary btn-sm">同意</a>
             <a href="SubmitApprove?mid=@item.MachineInfo.MachineId&aid=@item.MachApplyAndReturn.ApplyAndReturnId&state=1" class="btn btn-danger btn-sm">拒绝</a>

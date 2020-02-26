@@ -34,7 +34,7 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" appsettings_1json__JsonSchema="http://json.schemastore.org/bootstraprc" /></VisualStudio></ProjectExtensions>
 
 
 
