@@ -4,11 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
-using Moetech.Zhuangzhou.Common;
+using Moetech.Zhuangzhou.Interface;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -19,23 +17,22 @@ namespace Moetech.Zhuangzhou.Controllers
     public class ManageController : FilterController
     {
         /// <summary>
-        /// 数据量上下文
+        /// 虚拟机管理接口
         /// </summary>
-        private readonly VirtualMachineDB _db;
-
-        /// <summary>
-        /// 每页条数
-        /// </summary>
-        private readonly int pageSize = 10;
+        private readonly IVmwareManage _vmwareManage;
 
         /// <summary>
         /// 角色 
         /// </summary>
         public override int[] Role { get; set; } = { 1 };
 
-        public ManageController(VirtualMachineDB context)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="vmwareManage">虚拟机接口</param>
+        public ManageController(IVmwareManage vmwareManage)
         {
-            _db = context;
+            _vmwareManage = vmwareManage;
         }
 
         /// <summary>
@@ -50,48 +47,13 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(string name = "", int? type = -1, int? status = -1, int? pageIndex = 1)
         {
-            var list = from m1 in _db.MachineInfo
-                       join m2 in (from m3 in _db.MachApplyAndReturn
-                                   join cp in _db.CommonPersonnelInfo on m3.ApplyUserID equals cp.PersonnelId
-                                   where m3.OprationType == 0 && m3.ExamineResult != 1
-                                   select new ReturnMachineInfoApplyData
-                                   {
-                                       MachApplyAndReturn = m3,
-                                       CommonPersonnelInfo = cp
-                                   }) on m1.MachineId equals m2.MachApplyAndReturn.MachineInfoID
-                       into re
-                       from r in re.DefaultIfEmpty()
-                       select new ReturnMachineInfoApplyData
-                       {
-                           MachineInfo = m1,
-                           MachApplyAndReturn = r.MachApplyAndReturn,
-                           CommonPersonnelInfo = r.CommonPersonnelInfo
-                       };
+            var list = await _vmwareManage.SelectAll(name, type, status, pageIndex);
 
-            // 操作系统类型
-            if (type != -1)
-            {
-                list = list.Where(o => o.MachineInfo.MachineSystem == type);
-            }
-
-            // 虚拟机状态
-            if (status != -1)
-            {
-                list = list.Where(o => o.MachineInfo.MachineState == status);
-            }
-
-            // 申请人员
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                list = list.Where(o => o.CommonPersonnelInfo.PersonnelName.Contains(name));
-            }
-
-            var PagingList = await PaginatedList<ReturnMachineInfoApplyData>.CreateAsync(list.AsNoTracking(), pageIndex ?? 1, pageSize);
             // 查询条件参数
             ViewBag.name = name;
             ViewBag.type = type;
             ViewBag.status = status;
-            return View(PagingList);
+            return View(list);
         }
 
         /// <summary>
@@ -99,23 +61,12 @@ namespace Moetech.Zhuangzhou.Controllers
         /// Manage/Approve
         /// 审批虚拟机
         /// </summary>
+        /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
         public async Task<IActionResult> Approve(int? pageIndex = 1)
         {
-            var list = from m1 in _db.MachineInfo
-                       join m2 in _db.MachApplyAndReturn on m1.MachineId equals m2.MachineInfoID
-                       join p3 in _db.CommonPersonnelInfo on m2.ApplyUserID equals p3.PersonnelId
-                       where m2.OprationType == 0 && m2.ExamineUserID == -1 && m2.ExamineResult == 0
-                       select new ReturnMachineInfoApplyData
-                       {
-                           MachineInfo = m1,
-                           MachApplyAndReturn = m2,
-                           CommonPersonnelInfo = p3
-                       };
-
-            var PagingList = await PaginatedList<ReturnMachineInfoApplyData>.CreateAsync(list.AsNoTracking(), pageIndex ?? 1, pageSize);
-
-            return View(PagingList);
+            var list = await _vmwareManage.SelectApprove(pageIndex);
+            return View(list);
         }
 
         /// <summary>
@@ -127,98 +78,62 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <param name="aid">申请归还信息ID</param>
         /// <param name="state">状态1：拒绝  2：同意</param>
         /// <returns></returns>
-        //[HttpPost]
         public async Task<IActionResult> SubmitApprove(int mid, int aid, int state)
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
 
-            int adminID = userInfo.PersonnelId;
+            int result = await _vmwareManage.SubmitApprove(mid, aid, state, userInfo.PersonnelId);
 
-            var list = from m1 in _db.MachApplyAndReturn
-                       join m2 in _db.MachineInfo on m1.MachineInfoID equals m2.MachineId
-                       where m1.MachineInfoID == mid && m1.ApplyAndReturnId == aid
-                       select new ReturnMachineInfoApplyData
-                       {
-                           MachApplyAndReturn = m1,
-                           MachineInfo = m2
-                       };
-
-            if (list.Count() == 0)
+            if (result == -1)
             {
                 return NotFound("数据非法，操作终止!");
             }
             else
             {
-                foreach (var item in list)
-                {
-                    item.MachApplyAndReturn.ExamineUserID = adminID;        // 修改审批人员ID
-                    item.MachApplyAndReturn.ExamineResult = state;          // 修改审批结果
-                    item.MachineInfo.MachineState = state == 2 ? 2 : 0;     // 修改虚拟机状态
-
-                    _db.MachApplyAndReturn.Update(item.MachApplyAndReturn);
-                    _db.MachineInfo.Update(item.MachineInfo);
-                }
-
-                await _db.SaveChangesAsync();
-
                 return RedirectToAction(nameof(Approve));
             }
         }
 
-
         /// <summary>
-        /// 回收
+        /// GET
+        /// Manage/Recycle
+        /// 回收虚拟机
         /// </summary>
+        /// <param name="mid">虚拟机信息ID</param>
+        /// <param name="rid">申请虚拟机记录ID</param>
         /// <returns></returns>
         public async Task<IActionResult> Recycle(int mid, int rid)
         {
-            var list = from m1 in _db.MachineInfo
-                       join m2 in _db.MachApplyAndReturn on m1.MachineId equals m2.MachineInfoID
-                       where m1.MachineId == mid && m2.ApplyAndReturnId == rid
-                       select new
-                       {
-                           MachineInfo = m1,
-                           MachApplyAndReturn = m2
-                       };
+            int result = await _vmwareManage.Recycle(mid, rid);
 
-            if (list.Count() == 0)
+            if (result == -1)
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
                 return View("Views/Vmware/Error.cshtml");
             }
+            else if (result == -2)
+            {
+                ViewData["Title"] = "回收失败";
+                ViewData["Message"] = $"回收失败，虚拟机未在使用！";
+                return View("Views/Vmware/Error.cshtml");
+            }
             else
             {
-                foreach (var item in list)
-                {
-                    if (item.MachineInfo.MachineState == 2)
-                    {
-                        item.MachineInfo.MachineState = 0;
-                        item.MachApplyAndReturn.OprationType = 1;
-                        item.MachApplyAndReturn.ResultTime = DateTime.Now;
-
-                        _db.MachineInfo.Update(item.MachineInfo);
-                        _db.MachApplyAndReturn.Update(item.MachApplyAndReturn);
-
-                    }
-                    else
-                    {
-                        ViewData["Title"] = "回收失败";
-                        ViewData["Message"] = $"回收失败，虚拟机未在使用！";
-                        return View("Views/Vmware/Error.cshtml");
-                    }
-                }
-
-                await _db.SaveChangesAsync();
-
                 ViewData["Title"] = "回收成功";
                 ViewData["Message"] = "回收成功";
                 return View("Views/Manage/Succeed.cshtml");
             }
         }
 
-        // GET: MachineInfoes/Details/5
+        /// <summary>
+        /// GET
+        /// Manage/Details/1
+        /// 虚拟机详细信息
+        /// </summary>
+        /// <param name="id">虚拟机ID</param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -227,7 +142,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             else
             {
-                var machineInfo = await _db.MachineInfo.FirstOrDefaultAsync(m => m.MachineId == id);
+                var machineInfo = await _vmwareManage.Details(id);
 
                 if (machineInfo == null)
                 {
@@ -240,23 +155,31 @@ namespace Moetech.Zhuangzhou.Controllers
             }
         }
 
-        // GET: MachineInfoes/Create
+        /// <summary>
+        /// GET
+        /// Manage/Create
+        /// 新增虚拟机页面
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: MachineInfoes/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// POST
+        /// Manage/Create
+        /// 新增虚拟机数据
+        /// </summary>
+        /// <param name="machineInfo">虚拟机对象</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
         {
             if (ModelState.IsValid)
             {
-                _db.Add(machineInfo);
-                await _db.SaveChangesAsync();
+                await _vmwareManage.Save(machineInfo);
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -265,7 +188,13 @@ namespace Moetech.Zhuangzhou.Controllers
             }
         }
 
-        // GET: MachineInfoes/Edit/5
+        /// <summary>
+        /// GET
+        /// Manage/Edit/1
+        /// 编辑虚拟机页面
+        /// </summary>
+        /// <param name="id">虚拟机ID</param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -274,7 +203,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             else
             {
-                var machineInfo = await _db.MachineInfo.FindAsync(id);
+                var machineInfo = await _vmwareManage.Details(id);
                 if (machineInfo == null)
                 {
                     return NotFound();
@@ -286,9 +215,14 @@ namespace Moetech.Zhuangzhou.Controllers
             }
         }
 
-        // POST: MachineInfoes/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// POST
+        /// Manage/Edit
+        /// 编辑虚拟机数据
+        /// </summary>
+        /// <param name="id">虚拟机ID</param>
+        /// <param name="machineInfo">虚拟机对象</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
@@ -301,22 +235,7 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    try
-                    {
-                        _db.Update(machineInfo);
-                        await _db.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!MachineInfoExists(machineInfo.MachineId))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    await _vmwareManage.Update(machineInfo);
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -326,7 +245,13 @@ namespace Moetech.Zhuangzhou.Controllers
             }
         }
 
-        // GET: MachineInfoes/Delete/5
+        /// <summary>
+        /// GET
+        /// Manage/Delete/1
+        /// 删除虚拟机页面
+        /// </summary>
+        /// <param name="id">虚拟机ID</param>
+        /// <returns></returns>
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -335,7 +260,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             else
             {
-                var machineInfo = await _db.MachineInfo.FirstOrDefaultAsync(m => m.MachineId == id);
+                var machineInfo = await _vmwareManage.Details(id);
                 if (machineInfo == null)
                 {
                     return NotFound();
@@ -347,20 +272,20 @@ namespace Moetech.Zhuangzhou.Controllers
             }
         }
 
-        // POST: MachineInfoes/Delete/5
+        /// <summary>
+        /// POST
+        /// Manage/DeleteConfirmed/1
+        /// 删除虚拟机数据
+        /// </summary>
+        /// <param name="id">虚拟机ID</param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var machineInfo = await _db.MachineInfo.FindAsync(id);
-            _db.MachineInfo.Remove(machineInfo);
-            await _db.SaveChangesAsync();
+            var machineInfo = await _vmwareManage.Details(id);
+            await _vmwareManage.Delete(machineInfo);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool MachineInfoExists(int id)
-        {
-            return _db.MachineInfo.Any(e => e.MachineId == id);
         }
     }
 }
