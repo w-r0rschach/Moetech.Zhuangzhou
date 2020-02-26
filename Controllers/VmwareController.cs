@@ -21,29 +21,19 @@ namespace Moetech.Zhuangzhou.Controllers
     public class VmwareController : FilterController
     {
         /// <summary>
-        /// 数据量上下文
-        /// </summary>
-        //private readonly VirtualMachineDB _db;
-
-        /// <summary>
         /// 虚拟机信息接口
         /// </summary>
         private IVmware _vmware;
-
-        public VmwareController(IVmware vmware)
-        {
-            _vmware = vmware;
-        }
 
         /// <summary>
         /// 角色 
         /// </summary>
         public override int[] Role { get; set; } = { 0, 1 };
 
-        //public VmwareController(VirtualMachineDB context)
-        //{
-        //    _db = context;
-        //}
+        public VmwareController(IVmware vmware)
+        {
+            _vmware = vmware;
+        }
 
         /// <summary>
         /// GET
@@ -97,9 +87,10 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            IQueryable<MachineInfo> list = await _vmware.SubmitApplication(machineSystem, machineDiskCount, machineMemory, applyNumber, remark, userInfo);
+            
+            IEnumerable<MachineInfo> list = await _vmware.SubmitApplication(machineSystem, machineDiskCount, machineMemory, applyNumber, remark, userInfo);
             // 空闲数量小于申请数量 申请失败
-            if (list.Count() < applyNumber)
+            if (list == null)
             {
                 ViewData["Title"] = "申请失败";
                 ViewData["Message"] = "虚拟机空闲数量不足，请重新申请！";
@@ -130,11 +121,11 @@ namespace Moetech.Zhuangzhou.Controllers
         /// 提前归还
         /// </summary>
         /// <returns></returns>
-        public IActionResult EarlyReturn(int id)
+        public async Task<IActionResult> EarlyReturn(int id)
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            _vmware.EarlyReturn(id, userInfo);
+            bool ss = await _vmware.EarlyReturn(id, userInfo);
             if (id == 0)
             {
                 ViewData["Title"] = "操作失败";
@@ -155,8 +146,6 @@ namespace Moetech.Zhuangzhou.Controllers
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
 
-            int userId = userInfo.PersonnelId;
-
             if (id == 0)
             {
                 ViewData["Title"] = "操作失败";
@@ -165,11 +154,12 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             else
             {
-                var list = await _vmware.Renew(id, userInfo);
-                if (list.Count() == 0)
+                var result = await _vmware.Renew(id, userInfo);
+
+                if (result == false)
                 {
-                    ViewData["Title"] = "操作失败";
-                    ViewData["Message"] = "数据非法，操作终止！";
+                    ViewData["Title"] = "续租失败";
+                    ViewData["Message"] = "虚拟机归还时间必须小于三天！";
                     return View("Views/Vmware/Error.cshtml");
                 }
                 else

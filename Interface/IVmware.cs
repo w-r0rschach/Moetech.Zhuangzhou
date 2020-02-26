@@ -22,7 +22,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// <summary>
         /// 提交申请 
         /// </summary>
-        Task<IQueryable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo);
+        Task<IEnumerable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo);
 
         /// <summary>
         /// 我的虚拟机
@@ -30,14 +30,14 @@ namespace Moetech.Zhuangzhou.Interface
         IQueryable<ReturnMachineInfoApplyData> MyVmware(CommonPersonnelInfo userInfo);
 
         /// <summary>
-        ///  提前归还
+        /// 提前归还
         /// </summary>
         /// <param name="userInfo"></param>
-        void EarlyReturn(int id,CommonPersonnelInfo userInfo);
+        Task<bool> EarlyReturn(int id,CommonPersonnelInfo userInfo);
 
         /// <summary>
         /// 续租
         /// </summary>
-        Task<IQueryable<MachApplyAndReturn>> Renew(int id, CommonPersonnelInfo userInfo);
+        Task<bool> Renew(int id, CommonPersonnelInfo userInfo);
     }
 }

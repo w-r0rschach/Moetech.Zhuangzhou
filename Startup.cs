@@ -34,8 +34,8 @@ namespace Moetech.Zhuangzhou
             services.AddControllersWithViews();
 
             // 注册数据库上下文
-            //services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
-            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
+            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
+            //services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
             // HTML编码
             services.Configure<WebEncoderOptions>(options => options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             // 添加Session

@@ -30,19 +30,19 @@ namespace Moetech.Zhuangzhou.Service
         /// 查询虚拟机
         /// </summary>
         /// <returns></returns>
-        public  IQueryable<MachineInfo> SelectVmware()
+        public IQueryable<MachineInfo> SelectVmware()
         {
             IQueryable<MachineInfo> list = from m in _context.MachineInfo
-                       where m.MachineState == 0    // 空闲状态
-                       orderby m.MachineSystem ascending, m.MachineDiskCount ascending, m.MachineMemory ascending
-                       group m by new { m.MachineSystem, m.MachineDiskCount, m.MachineMemory } into b
-                       select new MachineInfo
-                       {
-                           MachineSystem = b.Key.MachineSystem,
-                           MachineDiskCount = b.Key.MachineDiskCount,
-                           MachineMemory = b.Key.MachineMemory,
-                           MachineState = b.Count() // 临时当做剩余数量显示
-                       };
+                                           where m.MachineState == 0    // 空闲状态
+                                           orderby m.MachineSystem ascending, m.MachineDiskCount ascending, m.MachineMemory ascending
+                                           group m by new { m.MachineSystem, m.MachineDiskCount, m.MachineMemory } into b
+                                           select new MachineInfo
+                                           {
+                                               MachineSystem = b.Key.MachineSystem,
+                                               MachineDiskCount = b.Key.MachineDiskCount,
+                                               MachineMemory = b.Key.MachineMemory,
+                                               MachineState = b.Count() // 临时当做剩余数量显示
+                                           };
             return list;
         }
 
@@ -54,26 +54,32 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="machineMemory">内存大小/G</param>
         /// <param name="applyNumber">申请数量</param>
         /// <param name="remark">备注</param>
-        public async Task<IQueryable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
+        public async Task<IEnumerable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
         {
             // 当前用户ID
             int userId = userInfo.PersonnelId;
             // 最大数量
             int appMaxCount = userInfo.AppMaxCount;
 
-            var list = from m in _context.MachineInfo
-                                            where m.MachineState == 0
-                                               && m.MachineSystem == machineSystem
-                                               && m.MachineDiskCount == machineDiskCount
-                                               && m.MachineMemory == machineMemory
+            IEnumerable<MachineInfo> list = from m in _context.MachineInfo
+                                            where m.MachineState == 0 &&
+                                                 m.MachineSystem == machineSystem &&
+                                                 m.MachineDiskCount == machineDiskCount &&
+                                                 m.MachineMemory == machineMemory
                                             select m;
 
+
+            // 空闲数量小于申请数量 申请失败
+            if (list.Count() < applyNumber)
+            {
+                return null;
+            }
 
 
             // 查询当前用户已申请的数量
             var machApplyAndReturnList = from m in _context.MachApplyAndReturn
-                                                                     where m.OprationType == 0 && m.ExamineResult == 2 && m.ApplyUserID == userId
-                                                                     select m;
+                                         where m.OprationType == 0 && m.ExamineResult == 2 && m.ApplyUserID == userId
+                                         select m;
 
             // 未超过数量系统自动审批
             // 超过数量由管理员审批
@@ -107,7 +113,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <summary>
         /// 我的虚拟机
         /// </summary>
-        public  IQueryable<ReturnMachineInfoApplyData> MyVmware(CommonPersonnelInfo userInfo)
+        public IQueryable<ReturnMachineInfoApplyData> MyVmware(CommonPersonnelInfo userInfo)
         {
             int userId = userInfo.PersonnelId;
             var list = from m1 in _context.MachineInfo
@@ -125,7 +131,7 @@ namespace Moetech.Zhuangzhou.Service
         /// 提前归还
         /// </summary>
         /// <param name="userInfo"></param>
-        public void EarlyReturn(int id,CommonPersonnelInfo userInfo)
+        public async Task<bool> EarlyReturn(int id, CommonPersonnelInfo userInfo)
         {
             int userId = userInfo.PersonnelId;
             var list = from m1 in _context.MachineInfo
@@ -140,43 +146,41 @@ namespace Moetech.Zhuangzhou.Service
             foreach (var item in list)
             {
                 item.MachineInfo.MachineState = 0;
+                _context.MachineInfo.Update(item.MachineInfo);
+
                 item.MachApplyAndReturn.OprationType = 1;
                 item.MachApplyAndReturn.ResultTime = DateTime.Now;
-                _context.MachineInfo.Update(item.MachineInfo);
                 _context.MachApplyAndReturn.Update(item.MachApplyAndReturn);
             }
-            _context.SaveChangesAsync();
+
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         /// <summary>
         /// 续租
         /// </summary>
-        public async Task<IQueryable<MachApplyAndReturn>> Renew(int id, CommonPersonnelInfo userInfo)
+        public async Task<bool> Renew(int id, CommonPersonnelInfo userInfo)
         {
             int userId = userInfo.PersonnelId;
 
-            var list = from m in _context.MachApplyAndReturn
-                       where m.ApplyAndReturnId == id && m.OprationType == 0 && m.ApplyUserID == userId
-                       select m;
-            foreach (var item in list)
+            var machApplyAndReturn = await _context.MachApplyAndReturn.FirstOrDefaultAsync(m => m.ApplyAndReturnId == id && m.OprationType == 0 && m.ApplyUserID == userId);
+
+            TimeSpan time = (machApplyAndReturn.ResultTime - DateTime.Now);
+
+            // 小于三天才能续租
+            if (time.Days > 3)
             {
-
-                TimeSpan time = (item.ResultTime - DateTime.Now);
-                // 小于三天才能续租
-                //if (time.Days > 3)
-                //{
-                //    ViewData["Title"] = "续租失败";
-                //    ViewData["Message"] = "虚拟机归还时间必须小于三天！";
-                //    return View("Views/Vmware/Error.cshtml");
-                //}
-
-                // 当前时间+15天
-                item.ResultTime = DateTime.Now.AddDays(15);
-
-                _context.MachApplyAndReturn.Update(item);
-                await _context.SaveChangesAsync();                
+                return false;
             }
-            return list;
+
+            // 当前时间+15天
+            machApplyAndReturn.ResultTime = DateTime.Now.AddDays(15);
+
+            _context.MachApplyAndReturn.Update(machApplyAndReturn);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
