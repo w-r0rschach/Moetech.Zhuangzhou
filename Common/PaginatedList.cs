@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Moetech.Zhuangzhou.Common
 {
+    /// <summary>
+    /// 分页
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class PaginatedList<T> : List<T>
     {
         public int PageIndex { get; private set; }

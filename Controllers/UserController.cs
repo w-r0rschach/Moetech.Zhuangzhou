@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moetech.Zhuangzhou.Data;
+using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Models;
 
 namespace Moetech.Zhuangzhou.Controllers
@@ -14,13 +15,13 @@ namespace Moetech.Zhuangzhou.Controllers
     public class UserController : Controller
     {
         /// <summary>
-        /// 数据量上下文
+        /// 用户接口
         /// </summary>
-        private VirtualMachineDB _db;
+        private IUser _user;
 
-        public UserController(VirtualMachineDB context)
+        public UserController(IUser user)
         {
-            _db = context;
+            _user = user;
         }
 
         /// <summary>
@@ -42,28 +43,25 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DoLogin(string userName, string userPwd)
         {
-            if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(userName))
+            if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(userPwd))
             {
                 ViewData["Message"] = "账号或密码错误。";
                 return View("Views/User/Login.cshtml");
             }
 
-            IEnumerable<CommonPersonnelInfo> users = from us in _db.CommonPersonnelInfo
-                                                     where us.UserName == userName && us.Password == userPwd
-                                                     select us;
+            var user = _user.Login(userName, userPwd);
 
-            if (users.Count() == 0)
+            if (user == null)
             {
                 ViewData["Message"] = "账号或密码错误。";
                 return View("Views/User/Login.cshtml");
             }
 
-            CommonPersonnelInfo info = users.ElementAt(0);
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(info);
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(user);
             // 存入Session
             HttpContext.Session.Set("User", System.Text.Encoding.UTF8.GetBytes(json));
 
-            if (info.DepId == 1)
+            if (user.DepId == 1)
             {
                 return RedirectToAction("Index", "Manage");
             }

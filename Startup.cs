@@ -14,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.WebEncoders;
 using Moetech.Zhuangzhou.Controllers;
 using Moetech.Zhuangzhou.Data;
+using Moetech.Zhuangzhou.Interface;
+using Moetech.Zhuangzhou.Service;
 
 namespace Moetech.Zhuangzhou
 {
@@ -32,12 +34,13 @@ namespace Moetech.Zhuangzhou
             services.AddControllersWithViews();
 
             // 注册数据库上下文
-            //services.AddDbContext<VirtualMachineDB>(options => options.UseSqlServer(Configuration.GetConnectionString("SqlServerDefault")));
-            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
+            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
             // HTML编码
             services.Configure<WebEncoderOptions>(options => options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             // 添加Session
             services.AddSession();
+            // 注入接口
+            services.AddScoped<IUser, UserService>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
