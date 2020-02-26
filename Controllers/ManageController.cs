@@ -87,7 +87,9 @@ namespace Moetech.Zhuangzhou.Controllers
 
             if (result == -1)
             {
-                return NotFound("数据非法，操作终止!");
+                ViewData["Title"] = "操作失败";
+                ViewData["Message"] = "数据非法，操作终止！";
+                return View("Views/Shared/Tip.cshtml");
             }
             else
             {
@@ -111,19 +113,19 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
-                return View("Views/Vmware/Error.cshtml");
+                return View("Tip");
             }
             else if (result == -2)
             {
                 ViewData["Title"] = "回收失败";
-                ViewData["Message"] = $"回收失败，虚拟机未在使用！";
-                return View("Views/Vmware/Error.cshtml");
+                ViewData["Message"] = $"回收失败，虚拟机未在使用！返回<a href='/Manage/Index'>管理虚拟机</a>";
+                return View("Views/Shared/Tip.cshtml");
             }
             else
             {
                 ViewData["Title"] = "回收成功";
-                ViewData["Message"] = "回收成功";
-                return View("Views/Manage/Succeed.cshtml");
+                ViewData["Message"] = "回收成功！返回<a href='/Manage/Index'>管理虚拟机</a>";
+                return View("Views/Shared/Tip.cshtml");
             }
         }
 

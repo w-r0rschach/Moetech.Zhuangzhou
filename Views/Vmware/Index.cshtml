@@ -33,29 +33,6 @@
         <div class="col col-sm-2">@item.MachineState</div>
         <div class="col col-sm-3">
             <a class="btn btn-primary btn-sm" href="Vmware/Apply?machineSystem=@item.MachineSystem&machineDiskCount=@item.MachineDiskCount&machineMemory=@item.MachineMemory&freeNumber=@item.MachineState">申请</a>
-            <!-- <a class="btn btn-primary btn-sm" onclick="Test()">测试</a>-->
         </div>
     </div>
 }
-
-
-
-
-<script>
-
-    function Test() {
-        //var token = $('[name=__RequestVerificationToken]').val();
-
-         var token = $('@Html.AntiForgeryToken()').val();
-        console.info(token);
-
-        $.ajax({
-            type: 'POST',
-            url: 'Vmware/Test',
-            data: {"__RequestVerificationToken": token}
-            //success: function (data) {
-            //    window.location.href = data;
-            //}
-        });
-    }
-</script>

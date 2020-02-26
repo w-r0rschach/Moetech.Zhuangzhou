@@ -4,12 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
-using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Interface;
 
 namespace Moetech.Zhuangzhou.Controllers
@@ -67,6 +64,7 @@ namespace Moetech.Zhuangzhou.Controllers
             ViewData["MachineDiskCount"] = machineDiskCount;
             ViewData["MachineMemory"] = machineMemory;
             ViewData["FreeNumber"] = freeNumber;
+
             return View();
         }
 
@@ -87,20 +85,20 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            
+
             IEnumerable<MachineInfo> list = await _vmware.SubmitApplication(machineSystem, machineDiskCount, machineMemory, applyNumber, remark, userInfo);
             // 空闲数量小于申请数量 申请失败
             if (list == null)
             {
                 ViewData["Title"] = "申请失败";
-                ViewData["Message"] = "虚拟机空闲数量不足，请重新申请！";
-                return View("Views/Vmware/Error.cshtml");
+                ViewData["Message"] = "虚拟机空闲数量不足，请重新申请！返回到<a href='/Vmware'>申请虚拟机</a>";
+                return View("Views/Shared/Tip.cshtml");
             }
             else
             {
                 ViewData["Title"] = "申请成功";
-                ViewData["Message"] = "申请成功！";
-                return View("Views/Vmware/Succeed.cshtml");
+                ViewData["Message"] = "申请成功！查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
+                return View("Views/Shared/Tip.cshtml");
             }
         }
 
@@ -130,7 +128,7 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
-                return View("Views/Vmware/Error.cshtml");
+                return View("Views/Shared/Tip.cshtml");
             }
             return RedirectToAction(nameof(MyVmware));
         }
@@ -150,7 +148,7 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
-                return View("Views/Vmware/Error.cshtml");
+                return View("Views/Shared/Tip.cshtml");
             }
             else
             {
@@ -159,23 +157,16 @@ namespace Moetech.Zhuangzhou.Controllers
                 if (result == false)
                 {
                     ViewData["Title"] = "续租失败";
-                    ViewData["Message"] = "虚拟机归还时间必须小于三天！";
-                    return View("Views/Vmware/Error.cshtml");
+                    ViewData["Message"] = "虚拟机归还时间必须小于三天！查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
+                    return View("Views/Shared/Tip.cshtml");
                 }
                 else
                 {
                     ViewData["Title"] = "续租成功";
-                    ViewData["Message"] = "续租成功！";
-                    return View("Views/Vmware/Succeed.cshtml");
+                    ViewData["Message"] = "续租成功！查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
+                    return View("Views/Shared/Tip.cshtml");
                 }
             }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public string Test()
-        {
-            return "Vmware/MyVmware";
         }
     }
 }

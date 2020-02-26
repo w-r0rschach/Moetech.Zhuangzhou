@@ -13,27 +13,24 @@
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item">
-        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="home"
-           aria-selected="true">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="home" aria-selected="true">
             <h6>已申请</h6>
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile"
-           aria-selected="false">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile" aria-selected="false">
             <h6>正在申请中</h6>
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#audit" role="tab" aria-controls="contact"
-           aria-selected="false">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#audit" role="tab" aria-controls="contact" aria-selected="false">
             <h6>已拒绝</h6>
         </a>
     </li>
 </ul>
 
 <!--同意Tab页-->
-<div class="tab-content border-top-0">
+<div class="tab-content border-top-0" style="margin-top:20px; margin-left:20px;">
     <div class="tab-pane fade show active" id="admin" role="tabpanel" aria-labelledby="home-tab">
         <div class="row font-weight-bold">
             <div class="col">虚拟机IP</div>
@@ -52,32 +49,32 @@
         {
             @if (item.MachApplyAndReturn.ExamineResult == 2)
             {
-    <div class="row">
-        <div class="col">@item.MachineInfo.MachineIP</div>
-        @if (item.MachineInfo.MachineSystem == 0)
-        {
-            <div class="col">Windows</div>
-        }
-        else
-        {
-            <div class="col">Linux</div>
-        }
-        <div class="col">@item.MachineInfo.MachineDiskCount</div>
-        <div class="col">@item.MachineInfo.MachineMemory</div>
-        <div class="col">同意</div>
-        <div class="col">@item.MachineInfo.MachineUser</div>
-        <div class="col">@item.MachineInfo.MachinePassword</div>
-        <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
-        <div class="col">@item.MachApplyAndReturn.ResultTime</div>
-        <div class="col" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
-        <div class="col col-sm-2">
-            @if (item.MachApplyAndReturn.ExamineResult == 2)
-            {
-                <button class="btn btn-primary btn-sm" onclick="modal(@item.MachApplyAndReturn.ApplyAndReturnId)">归还</button>
-                <a asp-action="Relet" asp-route-id="@item.MachApplyAndReturn.ApplyAndReturnId" class="btn btn-primary btn-sm">续租</a>
-            }
-        </div>
-    </div>
+                <div class="row">
+                    <div class="col">@item.MachineInfo.MachineIP</div>
+                    @if (item.MachineInfo.MachineSystem == 0)
+                    {
+                        <div class="col">Windows</div>
+                    }
+                    else
+                    {
+                        <div class="col">Linux</div>
+                    }
+                    <div class="col">@item.MachineInfo.MachineDiskCount</div>
+                    <div class="col">@item.MachineInfo.MachineMemory</div>
+                    <div class="col">同意</div>
+                    <div class="col">@item.MachineInfo.MachineUser</div>
+                    <div class="col">@item.MachineInfo.MachinePassword</div>
+                    <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+                    <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+                    <div class="col" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
+                    <div class="col col-sm-2">
+                        @if (item.MachApplyAndReturn.ExamineResult == 2)
+                        {
+                            <button class="btn btn-primary btn-sm" onclick="modal(@item.MachApplyAndReturn.ApplyAndReturnId)">归还</button>
+                            <a asp-action="Relet" asp-route-id="@item.MachApplyAndReturn.ApplyAndReturnId" class="btn btn-primary btn-sm">续租</a>
+                        }
+                    </div>
+                </div><hr />
             }
         }
     </div>
@@ -98,23 +95,23 @@
         {
             @if (item.MachApplyAndReturn.ExamineResult == 0)
             {
-    <div class="row">
-        <div class="col">@item.MachineInfo.MachineIP</div>
-        @if (item.MachineInfo.MachineSystem == 0)
-        {
-            <div class="col">Windows</div>
-        }
-        else
-        {
-            <div class="col">Linux</div>
-        }
-        <div class="col">@item.MachineInfo.MachineDiskCount</div>
-        <div class="col">@item.MachineInfo.MachineMemory</div>
-        <div class="col">待审批</div>
-        <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
-        <div class="col">@item.MachApplyAndReturn.ResultTime</div>
-        <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
-    </div>
+                <div class="row">
+                    <div class="col">@item.MachineInfo.MachineIP</div>
+                    @if (item.MachineInfo.MachineSystem == 0)
+                    {
+                        <div class="col">Windows</div>
+                    }
+                    else
+                    {
+                        <div class="col">Linux</div>
+                    }
+                    <div class="col">@item.MachineInfo.MachineDiskCount</div>
+                    <div class="col">@item.MachineInfo.MachineMemory</div>
+                    <div class="col">待审批</div>
+                    <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+                    <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+                    <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
+                </div><hr />
             }
         }
     </div>
@@ -135,23 +132,23 @@
         {
             @if (item.MachApplyAndReturn.ExamineResult == 1)
             {
-    <div class="row">
-        <div class="col">@item.MachineInfo.MachineIP</div>
-        @if (item.MachineInfo.MachineSystem == 0)
-        {
-            <div class="col">Windows</div>
-        }
-        else
-        {
-            <div class="col">Linux</div>
-        }
-        <div class="col">@item.MachineInfo.MachineDiskCount</div>
-        <div class="col">@item.MachineInfo.MachineMemory</div>
-        <div class="col">拒绝</div>
-        <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
-        <div class="col">@item.MachApplyAndReturn.ResultTime</div>
-        <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
-    </div>
+                <div class="row">
+                    <div class="col">@item.MachineInfo.MachineIP</div>
+                    @if (item.MachineInfo.MachineSystem == 0)
+                    {
+                        <div class="col">Windows</div>
+                    }
+                    else
+                    {
+                        <div class="col">Linux</div>
+                    }
+                    <div class="col">@item.MachineInfo.MachineDiskCount</div>
+                    <div class="col">@item.MachineInfo.MachineMemory</div>
+                    <div class="col">拒绝</div>
+                    <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+                    <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+                    <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
+                </div><hr />
             }
         }
     </div>

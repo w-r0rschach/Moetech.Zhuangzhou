@@ -12,8 +12,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.WebEncoders;
+using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Controllers;
 using Moetech.Zhuangzhou.Data;
+using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Service;
 
@@ -31,11 +33,15 @@ namespace Moetech.Zhuangzhou
         // 此方法由运行时调用。使用此方法向容器添加服务。
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            // 邮箱配置
+            EmailConfig emailConfig = new EmailConfig();
+            Configuration.GetSection("EmailConfig").Bind(emailConfig);
+            EmailHelper email = new EmailHelper(emailConfig);
 
+            services.AddControllersWithViews();
             // 注册数据库上下文
-            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
-            //services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
+            //services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
+            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
             // HTML编码
             services.Configure<WebEncoderOptions>(options => options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             // 添加Session
