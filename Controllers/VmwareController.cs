@@ -97,7 +97,7 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            IQueryable<MachineInfo> list = _vmware.SubmitApplication(machineSystem, machineDiskCount, machineMemory, applyNumber, remark, userInfo);
+            IQueryable<MachineInfo> list = await _vmware.SubmitApplication(machineSystem, machineDiskCount, machineMemory, applyNumber, remark, userInfo);
             // 空闲数量小于申请数量 申请失败
             if (list.Count() < applyNumber)
             {
@@ -130,11 +130,11 @@ namespace Moetech.Zhuangzhou.Controllers
         /// 提前归还
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> EarlyReturn(int id)
+        public IActionResult EarlyReturn(int id)
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            _vmware.EarlyReturn(id,userInfo);
+            _vmware.EarlyReturn(id, userInfo);
             if (id == 0)
             {
                 ViewData["Title"] = "操作失败";
@@ -165,7 +165,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             else
             {
-                var list = _vmware.Renew(id, userInfo);
+                var list = await _vmware.Renew(id, userInfo);
                 if (list.Count() == 0)
                 {
                     ViewData["Title"] = "操作失败";

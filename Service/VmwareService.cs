@@ -30,7 +30,7 @@ namespace Moetech.Zhuangzhou.Service
         /// 查询虚拟机
         /// </summary>
         /// <returns></returns>
-        public IQueryable<MachineInfo> SelectVmware()
+        public  IQueryable<MachineInfo> SelectVmware()
         {
             IQueryable<MachineInfo> list = from m in _context.MachineInfo
                        where m.MachineState == 0    // 空闲状态
@@ -54,7 +54,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="machineMemory">内存大小/G</param>
         /// <param name="applyNumber">申请数量</param>
         /// <param name="remark">备注</param>
-        public IQueryable<MachineInfo> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
+        public async Task<IQueryable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
         {
             // 当前用户ID
             int userId = userInfo.PersonnelId;
@@ -99,7 +99,7 @@ namespace Moetech.Zhuangzhou.Service
                         Remark = remark
                     });
             }
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
             return list;
         }
@@ -107,7 +107,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <summary>
         /// 我的虚拟机
         /// </summary>
-        public IQueryable<ReturnMachineInfoApplyData> MyVmware(CommonPersonnelInfo userInfo)
+        public  IQueryable<ReturnMachineInfoApplyData> MyVmware(CommonPersonnelInfo userInfo)
         {
             int userId = userInfo.PersonnelId;
             var list = from m1 in _context.MachineInfo
@@ -151,7 +151,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <summary>
         /// 续租
         /// </summary>
-        public IQueryable<MachApplyAndReturn> Renew(int id, CommonPersonnelInfo userInfo)
+        public async Task<IQueryable<MachApplyAndReturn>> Renew(int id, CommonPersonnelInfo userInfo)
         {
             int userId = userInfo.PersonnelId;
 
@@ -174,7 +174,7 @@ namespace Moetech.Zhuangzhou.Service
                 item.ResultTime = DateTime.Now.AddDays(15);
 
                 _context.MachApplyAndReturn.Update(item);
-                _context.SaveChangesAsync();                
+                await _context.SaveChangesAsync();                
             }
             return list;
         }
