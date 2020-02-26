@@ -11,68 +11,151 @@
 
 <hr />
 
-<div class="row font-weight-bold">
-    <div class="col">虚拟机IP</div>
-    <div class="col">操作系统</div>
-    <div class="col">硬盘大小/G</div>
-    <div class="col">内存大小/G</div>
-    <div class="col">审批状态</div>
-    <div class="col">登录账号</div>
-    <div class="col">登录密码</div>
-    <div class="col">申请时间</div>
-    <div class="col">归还时间</div>
-    <div class="col">备注</div>
-    <div class="col col-sm-2">操作</div>
-</div>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#admin" role="tab" aria-controls="home"
+           aria-selected="true">
+            <h6>已申请</h6>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile"
+           aria-selected="false">
+            <h6>正在申请中</h6>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#audit" role="tab" aria-controls="contact"
+           aria-selected="false">
+            <h6>已拒绝</h6>
+        </a>
+    </li>
+</ul>
 
-@foreach (var item in Model)
-{
-
-    <hr />
-    <div class="row">
-        <div class="col">@item.MachineInfo.MachineIP</div>
-        @if (item.MachineInfo.MachineSystem == 0)
+<!--同意Tab页-->
+<div class="tab-content border border-top-0">
+    <div class="tab-pane fade show active" id="admin" role="tabpanel" aria-labelledby="home-tab">
+        <div class="row font-weight-bold">
+            <div class="col">虚拟机IP</div>
+            <div class="col">操作系统</div>
+            <div class="col">硬盘大小/G</div>
+            <div class="col">内存大小/G</div>
+            <div class="col">审批状态</div>
+            <div class="col">登录账号</div>
+            <div class="col">登录密码</div>
+            <div class="col">申请时间</div>
+            <div class="col">归还时间</div>
+            <div class="col">备注</div>
+            <div class="col col-sm-2">操作</div>
+        </div>
+        @foreach (var item in Model)
         {
-            <div class="col">Windows</div>
-        }
-        else
-        {
-            <div class="col">Linux</div>
-        }
-        <div class="col">@item.MachineInfo.MachineDiskCount</div>
-        <div class="col">@item.MachineInfo.MachineMemory</div>
-
-        @if (item.MachApplyAndReturn.ExamineResult == 0)
-        {
-            <div class="col">待审批</div>
-            <div class="col">******</div>
-            <div class="col">******</div>
-        }
-        else if (item.MachApplyAndReturn.ExamineResult == 1)
-        {
-            <div class="col">拒绝</div>
-            <div class="col">******</div>
-            <div class="col">******</div>
-        }
-        else
-        {
-            <div class="col">同意</div>
-            <div class="col">@item.MachineInfo.MachineUser</div>
-            <div class="col">@item.MachineInfo.MachinePassword</div>
-        }
-
-        <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
-        <div class="col">@item.MachApplyAndReturn.ResultTime</div>
-        <div class="col">@item.MachApplyAndReturn.Remark</div>
-        <div class="col col-sm-2">
             @if (item.MachApplyAndReturn.ExamineResult == 2)
             {
-                <button class="btn btn-primary btn-sm" onclick="modal(@item.MachApplyAndReturn.ApplyAndReturnId)">归还</button>
-                <a asp-action="Relet" asp-route-id="@item.MachApplyAndReturn.ApplyAndReturnId" class="btn btn-primary btn-sm">续租</a>
+                <div class="row">
+                    <div class="col">@item.MachineInfo.MachineIP</div>
+                    @if (item.MachineInfo.MachineSystem == 0)
+                    {
+                        <div class="col">Windows</div>
+                    }
+                    else
+                    {
+                        <div class="col">Linux</div>
+                    }
+                    <div class="col">@item.MachineInfo.MachineDiskCount</div>
+                    <div class="col">@item.MachineInfo.MachineMemory</div>
+                    <div class="col">同意</div>
+                    <div class="col">@item.MachineInfo.MachineUser</div>
+                    <div class="col">@item.MachineInfo.MachinePassword</div>
+                    <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+                    <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+                    <div class="col">@item.MachApplyAndReturn.Remark</div>
+                    <div class="col col-sm-2">
+                        @if (item.MachApplyAndReturn.ExamineResult == 2)
+                        {
+                            <button class="btn btn-primary btn-sm" onclick="modal(@item.MachApplyAndReturn.ApplyAndReturnId)">归还</button>
+                            <a asp-action="Relet" asp-route-id="@item.MachApplyAndReturn.ApplyAndReturnId" class="btn btn-primary btn-sm">续租</a>
+                        }
+                    </div>
+                </div>
             }
-        </div>
+        }
     </div>
-}
+
+    <!--待审批Tab页-->
+    <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="row font-weight-bold">
+            <div class="col">虚拟机IP</div>
+            <div class="col">操作系统</div>
+            <div class="col">硬盘大小/G</div>
+            <div class="col">内存大小/G</div>
+            <div class="col">审批状态</div>
+            <div class="col">申请时间</div>
+            <div class="col">归还时间</div>
+            <div class="col">备注</div>
+        </div>
+        @foreach (var item in Model)
+        {
+            @if (item.MachApplyAndReturn.ExamineResult == 0)
+            {
+                <div class="row">
+                    <div class="col">@item.MachineInfo.MachineIP</div>
+                    @if (item.MachineInfo.MachineSystem == 0)
+                    {
+                        <div class="col">Windows</div>
+                    }
+                    else
+                    {
+                        <div class="col">Linux</div>
+                    }
+                    <div class="col">@item.MachineInfo.MachineDiskCount</div>
+                    <div class="col">@item.MachineInfo.MachineMemory</div>
+                    <div class="col">待审批</div>
+                    <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+                    <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+                    <div class="col">@item.MachApplyAndReturn.Remark</div>
+                </div>
+            }
+        }
+    </div>
+
+    <!--拒绝Tab页-->
+    <div class="tab-pane fade" id="audit" role="tabpanel" aria-labelledby="contact-tab">
+        <div class="row font-weight-bold">
+            <div class="col">虚拟机IP</div>
+            <div class="col">操作系统</div>
+            <div class="col">硬盘大小/G</div>
+            <div class="col">内存大小/G</div>
+            <div class="col">审批状态</div>
+            <div class="col">申请时间</div>
+            <div class="col">归还时间</div>
+            <div class="col">备注</div>
+        </div>
+        @foreach (var item in Model)
+        {
+            @if (item.MachApplyAndReturn.ExamineResult == 1)
+            {
+                <div class="row">
+                    <div class="col">@item.MachineInfo.MachineIP</div>
+                    @if (item.MachineInfo.MachineSystem == 0)
+                    {
+                        <div class="col">Windows</div>
+                    }
+                    else
+                    {
+                        <div class="col">Linux</div>
+                    }
+                    <div class="col">@item.MachineInfo.MachineDiskCount</div>
+                    <div class="col">@item.MachineInfo.MachineMemory</div>
+                    <div class="col">拒绝</div>
+                    <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+                    <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+                    <div class="col">@item.MachApplyAndReturn.Remark</div>
+                </div>
+            }
+        }
+    </div>
+</div>
 
 <!-- 模态框 -->
 <div class="modal fade" id="myModal">

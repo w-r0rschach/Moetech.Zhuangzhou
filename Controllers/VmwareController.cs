@@ -169,7 +169,7 @@ namespace Moetech.Zhuangzhou.Controllers
 
             var list = from m1 in _db.MachineInfo
                        join m2 in _db.MachApplyAndReturn on m1.MachineId equals m2.MachineInfoID
-                       where m2.ApplyUserID == userId && m2.OprationType == 0 && m2.ExamineResult == 2
+                       where m2.ApplyUserID == userId && m2.OprationType == 0 
                        select new ReturnMachineInfoApplyData
                        {
                            MachineInfo = m1,
