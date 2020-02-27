@@ -35,6 +35,18 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="vSphereRestWrapper.CIS">
+      <HintPath>DLL\vSphereRestWrapper.CIS.dll</HintPath>
+    </Reference>
+    <Reference Include="vSphereRestWrapper.Common">
+      <HintPath>DLL\vSphereRestWrapper.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="vSphereRestWrapper.VCenter">
+      <HintPath>DLL\vSphereRestWrapper.VCenter.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 

@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>vSphereRestWrapper.Common</name>
+    </assembly>
+    <members>
+        <member name="T:vSphereRestWrapper.Common.RestGetObjectRequester">
+            <summary>
+            vSphere Rest Get方法请求对象（封装<see cref="T:vSphereRestWrapper.Common.RestRequester"/>的Get请求）。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestGetObjectRequester.GetObjectAsync``1(System.String,System.String)">
+            <summary>
+            获取Get方法的Rest对象。
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="sessionID"></param>
+            <param name="vSphereRestAPIUrl"></param>
+            <returns>执行成功返回T的实例，否则返回default(T)</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.Common.RestRequester">
+            <summary>
+            vSphere Rest请求对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.Common.RestRequester.SessionHeaderKey">
+            <summary>
+            vSphere Rest API调用时，Session标识Header名称。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.CreateIgnoreCertificateValidationClient(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            创建一个忽略服务器证书验证的<see cref="T:System.Net.Http.HttpClient"/>实例。
+            </summary>
+            <param name="headers">请求Headers。</param>
+            <returns><see cref="T:System.Net.Http.HttpClient"/>对象。</returns>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.ClientOperateAsync(System.String,vSphereRestWrapper.Common.RestRequester.OperateType,System.Collections.Generic.IDictionary{System.String,System.String},System.Net.Http.HttpContent)">
+            <summary>
+            使用指定方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="operateType">操作类型。</param>
+            <param name="headers">请求Headers，默认为null。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.GetRequestResultAsync(System.Net.Http.HttpResponseMessage)">
+            <summary>
+            获取请求结果。
+            </summary>
+            <param name="responseMessage">HttpClient实例请求的消息对象。</param>
+            <returns></returns>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.DoHttpOperateAsync(System.String,vSphereRestWrapper.Common.RestRequester.OperateType,System.Net.Http.HttpContent,System.Net.Http.HttpClient)">
+            <summary>
+            指定Http操作。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="operateType">操作类型。</param>
+            <param name="httpContent">请求内容。</param>
+            <param name="client">HttpClient实例。</param>
+            <returns></returns>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.PostAsync(System.String,System.String,System.Net.Http.HttpContent)">
+            <summary>
+            使用Post方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="vSphereSessionID">vSphere Session ID。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.GetAsync(System.String,System.String,System.Net.Http.HttpContent)">
+            <summary>
+            使用Get方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="vSphereSessionID">vSphere Session ID。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.DeleteAsync(System.String,System.String,System.Net.Http.HttpContent)">
+            <summary>
+            使用Delete方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="vSphereSessionID">vSphere Session ID。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.PostAsync(System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Net.Http.HttpContent)">
+            <summary>
+            使用Post方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="headers">请求Headers。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.GetAsync(System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Net.Http.HttpContent)">
+            <summary>
+            使用Get方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="headers">请求Headers。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.DeleteAsync(System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Net.Http.HttpContent)">
+            <summary>
+            使用Delete方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="headers">请求Headers。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequester.PutAsync(System.String,System.Collections.Generic.IDictionary{System.String,System.String},System.Net.Http.HttpContent)">
+            <summary>
+            使用Put方法对指定REST API进行请求。
+            </summary>
+            <param name="vSphereRestAPIUrl">vSphere Rest API地址。</param>
+            <param name="headers">请求Headers。</param>
+            <param name="httpContent">请求内容，默认为<see cref="T:System.Net.Http.FormUrlEncodedContent"/>。</param>
+            <returns>请求结果字符串。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.Common.RestRequester.OperateType">
+            <summary>
+            操作类型。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.Common.RestRequester.OperateType.Post">
+            <summary>
+            Post
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.Common.RestRequester.OperateType.Get">
+            <summary>
+            Get
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.Common.RestRequester.OperateType.Put">
+            <summary>
+            Put
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.Common.RestRequester.OperateType.Delete">
+            <summary>
+            Delete
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.Common.RestRequestResult">
+            <summary>
+            vSphere Rest请求结果。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.Common.RestRequestResult.#ctor(System.String,System.Net.HttpStatusCode)">
+            <summary>
+            创建vSphere Rest请求结果。
+            </summary>
+            <param name="responseString">请求结果Json字符串。</param>
+            <param name="statusCode">HTTP请求状态。</param>
+        </member>
+        <member name="P:vSphereRestWrapper.Common.RestRequestResult.ResponseString">
+            <summary>
+            响应内容。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.Common.RestRequestResult.APIErrorType">
+            <summary>
+            vSphere Rest API错误类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.Common.RestRequestResult.StatusCode">
+            <summary>
+            HTTP请求状态。
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,1382 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>vSphereRestWrapper.VCenter</name>
+    </assembly>
+    <members>
+        <member name="T:vSphereRestWrapper.VCenter.Cluster">
+            <summary>
+            Cluster管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Cluster._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Cluster.URL_GetAllCluster">
+            <summary>
+            获取所有Cluster列表。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Cluster.URL_GetClusterDetails">
+            <summary>
+            获取指定Cluster信息，参数0指示Cluster ID。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Cluster.#ctor(System.String)">
+            <summary>
+            创建Cluster管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Cluster.ListAsync(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有Cluster列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterFolders">依据cluster所在目录ID（<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>）筛选。</param>
+            <param name="filterClusters">依据cluster标识（<see cref="P:vSphereRestWrapper.VCenter.ClusterItem.ID"/>）筛选。</param>
+            <param name="filterNames">依据cluster名称（<see cref="P:vSphereRestWrapper.VCenter.ClusterItem.Name"/>）筛选。</param>
+            <param name="filterDatacenters">依据cluter所在数据中心ID（<see cref="P:vSphereRestWrapper.VCenter.DatastoreItem.ID"/>）名称筛选。</param>
+            <returns>请求成功返回Cluster列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Cluster.DetailAsync(System.String,System.String)">
+            <summary>
+            获取Cluster详情。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="clusterID">Cluster ID，可通过<see cref="M:vSphereRestWrapper.VCenter.Cluster.ListAsync(System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>执行成功返回Cluster详情，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.ClusterDetails">
+            <summary>
+            Cluster详情。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ClusterDetails.ResourcePool">
+            <summary>
+            Cluster根资源池。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ClusterDetails.Name">
+            <summary>
+            Cluster名称。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.ClusterItem">
+            <summary>
+            Cluster对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ClusterItem.ID">
+            <summary>
+            Cluster ID。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ClusterItem.DRSEnabled">
+            <summary>
+            DRS 服务启用标识。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ClusterItem.Name">
+            <summary>
+            Cluster名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ClusterItem.HAEnabled">
+            <summary>
+            高可用启用标识。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.Datacenter">
+            <summary>
+            Datacenter管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Datacenter._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Datacenter.URL_GetAllDataCenter">
+            <summary>
+            获取所有Datacenter列表。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Datacenter.URL_GetDataCenterDetails">
+            <summary>
+            获取指定Datacenter信息，参数0指示Datacenter名称。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Datacenter.#ctor(System.String)">
+            <summary>
+            创建DataCenter管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Datacenter.ListAsync(System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有Datacenter列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterFolders">依据Datacenter所在Folder ID（<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>）筛选。</param>
+            <param name="filterNames">依据Datacenter名称(（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.Name"/>）)筛选。</param>
+            <param name="filterDatacenters">依据Datacenter ID（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.ID"/>）筛选。</param>
+            <returns>请求成功返回Datacenter列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="!:HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Datacenter.DetailAsync(System.String,System.String)">
+            <summary>
+            获取Datacenter详情。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="dataCenterID">Datacenter ID，可通过<see cref="M:vSphereRestWrapper.VCenter.Datacenter.ListAsync(System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>执行成功返回Datacenter详情，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.DatacenterDetails">
+            <summary>
+            DataCenter详情。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatacenterDetails.DatastoreFolder">
+            <summary>
+            数据存储目录。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatacenterDetails.HostFolder">
+            <summary>
+            宿主目录。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatacenterDetails.NetworkFolder">
+            <summary>
+            网络目录。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatacenterDetails.Name">
+            <summary>
+            DataCenter名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatacenterDetails.VmFolder">
+            <summary>
+            虚拟机目录。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.DatacenterItem">
+            <summary>
+            DataCenter对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatacenterItem.Name">
+            <summary>
+            DataCenter名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatacenterItem.ID">
+            <summary>
+            DataCenter ID。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.Datastore">
+            <summary>
+            Datastore管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Datastore._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Datastore.URL_GetAllDatastore">
+            <summary>
+            获取所有Datastore列表。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Datastore.URL_GetDatastoreDetails">
+            <summary>
+            获取指定Datastore信息，参数0指示Datastore ID。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Datastore.#ctor(System.String)">
+            <summary>
+            创建Datastore管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Datastore.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有Datastore列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterDatastores">依据Datastore ID（<see cref="!:DatastoreItem.ID）"/>）筛选。</param>
+            <param name="filterFolders">依据Datastore所属Folder ID（<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>）筛选。</param>
+            <param name="filterType">依据Datastore类型（<see cref="T:vSphereRestWrapper.VCenter.DatastoreType"/>）筛选。</param>
+            <param name="filterNames">依据Datastore名称（<see cref="!:DatastoreItem.Name）"/>筛选。</param>
+            <param name="filterDatacenters">依据Datastore所属Datacenter ID（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.ID"/>）筛选。</param>
+            <returns>请求成功返回Datastore列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Datastore.DetailAsync(System.String,System.String)">
+            <summary>
+            获取Datastore详情。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="datastoreID">Datastore ID，可通过<see cref="M:vSphereRestWrapper.VCenter.Datastore.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>执行成功返回Datastore详情，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.DatastoreDetails">
+            <summary>
+            Datastore详情。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreDetails.Accessible">
+            <summary>
+            是否可访问。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreDetails.MultipleHostAccess">
+            <summary>
+            是否可由多个Host访问。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreDetails.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreDetails.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreDetails.FreeSpace">
+            <summary>
+            可用容量（字节）。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreDetails.ThinprovisioningSupported">
+            <summary>
+            是否支持自动精简配置。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.DatastoreItem">
+            <summary>
+            Datastore对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreItem.Capacity">
+            <summary>
+            容量（字节）。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreItem.ID">
+            <summary>
+            DataStore ID。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreItem.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreItem.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.DatastoreItem.FreeSpace">
+            <summary>
+            可用空间（字节）。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.DatastoreType">
+            <summary>
+            Datastore类型。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.DatastoreType.VMFS">
+            <summary>
+            VMFS
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.DatastoreType.NFS">
+            <summary>
+            NFS
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.DatastoreType.NFS41">
+            <summary>
+            NFS41
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.DatastoreType.CIFS">
+            <summary>
+            CIFS
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.DatastoreType.VSAN">
+            <summary>
+            VSAN
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:vSphereRestWrapper.VCenter.DatastoreType.VFFS" -->
+        <member name="F:vSphereRestWrapper.VCenter.DatastoreType.VVOL">
+            <summary>
+            VVOL
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.Folder">
+            <summary>
+            Folder管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Folder._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Folder.URL_GetAllFolder">
+            <summary>
+            获取所有Folder列表。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Folder.#ctor(System.String)">
+            <summary>
+            创建Folder管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Folder.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有Folder列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterFolders">依据Folder ID<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>筛选。</param>
+            <param name="filterParentFolders">依据上级Folder ID<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>筛选。</param>
+            <param name="filterType">依据Folder类型（<see cref="T:vSphereRestWrapper.VCenter.FolderType"/>）筛选。</param>
+            <param name="filterNames">依据Folder名称筛选。</param>
+            <param name="filterDatacenters">依据Folder所属Datacenter ID（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.ID"/>）筛选。</param>
+            <returns>请求成功返回Folder列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="T:System.Net.Http.HttpRequestException"></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.FolderItem">
+            <summary>
+            Folder对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.FolderItem.ID">
+            <summary>
+            Folder ID。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.FolderItem.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.FolderItem.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.FolderType">
+            <summary>
+            Folder类型。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.FolderType.DATACENTER">
+            <summary>
+            DATACENTER
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.FolderType.DATASTORE">
+            <summary>
+            DATASTORE
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.FolderType.HOST">
+            <summary>
+            HOST
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.FolderType.NETWORK">
+            <summary>
+            NETWORK
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.FolderType.VIRTUAL_MACHINE">
+            <summary>
+            VIRTUAL_MACHINE
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.Host">
+            <summary>
+            Host管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Host._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Host.URL_GetAllHost">
+            <summary>
+            获取所有Host列表。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Host.#ctor(System.String)">
+            <summary>
+            创建Host管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Host.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有Host列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterFolders">依据Host所在Folder ID<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>筛选。</param>
+            <param name="filterStandalone">依据是否为独立Host筛选（true指示是，false指示否）。</param>
+            <param name="filterHosts">依据Host ID（<see cref="P:vSphereRestWrapper.VCenter.HostItem.ID"/>）筛选（<see cref="T:vSphereRestWrapper.VCenter.FolderType"/>）筛选。</param>
+            <param name="filterNames">依据Host名称（<see cref="P:vSphereRestWrapper.VCenter.HostItem.Name"/>）筛选。</param>
+            <param name="filterClusters">依据Host所属Cluster ID（<see cref="P:vSphereRestWrapper.VCenter.ClusterItem.ID"/>）筛选。</param>
+            <param name="filterDatacenters">依据Host所属Datacenter ID（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.ID"/>）筛选。</param>
+            <param name="filterConnectionStates">依据Host连接状态（<see cref="T:vSphereRestWrapper.VCenter.HostConnectionState"/>）筛选。</param>
+            <returns>请求成功返回Host列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="!:HttpRequestException"></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.HostConnectionState">
+            <summary>
+            Host连接状态。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.HostConnectionState.CONNECTED">
+            <summary>
+            已连接。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.HostConnectionState.DISCONNECTED">
+            <summary>
+            未连接。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.HostConnectionState.NOT_RESPONDING">
+            <summary>
+            无响应。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.HostItem">
+            <summary>
+            Host对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.HostItem.ID">
+            <summary>
+            ID。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.HostItem.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.HostItem.ConnectionState">
+            <summary>
+            连接状态。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.HostItem.PowerState">
+            <summary>
+            电源状态。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.HostPowerState">
+            <summary>
+            Host电源状态。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.HostPowerState.POWERED_ON">
+            <summary>
+            开机。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.HostPowerState.POWERED_OFF">
+            <summary>
+            关机。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.HostPowerState.STANDBY">
+            <summary>
+            待机。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.Network">
+            <summary>
+            Network管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Network._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.Network.URL_GetAllNetwork">
+            <summary>
+            获取所有Network列表。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Network.#ctor(System.String)">
+            <summary>
+            创建Network管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.Network.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有Networkt列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterFolders">依据Network所在Folder ID<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>筛选。</param>
+            <param name="filterNames">依据Network名称（<see cref="P:vSphereRestWrapper.VCenter.HostItem.Name"/>）筛选。</param>
+            <param name="filterDatacenters">依据Network数据中心ID（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.ID"/>）筛选。</param>
+            <param name="filterNetworks">依据Network ID（<see cref="P:vSphereRestWrapper.VCenter.NetworkItem.ID"/>）筛选。</param>
+            <param name="filterTypes">依据Network类型（<see cref="T:vSphereRestWrapper.VCenter.NetworkType"/>）筛选。</param>
+            <returns>请求成功返回Network列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="!:HttpRequestException"></exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.NetworkItem">
+            <summary>
+            Network对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.NetworkItem.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.NetworkItem.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.NetworkItem.ID">
+            <summary>
+            ID。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.NetworkType">
+            <summary>
+            Network类型。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.NetworkType.STANDARD_PORTGROUP">
+            <summary>
+            STANDARD_PORTGROUP
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.NetworkType.DISTRIBUTED_PORTGROUP">
+            <summary>
+            DISTRIBUTED_PORTGROUP
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.NetworkType.OPAQUE_NETWORK">
+            <summary>
+            OPAQUE_NETWORK
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.ResourcePool">
+            <summary>
+            Resource Pool管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.ResourcePool._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.ResourcePool.URL_GetAllResourcePool">
+            <summary>
+            获取所有ResourcePool列表。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.ResourcePool.URL_GetResourcePoolDetails">
+            <summary>
+            获取指定ResourcePool信息，参数0指示ResourcePool名称。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.ResourcePool.#ctor(System.String)">
+            <summary>
+            创建ResourcePool管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.ResourcePool.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有Resource Pool列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterParentResourcePools">依据Resource Pool上级Resource Pool ID<see cref="P:vSphereRestWrapper.VCenter.ResourcePoolItem.ID"/>筛选。</param>
+            <param name="filterHosts">依据Resource Pool所在Host ID（<see cref="P:vSphereRestWrapper.VCenter.HostItem.ID"/>）筛选。</param>
+            <param name="filterNames">依据Resource Pool名称（<see cref="!:ResourcePool.Name"/>）筛选。</param>
+            <param name="filterClusters">依据Resource Pool所属Cluster ID（<see cref="P:vSphereRestWrapper.VCenter.ClusterItem.ID"/>）筛选。</param>
+            <param name="filterDatacenters">依据Resource Pool所属Datacenter ID（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.ID"/>）筛选。</param>
+            <param name="filterResourcePools">依据Network ID（<see cref="P:vSphereRestWrapper.VCenter.NetworkItem.ID"/>）筛选。</param>
+            <returns>请求成功返回Cluster ID列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="!:HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.ResourcePool.DetailAsync(System.String,System.String)">
+            <summary>
+            获取Resource Pool详情。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="resourcePoolID">Resource Pool，可通过<see cref="M:vSphereRestWrapper.VCenter.ResourcePool.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>执行成功返回Resource Pool详情，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.ResourcePoolDetails">
+            <summary>
+            Resource Pool详情。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ResourcePoolDetails.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ResourcePoolDetails.ChildResourcePools">
+            <summary>
+            子级Resource Pool ID列表。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.ResourcePoolItem">
+            <summary>
+            Resource Pool对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ResourcePoolItem.ID">
+            <summary>
+            ID。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.ResourcePoolItem.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VM">
+            <summary>
+            虚拟机管理对象。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM._vSphereHost">
+            <summary>
+            vSphere服务器地址（需要以http://或https://开头）
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM.URL_GetAllVM">
+            <summary>
+            获取所有虚拟机列表。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM.URL_GetVMDetails">
+            <summary>
+            获取指定虚拟机信息，参数0指示虚拟机ID。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM.URL_GetVMPowerState">
+            <summary>
+            获取指定虚拟机电源状态，参数0指示虚拟机ID。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM.URL_RestVMPower">
+            <summary>
+            重置虚拟机电源，参数0指示虚拟机ID。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM.URL_StartVMPower">
+            <summary>
+            开启虚拟机电源，参数0指示虚拟机ID。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM.URL_StopVMPower">
+            <summary>
+            关闭虚拟机电源，参数0指示虚拟机ID。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VM.URL_SuspendVMPowerState">
+            <summary>
+            挂起虚拟机电源，参数0指示虚拟机ID。
+            </summary>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.#ctor(System.String)">
+            <summary>
+            创建ResourcePool管理对象。
+            </summary>
+            <param name="vSphereHost"></param>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            获取所有虚拟机列表。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="filterfolders">依据虚拟机所在目录ID（<see cref="P:vSphereRestWrapper.VCenter.FolderItem.ID"/>）筛选。</param>
+            <param name="filterPowerStates">依据虚拟机电源状态（<see cref="T:vSphereRestWrapper.VCenter.VMPowerState"/>）筛选。</param>
+            <param name="filterHosts">依据虚拟机所属Host ID（<see cref="P:vSphereRestWrapper.VCenter.HostItem.ID"/>）筛选。</param>
+            <param name="filterNames">依据虚拟机名称（<see cref="P:vSphereRestWrapper.VCenter.VMItem.Name"/>）筛选。</param>
+            <param name="filterClusters">依据虚拟机所属Cluster ID（<see cref="P:vSphereRestWrapper.VCenter.ClusterItem.ID"/>）筛选。</param>
+            <param name="filterDatacenters">依据虚拟机所属Dataceter ID（<see cref="P:vSphereRestWrapper.VCenter.DatacenterItem.ID"/>）筛选。</param>
+            <param name="filterResourcePools">依据虚拟机所属Resource Pool ID（<see cref="P:vSphereRestWrapper.VCenter.ResourcePoolItem.ID"/>）筛选。</param>
+            <param name="filterVms">依据虚拟机ID（<see cref="P:vSphereRestWrapper.VCenter.VMItem.ID"/>）筛选。</param>
+            <returns>请求成功返回Cluster ID列表，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+            <exception cref="!:HttpRequestException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.DetailAsync(System.String,System.String)">
+            <summary>
+            获取虚拟机详情。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="vmID">虚拟机ID，可通过<see cref="M:vSphereRestWrapper.VCenter.VM.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>执行成功返回虚拟机详情，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.GetPowerStateAsync(System.String,System.String)">
+            <summary>
+            获取虚拟机电源状态。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="vmID">虚拟机ID，可通过<see cref="M:vSphereRestWrapper.VCenter.VM.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>执行成功返回电源状态，否则返回null。</returns>
+            <exception cref="T:System.ArgumentNullException"></exception>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.RestPower(System.String,System.String)">
+            <summary>
+            重置指定虚拟机电源。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="vmID">虚拟机ID，可通过<see cref="M:vSphereRestWrapper.VCenter.VM.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>返回true表示操作成功，否则表示失败。</returns>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.StartPower(System.String,System.String)">
+            <summary>
+            启动指定虚拟机电源。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="vmID">虚拟机ID，可通过<see cref="M:vSphereRestWrapper.VCenter.VM.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>返回true表示操作成功，否则表示失败。</returns>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.StopPower(System.String,System.String)">
+            <summary>
+            关闭指定虚拟机电源。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="vmID">虚拟机ID，可通过<see cref="M:vSphereRestWrapper.VCenter.VM.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>返回true表示操作成功，否则表示失败。</returns>
+        </member>
+        <member name="M:vSphereRestWrapper.VCenter.VM.SuspendPower(System.String,System.String)">
+            <summary>
+            挂起指定虚拟机电源。
+            </summary>
+            <param name="sessionID">Session ID。</param>
+            <param name="vmID">虚拟机ID，可通过<see cref="M:vSphereRestWrapper.VCenter.VM.ListAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)"/>获得。</param>
+            <returns>返回true表示操作成功，否则表示失败。</returns>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMDetails">
+            <summary>
+            虚拟机详情。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.CDRoms">
+            <summary>
+            光驱。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.Memory">
+            <summary>
+            内存。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.Disks">
+            <summary>
+            磁盘。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.ParallelPorts">
+            <summary>
+            并口。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.SataAdapters">
+            <summary>
+            SATA适配器。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.CPU">
+            <summary>
+            处理器。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.SCSIAdapters">
+            <summary>
+            SCSI适配器。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.PowerState">
+            <summary>
+            电源状态。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.Floppies">
+            <summary>
+            软驱。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.NICs">
+            <summary>
+            网卡。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.Boot">
+            <summary>
+            启动程序。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.SerialPorts">
+            <summary>
+            串口。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.GuestOS">
+            <summary>
+            来宾操作系统。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.BootDevices">
+            <summary>
+            启动设备。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDetails.Hardware">
+            <summary>
+            虚拟机硬件信息。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMPowerOverview">
+            <summary>
+            虚拟机电源状态概览。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMPowerOverview.CleanPowerOff">
+            <summary>
+            CleanPowerOff。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMPowerOverview.State">
+            <summary>
+            状态。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMCDRomBacking">
+            <summary>
+            光驱扩展信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomBacking.ISOFile">
+            <summary>
+            镜像文件。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomBacking.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMCDRomItem">
+            <summary>
+            虚拟机光驱信息包装器。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomItem.Value">
+            <summary>
+            光驱信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomItem.Key">
+            <summary>
+            光驱标识键。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMCDRomSata">
+            <summary>
+            SATA信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomSata.Bus">
+            <summary>
+            Bus
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomSata.Unit">
+            <summary>
+            Unit
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMCDRomValue">
+            <summary>
+            光驱信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomValue.StartConnected">
+            <summary>
+            是否启动时连接。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomValue.Backing">
+            <summary>
+            支持
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomValue.AllowGuestControl">
+            <summary>
+            是否允许来宾控制。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomValue.Label">
+            <summary>
+            标签。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomValue.State">
+            <summary>
+            状态。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomValue.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCDRomValue.SATA">
+            <summary>
+            SATA信息。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMDiskBacking">
+            <summary>
+            虚拟机磁盘扩展信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskBacking.VMDiskFile">
+            <summary>
+            虚拟磁盘文件。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskBacking.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMDiskItem">
+            <summary>
+            虚拟机磁盘信息封装。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskItem.Value">
+            <summary>
+            磁盘信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskItem.Key">
+            <summary>
+            磁盘标识键。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMDiskValue">
+            <summary>
+            虚拟机磁盘信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskValue.SCSI">
+            <summary>
+            SCSI信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskValue.Backing">
+            <summary>
+            扩展信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskValue.Label">
+            <summary>
+            标签。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskValue.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMDiskValue.Capacity">
+            <summary>
+            容量（字节）。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMNICBacking">
+            <summary>
+            虚拟机网卡扩展信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICBacking.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICBacking.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICBacking.ID">
+            <summary>
+            网卡ID。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMNICItem">
+            <summary>
+            虚拟机网卡封装。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICItem.Value">
+            <summary>
+            网卡信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICItem.Key">
+            <summary>
+            网卡标识键。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMNICValue">
+            <summary>
+            虚拟机网卡信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.StartConnected">
+            <summary>
+            是否启动时连接。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.PCISlotNumber">
+            <summary>
+            PCI插槽。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.Backing">
+            <summary>
+            扩展信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.MACAddress">
+            <summary>
+            MAC地址。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.MACType">
+            <summary>
+            MAC类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.AllowGuestControl">
+            <summary>
+            允许来宾控制。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.WakeOnLanEnabled">
+            <summary>
+            是否启用网络唤醒。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.Label">
+            <summary>
+            标签。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.State">
+            <summary>
+            状态。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMNICValue.UPTCompatibilityEnabled">
+            <summary>
+            是否启用UPT。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMSataAdapterItem">
+            <summary>
+            虚拟机SATA适配器封装。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSataAdapterItem.Value">
+            <summary>
+            SATA适配器信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSataAdapterItem.Key">
+            <summary>
+            SATA适配器标识键。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMSataAdapterValue">
+            <summary>
+            虚拟机SATA适配器信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSataAdapterValue.Bus">
+            <summary>
+            总线。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSataAdapterValue.PCISlotNumber">
+            <summary>
+            PCI插槽。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSataAdapterValue.Label">
+            <summary>
+            标签。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSataAdapterValue.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMScsiAdapterItem">
+            <summary>
+            虚拟机SCSI适配器封装。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMScsiAdapterItem.Value">
+            <summary>
+            SCSI适配器信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMScsiAdapterItem.Key">
+            <summary>
+            SCSI适配器标识键。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMScsiAdapterValue">
+            <summary>
+            虚拟机SCSI信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMScsiAdapterValue.SCSI">
+            <summary>
+            SCSI。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMScsiAdapterValue.PCISlotNumber">
+            <summary>
+            PCI插槽。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMScsiAdapterValue.Label">
+            <summary>
+            标签。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMScsiAdapterValue.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMScsiAdapterValue.Sharing">
+            <summary>
+            共享。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMBootItem">
+            <summary>
+            虚拟机启动信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMBootItem.Delay">
+            <summary>
+            延迟。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMBootItem.RetryDelay">
+            <summary>
+            重试延迟。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMBootItem.EnterSetupMode">
+            <summary>
+            是否允许进入安装模式。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMBootItem.Type">
+            <summary>
+            类型。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMBootItem.Retry">
+            <summary>
+            是否允许重试。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMCPUItem">
+            <summary>
+            虚拟机处理器信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCPUItem.HotRemoveEnabled">
+            <summary>
+            是否支持热拔。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCPUItem.Count">
+            <summary>
+            数量。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCPUItem.HotAddEnabled">
+            <summary>
+            是否支持热插。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMCPUItem.CoresPerSocket">
+            <summary>
+            每插槽核心数量。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMHardwareItem">
+            <summary>
+            虚拟机硬件信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMHardwareItem.UpgradePolicy">
+            <summary>
+            升级策略。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMHardwareItem.UpgradeStatus">
+            <summary>
+            升级状态。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMHardwareItem.Version">
+            <summary>
+            版本。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMItem">
+            <summary>
+            VM对象。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMItem.MemorySize">
+            <summary>
+            内存容量（MB）。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMItem.ID">
+            <summary>
+            ID。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMItem.Name">
+            <summary>
+            名称。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMItem.PowerState">
+            <summary>
+            电源状态。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMItem.CpuCount">
+            <summary>
+            处理器数量。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMMemoryItem">
+            <summary>
+            内存信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMMemoryItem.Size">
+            <summary>
+            容量（MB）。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMMemoryItem.HotAddEnabled">
+            <summary>
+            是否支持热插拔。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMPowerState">
+            <summary>
+            虚拟机电源状态。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VMPowerState.POWERED_ON">
+            <summary>
+            开机。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VMPowerState.POWERED_OFF">
+            <summary>
+            关机。
+            </summary>
+        </member>
+        <member name="F:vSphereRestWrapper.VCenter.VMPowerState.STANDBY">
+            <summary>
+            待机。
+            </summary>
+        </member>
+        <member name="T:vSphereRestWrapper.VCenter.VMSCSI">
+            <summary>
+            虚拟机SCSI信息。
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSCSI.Bus">
+            <summary>
+            Bus
+            </summary>
+        </member>
+        <member name="P:vSphereRestWrapper.VCenter.VMSCSI.Unit">
+            <summary>
+            Unit
+            </summary>
+        </member>
+    </members>
+</doc>

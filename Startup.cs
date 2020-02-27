@@ -38,10 +38,14 @@ namespace Moetech.Zhuangzhou
             Configuration.GetSection("EmailConfig").Bind(emailConfig);
             EmailHelper email = new EmailHelper(emailConfig);
 
+            // vSphere配置
+            VSphereConfig sphereConfig = new VSphereConfig();
+            Configuration.GetSection("VSphereConfig").Bind(sphereConfig);
+
             services.AddControllersWithViews();
             // 注册数据库上下文
-            //services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
-            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
+            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
+            //services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
             // HTML编码
             services.Configure<WebEncoderOptions>(options => options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
             // 添加Session
