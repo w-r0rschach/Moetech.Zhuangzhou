@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.WebEncoders;
 using Moetech.Zhuangzhou.Common;
-using Moetech.Zhuangzhou.Controllers;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
@@ -61,6 +60,10 @@ namespace Moetech.Zhuangzhou
                options.CheckConsentNeeded = context => false;//默认为true，改为false
                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
+            // 注入定时任务
+            services.AddHostedService<StartTimedTask>();
+            services.AddScoped<ITimedTask, TimedTaskService>();
         }
 
         // 此方法由运行时调用。使用此方法配置HTTP请求管道。

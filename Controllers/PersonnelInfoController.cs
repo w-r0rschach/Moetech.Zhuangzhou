@@ -16,7 +16,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 数据量上下文
         /// </summary>
-        private readonly VirtualMachineDB _db;
+        private readonly VirtualMachineDB _context;
 
         /// <summary>
         /// 每页条数
@@ -30,13 +30,13 @@ namespace Moetech.Zhuangzhou.Controllers
 
         public PersonnelInfoController(VirtualMachineDB context)
         {
-            _db = context;
+            _context = context;
         }
 
         // GET: PersonnelInfo
         public async Task<IActionResult> Index(string name = "", int? pageIndex = 1)
         {
-            var list = from c in _db.CommonPersonnelInfo select c;
+            var list = from c in _context.CommonPersonnelInfo select c;
 
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -57,7 +57,7 @@ namespace Moetech.Zhuangzhou.Controllers
                 return NotFound();
             }
 
-            var commonPersonnelInfo = await _db.CommonPersonnelInfo
+            var commonPersonnelInfo = await _context.CommonPersonnelInfo
                 .FirstOrDefaultAsync(m => m.PersonnelId == id);
             if (commonPersonnelInfo == null)
             {
@@ -82,8 +82,8 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Add(commonPersonnelInfo);
-                await _db.SaveChangesAsync();
+                _context.Add(commonPersonnelInfo);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(commonPersonnelInfo);
@@ -97,7 +97,7 @@ namespace Moetech.Zhuangzhou.Controllers
                 return NotFound();
             }
 
-            var commonPersonnelInfo = await _db.CommonPersonnelInfo.FindAsync(id);
+            var commonPersonnelInfo = await _context.CommonPersonnelInfo.FindAsync(id);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
@@ -121,8 +121,8 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 try
                 {
-                    _db.Update(commonPersonnelInfo);
-                    await _db.SaveChangesAsync();
+                    _context.Update(commonPersonnelInfo);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -148,7 +148,7 @@ namespace Moetech.Zhuangzhou.Controllers
                 return NotFound();
             }
 
-            var commonPersonnelInfo = await _db.CommonPersonnelInfo
+            var commonPersonnelInfo = await _context.CommonPersonnelInfo
                 .FirstOrDefaultAsync(m => m.PersonnelId == id);
             if (commonPersonnelInfo == null)
             {
@@ -163,15 +163,15 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var commonPersonnelInfo = await _db.CommonPersonnelInfo.FindAsync(id);
-            _db.CommonPersonnelInfo.Remove(commonPersonnelInfo);
-            await _db.SaveChangesAsync();
+            var commonPersonnelInfo = await _context.CommonPersonnelInfo.FindAsync(id);
+            _context.CommonPersonnelInfo.Remove(commonPersonnelInfo);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CommonPersonnelInfoExists(int id)
         {
-            return _db.CommonPersonnelInfo.Any(e => e.PersonnelId == id);
+            return _context.CommonPersonnelInfo.Any(e => e.PersonnelId == id);
         }
     }
 }
