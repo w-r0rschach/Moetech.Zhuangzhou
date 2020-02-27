@@ -20,9 +20,20 @@ namespace Moetech.Zhuangzhou.Interface
         IQueryable<MachineInfo> SelectVmware();
 
         /// <summary>
-        /// 提交申请 
+        /// 提交申请
         /// </summary>
-        Task<IEnumerable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo);
+        /// <param name="machineSystem">操作系统 0：Windows 1：Linux</param>
+        /// <param name="machineDiskCount">硬盘大小/G</param>
+        /// <param name="machineMemory">内存大小/G</param>
+        /// <param name="applyNumber">申请数量</param>
+        /// <param name="remark">备注</param>
+        /// <param name="userInfo">当前用户信息</param>
+        /// <returns>
+        /// -1:申请失败
+        /// 0:待审批
+        /// 2:同意
+        /// </returns>
+        Task<int> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo);
 
         /// <summary>
         /// 我的虚拟机

@@ -38,6 +38,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="userid">用户ID</param>
         /// <returns></returns>
         Task<int> SubmitApprove(int mid, int aid, int state, int userid);
+
         /// <summary>
         /// 根据参数返回对需要Id
         /// </summary> 
@@ -47,7 +48,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="Remark">申请原因</param>
         /// <param name="state">审批状态</param>
         /// <param name="userId">用户Id</param>
-        /// <returns>ReturnSubmitApproeId</returns>
+        /// <returns></returns>
         Task<bool> ResultSubmitApprove(int ApplyUserID, DateTime ApplyTime, DateTime ResultTime, string Remark, int state, int userId);
 
         /// <summary>

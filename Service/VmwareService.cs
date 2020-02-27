@@ -54,7 +54,13 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="machineMemory">内存大小/G</param>
         /// <param name="applyNumber">申请数量</param>
         /// <param name="remark">备注</param>
-        public async Task<IEnumerable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
+        /// <param name="userInfo">当前用户信息</param>
+        /// <returns>
+        /// -1:申请失败
+        /// 0:待审批
+        /// 2:同意
+        /// </returns>
+        public async Task<int> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
         {
             ///获取当前时间
             DateTime _dateTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
@@ -74,7 +80,7 @@ namespace Moetech.Zhuangzhou.Service
             // 空闲数量小于申请数量 申请失败
             if (list.Count() < applyNumber)
             {
-                return null;
+                return -1;
             }
 
 
@@ -83,13 +89,21 @@ namespace Moetech.Zhuangzhou.Service
                                          where m.OprationType == 0 && m.ExamineResult == 2 && m.ApplyUserID == userId
                                          select m;
 
+            // 自动批准
+            bool autoApprove = false;
+
+            if ((machApplyAndReturnList.Count() + applyNumber) <= appMaxCount)
+            {
+                autoApprove = true;
+            }
+
             // 未超过数量系统自动审批
             // 超过数量由管理员审批
             // 修改虚拟机状态：申请中
             for (int i = 0; i < applyNumber; i++)
             {
                 var model = list.ElementAt(i);
-                model.MachineState = ((machApplyAndReturnList.Count() + applyNumber) <= appMaxCount ? 2 : 1);
+                model.MachineState = (autoApprove == true ? 2 : 1);
 
                 _context.MachineInfo.Update(model);
 
@@ -101,7 +115,7 @@ namespace Moetech.Zhuangzhou.Service
                         ApplyUserID = userId,
                         ExamineUserID = -1,
                         MachineInfoID = model.MachineId,
-                        ExamineResult = ((machApplyAndReturnList.Count() + applyNumber) <= appMaxCount ? 2 : 0),
+                        ExamineResult = (autoApprove == true ? 2 : 0),
                         ApplyTime = _dateTime,
                         ResultTime = _dateTime.AddDays(15), // 默认申请15天
                         Remark = remark
@@ -109,7 +123,7 @@ namespace Moetech.Zhuangzhou.Service
             }
             await _context.SaveChangesAsync();
 
-            return list;
+            return autoApprove == true ? 2 : 0;
         }
 
         /// <summary>
@@ -145,13 +159,18 @@ namespace Moetech.Zhuangzhou.Service
                            MachApplyAndReturn = m2
                        };
 
+            if (list.Count() == 0)
+            {
+                return false;
+            }
+
             foreach (var item in list)
             {
                 item.MachineInfo.MachineState = 0;
                 _context.MachineInfo.Update(item.MachineInfo);
 
                 item.MachApplyAndReturn.OprationType = 1;
-                item.MachApplyAndReturn.ResultTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")); 
+                item.MachApplyAndReturn.ResultTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 _context.MachApplyAndReturn.Update(item.MachApplyAndReturn);
             }
 
@@ -166,7 +185,7 @@ namespace Moetech.Zhuangzhou.Service
         public async Task<bool> Renew(int id, CommonPersonnelInfo userInfo)
         {
             int userId = userInfo.PersonnelId;
-            DateTime _dateTime =Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            DateTime _dateTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             var machApplyAndReturn = await _context.MachApplyAndReturn.FirstOrDefaultAsync(m => m.ApplyAndReturnId == id && m.OprationType == 0 && m.ApplyUserID == userId);
 
             TimeSpan time = (machApplyAndReturn.ResultTime - _dateTime);

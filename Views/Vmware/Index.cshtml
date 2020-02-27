@@ -32,7 +32,49 @@
         <div class="col col-sm-2">@item.MachineMemory</div>
         <div class="col col-sm-2">@item.MachineState</div>
         <div class="col col-sm-3">
-            <a class="btn btn-primary btn-sm" href="Vmware/Apply?machineSystem=@item.MachineSystem&machineDiskCount=@item.MachineDiskCount&machineMemory=@item.MachineMemory&freeNumber=@item.MachineState">申请</a>
+            <a class="btn btn-primary btn-sm" href="javascript:apply(@item.MachineSystem,@item.MachineDiskCount,@item.MachineMemory,@item.MachineState)">申请</a>
         </div>
     </div>
 }
+
+<script type="text/javascript">
+    // 申请虚拟机
+    function apply(machineSystem, machineDiskCount, machineMemory, freeNumber) {
+
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "Vmware/Apply";
+
+        // 操作系统
+        var machineSystemInput = document.createElement("input");
+        machineSystemInput.setAttribute("name", "machineSystem");
+        machineSystemInput.setAttribute("value", machineSystem);
+        // 硬盘大小
+        var machineDiskCountInput = document.createElement("input");
+        machineDiskCountInput.setAttribute("name", "machineDiskCount");
+        machineDiskCountInput.setAttribute("value", machineDiskCount);
+        // 内存大小
+        var machineMemoryInput = document.createElement("input");
+        machineMemoryInput.setAttribute("name", "machineMemory");
+        machineMemoryInput.setAttribute("value", machineMemory);
+        // 空闲数量
+        var freeNumberInput = document.createElement("input");
+        freeNumberInput.setAttribute("name", "freeNumber");
+        freeNumberInput.setAttribute("value", freeNumber);
+        // Token
+        var token = $('@Html.AntiForgeryToken()').val();
+        var tokenInput = document.createElement("input");
+        tokenInput.setAttribute("name", "__RequestVerificationToken");
+        tokenInput.setAttribute("value", token);
+
+        form.appendChild(machineSystemInput);
+        form.appendChild(machineDiskCountInput);
+        form.appendChild(machineMemoryInput);
+        form.appendChild(freeNumberInput);
+        form.appendChild(tokenInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    };
+</script>

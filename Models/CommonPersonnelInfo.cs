@@ -22,13 +22,14 @@ namespace Moetech.Zhuangzhou.Models
         /// 工号
         /// </summary>
         [Display(Name = "工号")]
+        [Required(ErrorMessage = "工号字段是必需的。")]
         public int PersonnelNo { get; set; }
 
         /// <summary>
         /// 员工名称
         /// </summary>
         [Display(Name = "员工名称")]
-        [StringLength(50)]
+        [Required(ErrorMessage = "员工名称字段是必需的。"), StringLength(50)]
         public string PersonnelName { get; set; }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace Moetech.Zhuangzhou.Models
         /// </summary>
         [Display(Name = "出身日期")]
         [DataType(DataType.Date)]
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         /// <summary>
         /// 身份证号
@@ -148,21 +149,21 @@ namespace Moetech.Zhuangzhou.Models
         /// </summary>
         [Display(Name = "入职时间")]
         [DataType(DataType.Date)]
-        public DateTime OnboardingTime { get; set; }
+        public DateTime? OnboardingTime { get; set; }
 
         /// <summary>
         /// 离职时间
         /// </summary>
         [Display(Name = "离职时间")]
         [DataType(DataType.Date)]
-        public DateTime DepartureTime { get; set; }
+        public DateTime? DepartureTime { get; set; }
 
         /// <summary>
         /// 试用期或实习期结束时间
         /// </summary>
         [Display(Name = "结束时间")]
         [DataType(DataType.Date)]
-        public DateTime TrialTime { get; set; }
+        public DateTime? TrialTime { get; set; }
 
         /// <summary>
         /// 是否奋斗者
@@ -184,14 +185,14 @@ namespace Moetech.Zhuangzhou.Models
         /// 用户名称
         /// </summary>
         [Display(Name = "登录账号")]
-        [StringLength(255)]
+        [Required(ErrorMessage = "登录账号字段是必需的。"), StringLength(255)]
         public string UserName { get; set; }
 
         /// <summary>
         /// 用户密码
         /// </summary>
         [Display(Name = "登录密码")]
-        [StringLength(255)]
+        [Required(ErrorMessage = "登录密码字段是必需的。"), StringLength(255)]
         public string Password { get; set; }
 
         /// <summary>

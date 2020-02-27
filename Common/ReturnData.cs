@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Moetech.Zhuangzhou.Models
+namespace Moetech.Zhuangzhou.Common
 {
     public class ReturnData
     {

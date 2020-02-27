@@ -14,7 +14,7 @@ namespace Moetech.Zhuangzhou.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.1")
+                .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Moetech.Zhuangzhou.Models.CommonAuthority", b =>
@@ -89,7 +89,7 @@ namespace Moetech.Zhuangzhou.Migrations
                         .HasColumnType("varchar(200) CHARACTER SET utf8mb4")
                         .HasMaxLength(200);
 
-                    b.Property<DateTime>("BirthDate")
+                    b.Property<DateTime?>("BirthDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("Degree")
@@ -98,7 +98,7 @@ namespace Moetech.Zhuangzhou.Migrations
                     b.Property<int>("DepId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DepartureTime")
+                    b.Property<DateTime?>("DepartureTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("IdentityCard")
@@ -129,14 +129,16 @@ namespace Moetech.Zhuangzhou.Migrations
                         .HasColumnType("varchar(6) CHARACTER SET utf8mb4")
                         .HasMaxLength(6);
 
-                    b.Property<DateTime>("OnboardingTime")
+                    b.Property<DateTime?>("OnboardingTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Password")
+                        .IsRequired()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .HasMaxLength(255);
 
                     b.Property<string>("PersonnelName")
+                        .IsRequired()
                         .HasColumnType("varchar(50) CHARACTER SET utf8mb4")
                         .HasMaxLength(50);
 
@@ -150,10 +152,11 @@ namespace Moetech.Zhuangzhou.Migrations
                         .HasColumnType("varchar(500) CHARACTER SET utf8mb4")
                         .HasMaxLength(500);
 
-                    b.Property<DateTime>("TrialTime")
+                    b.Property<DateTime?>("TrialTime")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .HasMaxLength(255);
 

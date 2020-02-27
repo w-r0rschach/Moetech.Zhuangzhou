@@ -120,13 +120,13 @@ namespace Moetech.Zhuangzhou.Service
                                          ResultTime = b.Key.ResultTime,
                                          Remark = b.Key.Remark,
                                          NumberCount = b.Count()
-                                       
+
                                      };
 
             return await PaginatedList<ReturnData>.CreateAsync(machApplyAndReturn.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
-        
-        
+
+
         /// <summary>
         /// 提交审批虚拟机
         /// </summary>
@@ -256,31 +256,29 @@ namespace Moetech.Zhuangzhou.Service
             _context.MachineInfo.Remove(machineInfo);
             return await _context.SaveChangesAsync();
         }
+
         /// <summary>
-        /// 根据参数返回对需要Id
+        /// 返回审批状态
         /// </summary>
-        /// <param name="MachineSystem">操作系统</param>
-        /// <param name="MachineDiskCount">硬盘</param>
-        /// <param name="MachineMemory">内存</param>
         /// <param name="ApplyUserID">申请人</param>
         /// <param name="ApplyTime">申请时间</param>
         /// <param name="ResultTime">归还时间</param>
         /// <param name="Remark">申请原因</param>
         /// <param name="state">审批状态</param>
         /// <param name="userId">用户Id</param>
-        /// <returns>ReturnSubmitApproeId</returns>
-        public async Task<bool> ResultSubmitApprove(int ApplyUserID, DateTime ApplyTime, DateTime ResultTime, string Remark, int state,int userId)
+        /// <returns></returns>
+        public async Task<bool> ResultSubmitApprove(int ApplyUserID, DateTime ApplyTime, DateTime ResultTime, string Remark, int state, int userId)
         {
-            int rsultInt = 0; 
-            var MachApplyAndReturnInfo =from  m in _context.MachApplyAndReturn
-                                     where m.ApplyUserID == ApplyUserID && m.ApplyTime==ApplyTime
-                                     && m.ResultTime == ResultTime && m.Remark == Remark
+            int rsultInt = 0;
+            var MachApplyAndReturnInfo = from m in _context.MachApplyAndReturn
+                                         where m.ApplyUserID == ApplyUserID && m.ApplyTime == ApplyTime &&
+                                               m.ResultTime == ResultTime && m.Remark == Remark
                                          select m;
 
-            List<MachApplyAndReturn> _lsit = MachApplyAndReturnInfo.ToList();
-            foreach (var item in _lsit)
+            foreach (var item in MachApplyAndReturnInfo.ToList())
             {
                 int result = await SubmitApprove(item.MachineInfoID, item.ApplyAndReturnId, state, userId);
+
                 if (result > 0)
                 {
                     rsultInt += 1;

@@ -53,19 +53,25 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <param name="MachineMemory">内存大小/G</param>
         /// <param name="FreeNumber">空闲数量</param>
         /// <returns>IActionResult</returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Apply(int machineSystem, double machineDiskCount, double machineMemory, int freeNumber)
         {
-            if (machineSystem >= 2 || machineDiskCount == 0 || machineMemory == 0 || freeNumber == 0)
+            if (machineSystem < 0 || machineSystem > 1 || machineDiskCount == 0 || machineMemory == 0 || freeNumber == 0)
             {
-                return RedirectToAction(nameof(Index));
+                ViewData["Title"] = "操作失败";
+                ViewData["Message"] = "数据非法，操作终止！";
+                return View("Views/Shared/Tip.cshtml");
             }
+            else
+            {
+                ViewData["MachineSystem"] = machineSystem;
+                ViewData["MachineDiskCount"] = machineDiskCount;
+                ViewData["MachineMemory"] = machineMemory;
+                ViewData["FreeNumber"] = freeNumber;
 
-            ViewData["MachineSystem"] = machineSystem;
-            ViewData["MachineDiskCount"] = machineDiskCount;
-            ViewData["MachineMemory"] = machineMemory;
-            ViewData["FreeNumber"] = freeNumber;
-
-            return View();
+                return View();
+            }
         }
 
         /// <summary>
@@ -86,19 +92,35 @@ namespace Moetech.Zhuangzhou.Controllers
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
 
-            IEnumerable<MachineInfo> list = await _vmware.SubmitApplication(machineSystem, machineDiskCount, machineMemory, applyNumber, remark, userInfo);
-            // 空闲数量小于申请数量 申请失败
-            if (list == null)
+            if (machineSystem < 0 || machineSystem > 1 || machineDiskCount == 0 ||
+                machineMemory == 0 || applyNumber == 0 || string.IsNullOrWhiteSpace(remark) || remark.Length > 255)
             {
-                ViewData["Title"] = "申请失败";
-                ViewData["Message"] = "虚拟机空闲数量不足，请重新申请！返回到<a href='/Vmware'>申请虚拟机</a>";
+                ViewData["Title"] = "操作失败";
+                ViewData["Message"] = "数据非法，操作终止！";
                 return View("Views/Shared/Tip.cshtml");
             }
             else
             {
-                ViewData["Title"] = "申请成功";
-                ViewData["Message"] = "申请成功！查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
-                return View("Views/Shared/Tip.cshtml");
+                int result = await _vmware.SubmitApplication(machineSystem, machineDiskCount, machineMemory, applyNumber, remark, userInfo);
+
+                if (result == -1)
+                {
+                    ViewData["Title"] = "申请失败";
+                    ViewData["Message"] = "虚拟机空闲数量不足，请重新申请！返回<a href='/Vmware'>申请虚拟机</a>";
+                    return View("Views/Shared/Tip.cshtml");
+                }
+                else if (result == 0)
+                {
+                    ViewData["Title"] = "申请成功";
+                    ViewData["Message"] = "申请虚拟机数量超过设定值，需要等待管理员审批！ 查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
+                    return View("Views/Shared/Tip.cshtml");
+                }
+                else
+                {
+                    ViewData["Title"] = "申请成功";
+                    ViewData["Message"] = "申请成功！查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
+                    return View("Views/Shared/Tip.cshtml");
+                }
             }
         }
 
@@ -123,14 +145,26 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            bool ss = await _vmware.EarlyReturn(id, userInfo);
+
             if (id == 0)
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
                 return View("Views/Shared/Tip.cshtml");
             }
-            return RedirectToAction(nameof(MyVmware));
+
+            bool result = await _vmware.EarlyReturn(id, userInfo);
+
+            if (!result)
+            {
+                ViewData["Title"] = "归还失败";
+                ViewData["Message"] = "归还失败，未找到指定归还的虚拟机！查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
+                return View("Views/Shared/Tip.cshtml");
+            }
+            else
+            {
+                return RedirectToAction(nameof(MyVmware));
+            }
         }
 
 

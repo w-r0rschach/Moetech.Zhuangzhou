@@ -71,32 +71,42 @@ namespace Moetech.Zhuangzhou.Controllers
         }
 
         /// <summary>
-        /// POST
+        /// GET
         /// Manage/SubmitApprove
         /// 提交审批
         /// </summary>
-        /// <param name="mid">虚拟机信息ID</param>
-        /// <param name="aid">申请归还信息ID</param>
-        /// <param name="state">状态1：拒绝  2：同意</param>
-        /// <returns></returns> 
-        public async Task<IActionResult> SubmitApprove(int ApplyUserID, DateTime ApplyTime,
-            DateTime ResultTime, string Remark, int state)
+        /// <param name="applyUserID">申请用户ID</param>
+        /// <param name="applyTime">申请时间</param>
+        /// <param name="resultTime">归还时间</param>
+        /// <param name="remark">备注</param>
+        /// <param name="state">审批状态1：拒绝  2：同意</param>
+        /// <returns></returns>
+        public async Task<IActionResult> SubmitApprove(int applyUserID, DateTime applyTime, DateTime resultTime, string remark, int state)
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            int _userId = userInfo.PersonnelId;
-            var result = await _vmwareManage.ResultSubmitApprove(ApplyUserID, ApplyTime, ResultTime, Remark, state, _userId);
-            if (!result)
+
+            if (applyUserID == 0 || string.IsNullOrWhiteSpace(remark) || remark.Length > 255 || state < 1 || state > 2)
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
                 return View("Views/Shared/Tip.cshtml");
+
             }
             else
             {
-                return RedirectToAction(nameof(Approve));
+                var result = await _vmwareManage.ResultSubmitApprove(applyUserID, applyTime, resultTime, remark, state, userInfo.PersonnelId);
+                if (!result)
+                {
+                    ViewData["Title"] = "操作失败";
+                    ViewData["Message"] = "数据非法，操作终止！";
+                    return View("Views/Shared/Tip.cshtml");
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Approve));
+                }
             }
-
         }
 
         /// <summary>

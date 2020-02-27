@@ -22,35 +22,31 @@
     <div class="col">备注</div>
     <div class="col">审批</div>
 </div>
-<form asp-action="SubmitApprove" method="post">
-    @foreach (var item in Model)
-    {
-        <hr />
-        <div class="row">
-            @if (item.MachineSystem == 0)
-            {
-                <div class="col">Windows</div>
-            }
-            else
-            {
-                <div class="col">Linux</div>
-            }
-            <div class="col"><span name="MachineDiskCount">@item.MachineDiskCount</span> </div>
-            <div class="col">@item.MachineMemory</div>
-            <div class="col">@item.NumberCount</div>
-            <div class="col">@item.AppUserName</div>
-            <div class="col">@item.ApplyTime</div>
-            <div class="col">@item.ResultTime</div>
-            <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.Remark>@item.Remark</div>
-            <div class="col">
-                <a href="SubmitApprove?ApplyUserID=@item.ApplyUserID&ApplyTime=@item.ApplyTime&ResultTime=@item.ResultTime
-                   &Remark=@item.Remark&state=2" class="btn btn-primary btn-sm">同意</a>
-                <a href="SubmitApprove?ApplyUserID=@item.ApplyUserID&ApplyTime=@item.ApplyTime&ResultTime=@item.ResultTime
-                   &Remark=@item.Remark&&state=1" class="btn btn-danger btn-sm">拒绝</a>
-            </div>
+@foreach (var item in Model)
+{
+    <hr />
+    <div class="row">
+        @if (item.MachineSystem == 0)
+        {
+            <div class="col">Windows</div>
+        }
+        else
+        {
+            <div class="col">Linux</div>
+        }
+        <div class="col"><span name="MachineDiskCount">@item.MachineDiskCount</span> </div>
+        <div class="col">@item.MachineMemory</div>
+        <div class="col">@item.NumberCount</div>
+        <div class="col">@item.AppUserName</div>
+        <div class="col">@item.ApplyTime</div>
+        <div class="col">@item.ResultTime</div>
+        <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.Remark>@item.Remark</div>
+        <div class="col">
+            <a href="SubmitApprove?ApplyUserID=@item.ApplyUserID&ApplyTime=@item.ApplyTime&ResultTime=@item.ResultTime&Remark=@item.Remark&state=2" class="btn btn-primary btn-sm">同意</a>
+            <a href="SubmitApprove?ApplyUserID=@item.ApplyUserID&ApplyTime=@item.ApplyTime&ResultTime=@item.ResultTime&Remark=@item.Remark&&state=1" class="btn btn-danger btn-sm">拒绝</a>
         </div>
-    }
-</form>
+    </div>
+}
 @if (Model.TotalPages != 0)
 {
     <div class="row justify-content-center mt-4">

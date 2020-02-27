@@ -32,10 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="vSphereRestWrapper.CIS">
       <HintPath>DLL\vSphereRestWrapper.CIS.dll</HintPath>
     </Reference>
