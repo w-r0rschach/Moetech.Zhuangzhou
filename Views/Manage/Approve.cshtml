@@ -1,5 +1,5 @@
 @using Moetech.Zhuangzhou.Common;
-@model PaginatedList<ReturnMachineInfoApplyData>
+@model PaginatedList<ReturnData>
 @{
     ViewData["Title"] = "审批虚拟机";
 
@@ -12,43 +12,45 @@
 <hr />
 
 <div class="row font-weight-bold">
-    <div class="col">虚拟机IP</div>
     <div class="col">操作系统</div>
     <div class="col">硬盘大小/G</div>
     <div class="col">内存大小/G</div>
+    <div class="col">申请数量</div>
     <div class="col">申请人员</div>
     <div class="col">申请时间</div>
     <div class="col">归还时间</div>
     <div class="col">备注</div>
     <div class="col">审批</div>
 </div>
-
-@foreach (var item in Model)
-{
-    <hr />
-    <div class="row">
-        <div class="col">@item.MachineInfo.MachineIP</div>
-        @if (item.MachineInfo.MachineSystem == 0)
-        {
-            <div class="col">Windows</div>
-        }
-        else
-        {
-            <div class="col">Linux</div>
-        }
-        <div class="col">@item.MachineInfo.MachineDiskCount</div>
-        <div class="col">@item.MachineInfo.MachineMemory</div>
-        <div class="col">@item.CommonPersonnelInfo.PersonnelName</div>
-        <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
-        <div class="col">@item.MachApplyAndReturn.ResultTime</div>
-        <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
-        <div class="col">
-            <a href="SubmitApprove?mid=@item.MachineInfo.MachineId&aid=@item.MachApplyAndReturn.ApplyAndReturnId&state=2" class="btn btn-primary btn-sm">同意</a>
-            <a href="SubmitApprove?mid=@item.MachineInfo.MachineId&aid=@item.MachApplyAndReturn.ApplyAndReturnId&state=1" class="btn btn-danger btn-sm">拒绝</a>
+<form asp-action="SubmitApprove" method="post">
+    @foreach (var item in Model)
+    {
+        <hr />
+        <div class="row">
+            @if (item.MachineSystem == 0)
+            {
+                <div class="col">Windows</div>
+            }
+            else
+            {
+                <div class="col">Linux</div>
+            }
+            <div class="col"><span name="MachineDiskCount">@item.MachineDiskCount</span> </div>
+            <div class="col">@item.MachineMemory</div>
+            <div class="col">@item.NumberCount</div>
+            <div class="col">@item.AppUserName</div>
+            <div class="col">@item.ApplyTime</div>
+            <div class="col">@item.ResultTime</div>
+            <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.Remark>@item.Remark</div>
+            <div class="col">
+                <a href="SubmitApprove?ApplyUserID=@item.ApplyUserID&ApplyTime=@item.ApplyTime&ResultTime=@item.ResultTime
+                   &Remark=@item.Remark&state=2" class="btn btn-primary btn-sm">同意</a>
+                <a href="SubmitApprove?ApplyUserID=@item.ApplyUserID&ApplyTime=@item.ApplyTime&ResultTime=@item.ResultTime
+                   &Remark=@item.Remark&&state=1" class="btn btn-danger btn-sm">拒绝</a>
+            </div>
         </div>
-    </div>
-}
-
+    }
+</form>
 @if (Model.TotalPages != 0)
 {
     <div class="row justify-content-center mt-4">

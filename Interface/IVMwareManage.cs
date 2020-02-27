@@ -27,7 +27,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
-        Task<PaginatedList<ReturnMachineInfoApplyData>> SelectApprove(int? pageIndex = 1);
+        Task<PaginatedList<ReturnData>> SelectApprove(int? pageIndex = 1);
 
         /// <summary>
         /// 提交审批虚拟机
@@ -38,6 +38,17 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="userid">用户ID</param>
         /// <returns></returns>
         Task<int> SubmitApprove(int mid, int aid, int state, int userid);
+        /// <summary>
+        /// 根据参数返回对需要Id
+        /// </summary> 
+        /// <param name="ApplyUserID">申请人</param>
+        /// <param name="ApplyTime">申请时间</param>
+        /// <param name="ResultTime">归还时间</param>
+        /// <param name="Remark">申请原因</param>
+        /// <param name="state">审批状态</param>
+        /// <param name="userId">用户Id</param>
+        /// <returns>ReturnSubmitApproeId</returns>
+        Task<bool> ResultSubmitApprove(int ApplyUserID, DateTime ApplyTime, DateTime ResultTime, string Remark, int state, int userId);
 
         /// <summary>
         /// 回收虚拟机

@@ -56,6 +56,8 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="remark">备注</param>
         public async Task<IEnumerable<MachineInfo>> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
         {
+            ///获取当前时间
+            DateTime _dateTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             // 当前用户ID
             int userId = userInfo.PersonnelId;
             // 最大数量
@@ -100,8 +102,8 @@ namespace Moetech.Zhuangzhou.Service
                         ExamineUserID = -1,
                         MachineInfoID = model.MachineId,
                         ExamineResult = ((machApplyAndReturnList.Count() + applyNumber) <= appMaxCount ? 2 : 0),
-                        ApplyTime = DateTime.Now,
-                        ResultTime = DateTime.Now.AddDays(15), // 默认申请15天
+                        ApplyTime = _dateTime,
+                        ResultTime = _dateTime.AddDays(15), // 默认申请15天
                         Remark = remark
                     });
             }
@@ -149,7 +151,7 @@ namespace Moetech.Zhuangzhou.Service
                 _context.MachineInfo.Update(item.MachineInfo);
 
                 item.MachApplyAndReturn.OprationType = 1;
-                item.MachApplyAndReturn.ResultTime = DateTime.Now;
+                item.MachApplyAndReturn.ResultTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")); 
                 _context.MachApplyAndReturn.Update(item.MachApplyAndReturn);
             }
 
@@ -164,10 +166,10 @@ namespace Moetech.Zhuangzhou.Service
         public async Task<bool> Renew(int id, CommonPersonnelInfo userInfo)
         {
             int userId = userInfo.PersonnelId;
-
+            DateTime _dateTime =Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             var machApplyAndReturn = await _context.MachApplyAndReturn.FirstOrDefaultAsync(m => m.ApplyAndReturnId == id && m.OprationType == 0 && m.ApplyUserID == userId);
 
-            TimeSpan time = (machApplyAndReturn.ResultTime - DateTime.Now);
+            TimeSpan time = (machApplyAndReturn.ResultTime - _dateTime);
 
             // 小于三天才能续租
             if (time.Days > 3)
@@ -176,7 +178,7 @@ namespace Moetech.Zhuangzhou.Service
             }
 
             // 当前时间+15天
-            machApplyAndReturn.ResultTime = DateTime.Now.AddDays(15);
+            machApplyAndReturn.ResultTime = _dateTime.AddDays(15);
 
             _context.MachApplyAndReturn.Update(machApplyAndReturn);
             await _context.SaveChangesAsync();

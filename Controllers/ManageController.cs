@@ -65,7 +65,8 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Approve(int? pageIndex = 1)
         {
-            var list = await _vmwareManage.SelectApprove(pageIndex);
+            var list = await _vmwareManage.SelectApprove(pageIndex ?? 1);
+
             return View(list);
         }
 
@@ -77,15 +78,15 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <param name="mid">虚拟机信息ID</param>
         /// <param name="aid">申请归还信息ID</param>
         /// <param name="state">状态1：拒绝  2：同意</param>
-        /// <returns></returns>
-        public async Task<IActionResult> SubmitApprove(int mid, int aid, int state)
+        /// <returns></returns> 
+        public async Task<IActionResult> SubmitApprove(int ApplyUserID, DateTime ApplyTime,
+            DateTime ResultTime, string Remark, int state)
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-
-            int result = await _vmwareManage.SubmitApprove(mid, aid, state, userInfo.PersonnelId);
-
-            if (result == -1)
+            int _userId = userInfo.PersonnelId;
+            var result = await _vmwareManage.ResultSubmitApprove(ApplyUserID, ApplyTime, ResultTime, Remark, state, _userId);
+            if (!result)
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
@@ -95,6 +96,7 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 return RedirectToAction(nameof(Approve));
             }
+
         }
 
         /// <summary>
