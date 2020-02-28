@@ -8,15 +8,17 @@ using Microsoft.EntityFrameworkCore;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
 using Moetech.Zhuangzhou.Common;
+using Moetech.Zhuangzhou.Interface;
+using Moetech.Zhuangzhou.Common.EnumDefine;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
     public class PersonnelInfoController : FilterController
     {
         /// <summary>
-        /// 数据量上下文
+        /// 用户接口
         /// </summary>
-        private readonly VirtualMachineDB _context;
+        private IUser _user;
 
         /// <summary>
         /// 每页条数
@@ -28,22 +30,15 @@ namespace Moetech.Zhuangzhou.Controllers
         /// </summary>
         public override int[] Role { get; set; } = { 1 };
 
-        public PersonnelInfoController(VirtualMachineDB context)
+        public PersonnelInfoController(IUser user)
         {
-            _context = context;
+            _user = user;
         }
 
         // GET: PersonnelInfo
         public async Task<IActionResult> Index(string name = "", int? pageIndex = 1)
         {
-            var list = from c in _context.CommonPersonnelInfo select c;
-
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                list = list.Where(o => o.PersonnelName.Contains(name));
-            }
-
-            var PagingList = await PaginatedList<CommonPersonnelInfo>.CreateAsync(list, pageIndex ?? 1, pageSize);
+            var PagingList=await _user.GetUserInfo(name, pageIndex ?? 1);
             // 查询条件参数
             ViewBag.name = name;
             return View(PagingList);
@@ -56,21 +51,20 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 return NotFound();
             }
-
-            var commonPersonnelInfo = await _context.CommonPersonnelInfo
-                .FirstOrDefaultAsync(m => m.PersonnelId == id);
+            var commonPersonnelInfo = await _user.Details(id ?? 0);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
             }
-
             return View(commonPersonnelInfo);
         }
 
         // GET: PersonnelInfo/Create
         public IActionResult Create()
         {
-            return View();
+            CommonPersonnelInfo personnelInfo = new CommonPersonnelInfo();
+            personnelInfo.PersonnelNo = _user.GetMaxPersonnelNo()+1;
+            return View(personnelInfo);
         }
 
         // POST: PersonnelInfo/Create
@@ -78,14 +72,28 @@ namespace Moetech.Zhuangzhou.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PersonnelId,PersonnelNo,PersonnelName,DepId,Avatar,PersonnelSex,BirthDate,IdentityCard,IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime,DepartureTime,TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
+        public  IActionResult Create([Bind("PersonnelId,PersonnelNo,PersonnelName,DepId,Avatar,PersonnelSex,BirthDate,IdentityCard," +
+            "IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime,DepartureTime," +
+            "TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
         {
-            if (ModelState.IsValid)
+            if (_user.CheckUserName(commonPersonnelInfo.PersonnelNo, OperationUserType.WORKNUMBER))
             {
-                _context.Add(commonPersonnelInfo);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewData["Title"] = "操作失败";
+                ViewData["Message"] = $"员工工号:{commonPersonnelInfo.PersonnelNo},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
+                return View("Views/Shared/Tip.cshtml");
             }
+            if (_user.CheckUserName(commonPersonnelInfo.UserName,OperationUserType.USERNAME))
+            {
+                ViewData["Title"] = "操作失败";
+                ViewData["Message"] =$"用户名:{commonPersonnelInfo.UserName},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
+                return View("Views/Shared/Tip.cshtml");
+            }
+                if (ModelState.IsValid)
+                {
+                    _user.Create(commonPersonnelInfo);
+                    return RedirectToAction(nameof(Index));
+                }
+             
             return View(commonPersonnelInfo);
         }
 
@@ -97,7 +105,7 @@ namespace Moetech.Zhuangzhou.Controllers
                 return NotFound();
             }
 
-            var commonPersonnelInfo = await _context.CommonPersonnelInfo.FindAsync(id);
+            var commonPersonnelInfo =await _user.Details(id ?? 0);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
@@ -110,8 +118,22 @@ namespace Moetech.Zhuangzhou.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PersonnelId,PersonnelNo,PersonnelName,DepId,Avatar,PersonnelSex,BirthDate,IdentityCard,IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime,DepartureTime,TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
+        public IActionResult Edit(int id, [Bind("PersonnelId,PersonnelNo,PersonnelName,DepId,Avatar,PersonnelSex,BirthDate," +
+            "IdentityCard,IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime," +
+            "DepartureTime,TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
         {
+            if (_user.CheckUserName(commonPersonnelInfo.PersonnelNo, OperationUserType.WORKNUMBER,id))
+            {
+                ViewData["Title"] = "操作失败";
+                ViewData["Message"] = $"员工工号:{commonPersonnelInfo.PersonnelNo},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
+                return View("Views/Shared/Tip.cshtml");
+            }
+            if (_user.CheckUserName(commonPersonnelInfo.UserName,OperationUserType.USERNAME,id))
+            {
+                ViewData["Title"] = "操作失败";
+                ViewData["Message"] = $"用户名:{commonPersonnelInfo.UserName},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
+                return View("Views/Shared/Tip.cshtml");
+            }
             if (id != commonPersonnelInfo.PersonnelId)
             {
                 return NotFound();
@@ -121,19 +143,12 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 try
                 {
-                    _context.Update(commonPersonnelInfo);
-                    await _context.SaveChangesAsync();
+                    _user.Edit(commonPersonnelInfo);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommonPersonnelInfoExists(commonPersonnelInfo.PersonnelId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
                         throw;
-                    }
+                    
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -148,8 +163,7 @@ namespace Moetech.Zhuangzhou.Controllers
                 return NotFound();
             }
 
-            var commonPersonnelInfo = await _context.CommonPersonnelInfo
-                .FirstOrDefaultAsync(m => m.PersonnelId == id);
+            var commonPersonnelInfo = await _user.Details(id ?? 0);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
@@ -161,17 +175,12 @@ namespace Moetech.Zhuangzhou.Controllers
         // POST: PersonnelInfo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public  IActionResult DeleteConfirmed(int id)
         {
-            var commonPersonnelInfo = await _context.CommonPersonnelInfo.FindAsync(id);
-            _context.CommonPersonnelInfo.Remove(commonPersonnelInfo);
-            await _context.SaveChangesAsync();
+            _user.DeleteConfirmed(id);
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CommonPersonnelInfoExists(int id)
-        {
-            return _context.CommonPersonnelInfo.Any(e => e.PersonnelId == id);
-        }
     }
 }
