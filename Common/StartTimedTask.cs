@@ -57,8 +57,10 @@ namespace Moetech.Zhuangzhou.Common
         {
             _logger.LogInformation("启动定时任务");
 
+            // 1天执行一次
+            _timer = new Timer(WorkTask, null, TimeSpan.Zero, TimeSpan.FromDays(1));   
             // 1分钟执行一次
-            _timer = new Timer(WorkTask, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            //_timer = new Timer(WorkTask, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
         }
