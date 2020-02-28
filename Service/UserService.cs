@@ -20,6 +20,7 @@ namespace Moetech.Zhuangzhou.Service
         /// 每页条数
         /// </summary>
         private readonly int pageSize = 10;
+
         /// <summary>
         /// 数据量上下文
         /// </summary>
@@ -40,6 +41,7 @@ namespace Moetech.Zhuangzhou.Service
         {
             return _context.CommonPersonnelInfo.FirstOrDefault(o => o.UserName.Equals(userName) && o.Password.Equals(userPwd));
         }
+
         /// <summary>
         /// 根据主键获取实体
         /// </summary>
@@ -50,6 +52,7 @@ namespace Moetech.Zhuangzhou.Service
             var personeInfo = from m in _context.CommonPersonnelInfo.Where(s => s.PersonnelId == id) select m;
             return personeInfo.FirstOrDefault();
         }
+
         /// <summary>
         /// 验证数据是否存在
         /// 实现思路：
@@ -99,13 +102,14 @@ namespace Moetech.Zhuangzhou.Service
                 return false;
             }
         }
+
         /// <summary>
         /// 查询用户信息
         /// </summary>
         /// <param name="name"></param>
         /// <param name="pageIndex"></param>
         /// <returns></returns>
-        public Task<PaginatedList<CommonPersonnelInfo>> GetUserInfo(string name, int pageIndex)
+        public Task<PaginatedList<CommonPersonnelInfo>> GetUserInfo(string name, int? pageIndex = 1)
         {
             var list = from c in _context.CommonPersonnelInfo select c;
 
@@ -113,8 +117,9 @@ namespace Moetech.Zhuangzhou.Service
             {
                 list = list.Where(o => o.PersonnelName.Contains(name));
             }
-            return PaginatedList<CommonPersonnelInfo>.CreateAsync(list, 1, pageSize);
+            return PaginatedList<CommonPersonnelInfo>.CreateAsync(list, pageIndex ?? 1, pageSize);
         }
+
         /// <summary>
         /// 根据主键查询实体
         /// </summary>
@@ -124,6 +129,7 @@ namespace Moetech.Zhuangzhou.Service
         {
             return _context.CommonPersonnelInfo.FirstOrDefaultAsync(m => m.PersonnelId == id);
         }
+
         /// <summary>
         /// 创建用户信息
         /// </summary>
@@ -134,6 +140,7 @@ namespace Moetech.Zhuangzhou.Service
             _context.Add(info);
             _context.SaveChanges();
         }
+
         /// <summary>
         /// 更新用户信息
         /// </summary>
@@ -145,6 +152,7 @@ namespace Moetech.Zhuangzhou.Service
             _context.Update(info);
             _context.SaveChanges();
         }
+
         /// <summary>
         /// 根据用户主键删除用户实体
         /// </summary>
@@ -156,6 +164,7 @@ namespace Moetech.Zhuangzhou.Service
             _context.CommonPersonnelInfo.Remove(commonPersonnelInfo);
             _context.SaveChanges();
         }
+
         /// <summary>
         /// 返回最大员工编号
         /// </summary>

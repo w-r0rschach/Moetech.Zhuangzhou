@@ -7,7 +7,7 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>审批列表</h1>
 
 <hr />
 
@@ -27,7 +27,7 @@
     <hr />
     <div class="row">
         <div class="col">@item.MachineSystem</div>
-        <div class="col"><span name="MachineDiskCount">@item.MachineDiskCount</span> </div>
+        <div class="col">@item.MachineDiskCount</div>
         <div class="col">@item.MachineMemory</div>
         <div class="col">@item.NumberCount</div>
         <div class="col">@item.AppUserName</div>
@@ -44,14 +44,34 @@
 {
     <div class="row justify-content-center mt-4">
         <ul class="pagination">
+            <li class="page-item"><a class="page-link btn @prevDisabled" asp-action="Approve" asp-route-pageIndex="1">首页</a></li>
             <li class="page-item"><a class="page-link btn @prevDisabled" asp-action="Approve" asp-route-pageIndex="@(Model.PageIndex - 1)">上一页</a></li>
-
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(Model.PageIndex == i ? "active":"")"><a class="page-link" asp-action="Approve" asp-route-pageIndex="@i">@i</a></li>
-            }
-
             <li class="page-item"><a class="page-link btn @nextDisabled" asp-action="Approve" asp-route-pageIndex="@(Model.PageIndex + 1)">下一页</a></li>
+            <li class="page-item"><a class="page-link btn @nextDisabled" asp-action="Approve" asp-route-pageIndex="@(Model.TotalPages)">尾页</a></li>
+            <li class="page-item">
+                <select class="page-link btn" style="font-size:13px;" name="pageIndex" onchange="selectJump()">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        if (Model.PageIndex == i)
+                        {
+                            <option selected value="@i">@i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </li>
+            <li class="page-item"><span class="page-link btn" style="border:none;">当前第@(Model.PageIndex)页，共@(Model.TotalPages)页</span></li>
         </ul>
     </div>
 }
+
+<script type="text/javascript">
+     // 分页跳转
+    function selectJump() {
+        var pageIndex = $('select[name=pageIndex]').val().trim();
+        window.location.href = "/Manage/Approve?pageIndex=" + pageIndex;
+    }
+</script>
