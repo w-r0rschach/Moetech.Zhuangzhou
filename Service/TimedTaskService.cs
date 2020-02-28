@@ -68,13 +68,6 @@ namespace Moetech.Zhuangzhou.Service
                         //添加日志记录 TODO
                     }
                 }
-                else
-                {
-                    return;
-                }
-            }
-            else {
-                return;
             }
         }
 
@@ -82,13 +75,16 @@ namespace Moetech.Zhuangzhou.Service
         /// <summary>
         /// 发送邮件
         /// </summary>
-        public async Task SendMail(CommonPersonnelInfo personnelInfo, MachineInfo machineInfo,MachApplyAndReturn mach)
+        public async Task SendMail(CommonPersonnelInfo personnelInfo, MachineInfo machineInfo, MachApplyAndReturn mach)
         {
-            EmailHelper helper = new EmailHelper();
-            var subject = "虚拟机到期提醒";
-            var content = $"你申请的虚拟机（{machineInfo.MachineIP}）即将在{mach.ResultTime}到期，请及时归还或者续期，否则在到期之后系统将强制回收该虚拟机";
-            var address = new MailboxAddress[] { new MailboxAddress(personnelInfo.Mailbox) };
-            await helper.SendEMailAsync(subject, content, address);
+            if (!string.IsNullOrWhiteSpace(personnelInfo.Mailbox))
+            {
+                EmailHelper helper = new EmailHelper();
+                var subject = "虚拟机到期提醒";
+                var content = $"你申请的虚拟机（{machineInfo.MachineIP}）即将在{mach.ResultTime}到期，请及时归还或者续期，否则在到期之后系统将强制回收该虚拟机";
+                var address = new MailboxAddress[] { new MailboxAddress(personnelInfo.Mailbox) };
+                await helper.SendEMailAsync(subject, content, address);
+            }
         }
     }
 }
