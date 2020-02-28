@@ -1,8 +1,10 @@
 ﻿
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MimeKit;
 using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Data;
+using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Models;
 using Newtonsoft.Json;
@@ -174,7 +176,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="mid">虚拟机信息ID</param>
         /// <param name="rid">申请虚拟机记录ID</param>
         /// <returns></returns>
-        public async Task<int> Recycle(int mid, int rid)
+        public int Recycle(int mid, int rid)
         {
             var list = from m1 in _context.MachineInfo
                        join m2 in _context.MachApplyAndReturn on m1.MachineId equals m2.MachineInfoID
@@ -209,7 +211,7 @@ namespace Moetech.Zhuangzhou.Service
                     }
                 }
 
-                await _context.SaveChangesAsync();
+                _context.SaveChangesAsync().Wait();
                 return 1;
             }
         }
@@ -299,13 +301,14 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="host">ip地址</param>
         /// <param name="machineId">虚拟机Id</param>
         /// <returns></returns>
-        public bool CheckHost(string host,int  machineId=0)
+        public bool CheckHost(string host, int machineId = 0)
         {
             List<MachineInfo> machineInfo;
-            if (machineId>0)
+            if (machineId > 0)
             {
-             var   info= from m in _context.MachineInfo.Where(s => s.MachineIP == host
-                             &&s.MachineId!=machineId) select m;
+                var info = from m in _context.MachineInfo.Where(s => s.MachineIP == host
+                               && s.MachineId != machineId)
+                           select m;
                 machineInfo = info.ToList();
             }
             else
@@ -317,11 +320,41 @@ namespace Moetech.Zhuangzhou.Service
 
             if (machineInfo.Count > 0)
             {
-                return  true;
+                return true;
             }
             else
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// 发送邮件
+        /// </summary>
+        /// <param name="machineId">虚拟机Id</param>
+        /// <param name="applyPersonId">使用者id</param>
+        /// <returns></returns>
+        public async Task SendMail(int machineId, int applyPersonId)
+        {
+            var personInfo = from m in _context.CommonPersonnelInfo
+                             from n in _context.MachineInfo
+                             where m.PersonnelId == applyPersonId && n.MachineId == machineId
+                             select new ReturnMachineInfoApplyData
+                             {
+                                 MachineInfo = n,
+                                 CommonPersonnelInfo = m
+                             };
+            if (personInfo != null)
+            {
+                ReturnMachineInfoApplyData info = personInfo.ToList()[0];
+                if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
+                {
+                    string subject = "虚拟机到期回收通知";
+                    string content = $"由于检测到你申请的虚拟机{info.MachineInfo.MachineIP}许久未使用，管理员已强制回收该虚拟机。";
+                    EmailHelper helper = new EmailHelper();
+                    var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
+                    await helper.SendEMailAsync(subject, content, address);
+                }
             }
         }
     }

@@ -45,7 +45,7 @@ namespace Moetech.Zhuangzhou.Common
             // 注入数据库服务
             using var scope = _services.CreateScope();
             var task = scope.ServiceProvider.GetRequiredService<ITimedTask>();
-            task.EmailTask();
+            task.EmailTaskAsync();
         }
 
         /// <summary>
@@ -59,10 +59,23 @@ namespace Moetech.Zhuangzhou.Common
 
             // 1天执行一次
             _timer = new Timer(WorkTask, null, TimeSpan.Zero, TimeSpan.FromDays(1));   
-            // 1分钟执行一次
-            //_timer = new Timer(WorkTask, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+
+            // 1分钟执行一次,用于检测是否到期
+            _timer = new Timer(CheckMaturity, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// 检查到期提醒
+        /// </summary>
+        /// <param name="state"></param>
+        private void CheckMaturity(object state)
+        {
+            // 注入数据库服务
+            using var scope = _services.CreateScope();
+            var task = scope.ServiceProvider.GetRequiredService<ITimedTask>();
+            task.CheckMaturityAsync();
         }
 
         /// <summary>

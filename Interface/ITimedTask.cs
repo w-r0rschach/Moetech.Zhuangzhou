@@ -13,6 +13,12 @@ namespace Moetech.Zhuangzhou.Interface
         /// <summary>
         /// 邮件任务
         /// </summary>
-        void EmailTask();
+        Task EmailTaskAsync();
+
+        /// <summary>
+        /// 检查到期提醒
+        /// </summary>
+        Task CheckMaturityAsync();
+
     }
 }

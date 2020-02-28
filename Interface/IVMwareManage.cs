@@ -57,7 +57,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="mid">虚拟机信息ID</param>
         /// <param name="rid">申请虚拟机记录ID</param>
         /// <returns></returns>
-        Task<int> Recycle(int mid, int rid);
+        int Recycle(int mid, int rid);
 
         /// <summary>
         /// 查询单台虚拟机数据
@@ -92,5 +92,13 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="host">IP地址</param>
         /// <returns> true 存在  否则不存在</returns>
         bool CheckHost(string host, int machineId = 0);
+
+        /// <summary>
+        /// 发送邮件
+        /// </summary>
+        /// <param name="machineId">虚拟机Id</param>
+        /// <param name="applyPersonId">使用者id</param>
+        /// <returns></returns>
+        Task SendMail(int machineId,int applyPersonId);
     }
 }

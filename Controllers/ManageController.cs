@@ -116,11 +116,13 @@ namespace Moetech.Zhuangzhou.Controllers
         /// </summary>
         /// <param name="mid">虚拟机信息ID</param>
         /// <param name="rid">申请虚拟机记录ID</param>
+        /// <param name="pid">申请人员ID</param>
         /// <returns></returns>
-        public async Task<IActionResult> Recycle(int mid, int rid)
+        public IActionResult Recycle(int mid, int rid,int pid)
         {
-            int result = await _vmwareManage.Recycle(mid, rid);
-
+            //回收虚拟机
+            int result = _vmwareManage.Recycle(mid, rid);
+            
             if (result == -1)
             {
                 ViewData["Title"] = "操作失败";
@@ -137,6 +139,9 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 ViewData["Title"] = "回收成功";
                 ViewData["Message"] = "回收成功！返回<a href='/Manage/Index'>管理虚拟机</a>";
+                //回收成功后发送邮件告诉使用者
+                _vmwareManage.SendMail(mid,pid);
+
                 return View("Views/Shared/Tip.cshtml");
             }
         }
