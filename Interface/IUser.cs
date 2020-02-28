@@ -18,5 +18,12 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="userPwd">登录密码</param>
         /// <returns></returns>
         CommonPersonnelInfo Login(string userName, string userPwd);
+
+        /// <summary>
+        /// 根据主键获取实体
+        /// </summary>
+        /// <param name="id">实体主键</param>
+        /// <returns></returns>
+         CommonPersonnelInfo GetPersonnelInfo(int id);
     }
 }

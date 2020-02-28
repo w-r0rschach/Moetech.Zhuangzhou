@@ -60,7 +60,7 @@ namespace Moetech.Zhuangzhou.Service
         /// 0:待审批
         /// 2:同意
         /// </returns>
-        public async Task<int> SubmitApplication(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
+        public async Task<int> SubmitApplication(string machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
         {
             ///获取当前时间
             DateTime _dateTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));

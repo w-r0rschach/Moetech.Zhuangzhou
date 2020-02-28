@@ -14,7 +14,7 @@ namespace Moetech.Zhuangzhou.Common
         /// 1：Linux
         /// </summary>
         [Display(Name = "操作系统")]
-        public int MachineSystem { get; set; }
+        public string MachineSystem { get; set; }
 
         /// <summary>
         /// 硬盘大小/G

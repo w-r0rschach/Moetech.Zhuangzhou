@@ -33,5 +33,17 @@ namespace Moetech.Zhuangzhou.Service
         {
             return _context.CommonPersonnelInfo.FirstOrDefault(o => o.UserName.Equals(userName) && o.Password.Equals(userPwd));
         }
+        /// <summary>
+        /// 根据主键获取实体
+        /// </summary>
+        /// <param name="id">实体主键</param>
+        /// <returns></returns>
+       public CommonPersonnelInfo GetPersonnelInfo(int id)
+        {
+            var personeInfo = from m in _context.CommonPersonnelInfo.Where(s => s.PersonnelId == id) select m;
+            return personeInfo.FirstOrDefault();
+        } 
+
+
     }
 }

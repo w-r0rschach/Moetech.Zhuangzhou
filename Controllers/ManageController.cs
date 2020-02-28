@@ -45,7 +45,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <param name="status">虚拟机状态</param>
         /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
-        public async Task<IActionResult> Index(string name = "", int? type = -1, int? status = -1, int? pageIndex = 1)
+        public async Task<IActionResult> Index(string name = "", string type ="", int? status = -1, int? pageIndex = 1)
         {
             var list = await _vmwareManage.SelectAll(name, type, status, pageIndex);
 
@@ -191,6 +191,12 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
         {
+            if (_vmwareManage.CheckHost(machineInfo.MachineIP))
+            {
+                ViewData["Title"] = "新增失败";
+                ViewData["Message"] = $"IP地址:{machineInfo.MachineIP },已存在！返回<a href='/Manage/Index'>管理虚拟机</a>";
+                return View("Views/Shared/Tip.cshtml");
+            }
             if (ModelState.IsValid)
             {
                 await _vmwareManage.Save(machineInfo);
@@ -241,6 +247,12 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
         {
+            if (_vmwareManage.CheckHost(machineInfo.MachineIP))
+            {
+                ViewData["Title"] = "编辑失败";
+                ViewData["Message"] =$"IP地址:{machineInfo.MachineIP },已存在！返回<a href='/Manage/Index'>管理虚拟机</a>";
+                return View("Views/Shared/Tip.cshtml");
+            }
             if (id != machineInfo.MachineId)
             {
                 return NotFound();

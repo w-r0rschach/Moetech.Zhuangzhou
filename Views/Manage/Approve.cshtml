@@ -26,14 +26,7 @@
 {
     <hr />
     <div class="row">
-        @if (item.MachineSystem == 0)
-        {
-            <div class="col">Windows</div>
-        }
-        else
-        {
-            <div class="col">Linux</div>
-        }
+        <div class="col">@item.MachineSystem</div>
         <div class="col"><span name="MachineDiskCount">@item.MachineDiskCount</span> </div>
         <div class="col">@item.MachineMemory</div>
         <div class="col">@item.NumberCount</div>

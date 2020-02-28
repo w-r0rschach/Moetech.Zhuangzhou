@@ -1,4 +1,5 @@
 ﻿using Moetech.Zhuangzhou.Interface;
+using Moetech.Zhuangzhou.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,9 +54,32 @@ namespace Moetech.Zhuangzhou.vSphere
         /// 获取列表
         /// </summary>
         /// <returns></returns>
-        public async Task<List<VMItem>> ListAsync()
+        public async Task<List<MachineInfo>> ListAsync()
         {
-            return await _Vm.ListAsync(_SessionId);
+            ///获取虚拟机列表
+            //List<VMItem> vmItems = await _Vm.ListAsync(_SessionId);
+            //List<MachineInfo> _listMachineInfo = new List<MachineInfo>();
+            //long iskCount = 0;
+
+            //foreach (var item in vmItems)
+            //{
+            //    ///实例化虚拟机接收实体
+            //    MachineInfo machineInfo = new MachineInfo();
+            //    ///获取虚拟机详细信息对象
+            //    var details = await _Vm.DetailAsync(_SessionId,item.ID);
+
+            //   // machineInfo.MachineSystem = details.GuestOS;
+            //    machineInfo.MachineIP = item.ID;
+            //    machineInfo.MachineMemory = details.Memory.Size / 1024;
+            //    //  machineInfo.MachineDiskCount=details.
+            //    ///获取虚拟机磁盘大小
+            //    foreach (var itemDisks in details.Disks)
+            //    {
+            //        iskCount += itemDisks.Value.Capacity;
+            //    }
+            //    machineInfo.MachineDiskCount = iskCount / 1024 / 1024;
+            //}
+            return null;
         }
     }
 }

@@ -261,8 +261,9 @@ namespace Moetech.Zhuangzhou.Migrations
                     b.Property<int>("MachineState")
                         .HasColumnType("int");
 
-                    b.Property<int>("MachineSystem")
-                        .HasColumnType("int");
+                    b.Property<string>("MachineSystem")
+                        .HasColumnType("varchar(50) CHARACTER SET utf8mb4")
+                        .HasMaxLength(50);
 
                     b.Property<string>("MachineUser")
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")

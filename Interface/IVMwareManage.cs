@@ -20,7 +20,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="status">虚拟机状态</param>
         /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
-        Task<PaginatedList<ReturnMachineInfoApplyData>> SelectAll(string name = "", int? type = -1, int? status = -1, int? pageIndex = 1);
+        Task<PaginatedList<ReturnMachineInfoApplyData>> SelectAll(string name = "", string type = "", int? status = -1, int? pageIndex = 1);
 
         /// <summary>
         /// 查询审批虚拟机
@@ -86,5 +86,11 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="machineInfo">虚拟机对象</param>
         /// <returns></returns>
         Task<int> Delete(MachineInfo machineInfo);
+        /// <summary>
+        /// 验证ip地址是否存在
+        /// </summary>
+        /// <param name="host">IP地址</param>
+        /// <returns> true 存在  否则不存在</returns>
+        bool CheckHost(string host);
     }
 }

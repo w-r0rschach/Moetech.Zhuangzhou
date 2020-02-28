@@ -87,12 +87,12 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns>IActionResult</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SubmitApply(int machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark)
+        public async Task<IActionResult> SubmitApply(string machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark)
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
 
-            if (machineSystem < 0 || machineSystem > 1 || machineDiskCount == 0 ||
+            if (string.IsNullOrWhiteSpace(machineSystem) || machineDiskCount == 0 ||
                 machineMemory == 0 || applyNumber == 0 || string.IsNullOrWhiteSpace(remark) || remark.Length > 255)
             {
                 ViewData["Title"] = "操作失败";

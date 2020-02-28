@@ -140,7 +140,7 @@ namespace Moetech.Zhuangzhou.Migrations
                     MachineId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MachineIP = table.Column<string>(maxLength: 20, nullable: true),
-                    MachineSystem = table.Column<int>(nullable: false),
+                    MachineSystem = table.Column<string>(maxLength: 50, nullable: true),
                     MachineDiskCount = table.Column<double>(nullable: false),
                     MachineMemory = table.Column<double>(nullable: false),
                     MachineState = table.Column<int>(nullable: false),

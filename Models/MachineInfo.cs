@@ -21,8 +21,8 @@ namespace Moetech.Zhuangzhou.Models
         /// <summary>
         /// 虚拟机IP
         /// </summary>
-        [Display(Name = "虚拟机IP")]
-        [StringLength(20)]
+        [Display(Name = "虚拟机IP")] 
+        [Required(ErrorMessage = "虚拟机IP是必需的。"),StringLength(20)]
         public string MachineIP { get; set; }
 
         /// <summary>
@@ -31,18 +31,21 @@ namespace Moetech.Zhuangzhou.Models
         /// 1：Linux
         /// </summary>
         [Display(Name = "操作系统")]
-        public int MachineSystem { get; set; }
+        [Required(ErrorMessage = "操作系统是必需的。"), StringLength(50)]
+        public string MachineSystem { get; set; }
 
         /// <summary>
         /// 硬盘大小/G
         /// </summary>
         [Display(Name = "硬盘大小/G")]
+        [Required(ErrorMessage = "硬盘大小是必需的。")]
         public double MachineDiskCount { get; set; }
 
         /// <summary>
         /// 内存大小/G
         /// </summary>
         [Display(Name = "内存大小/G")]
+        [Required(ErrorMessage = "内存大小是必需的。")]
         public double MachineMemory { get; set; }
 
         /// <summary>
@@ -58,14 +61,14 @@ namespace Moetech.Zhuangzhou.Models
         /// 登录账号
         /// </summary>
         [Display(Name = "登录账号")]
-        [StringLength(20)]
+        [Required(ErrorMessage = "登录账号是必需的。"),StringLength(20)]
         public string MachineUser { get; set; }
 
         /// <summary>
         /// 登录密码
         /// </summary>
         [Display(Name = "登录密码")]
-        [StringLength(20)]
+        [Required(ErrorMessage = "登录密码是必需的。"),StringLength(20)]
         public string MachinePassword { get; set; }
     }
 }

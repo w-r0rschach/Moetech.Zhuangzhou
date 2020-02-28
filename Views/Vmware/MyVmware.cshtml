@@ -51,14 +51,7 @@
             {
                 <div class="row">
                     <div class="col">@item.MachineInfo.MachineIP</div>
-                    @if (item.MachineInfo.MachineSystem == 0)
-                    {
-                        <div class="col">Windows</div>
-                    }
-                    else
-                    {
-                        <div class="col">Linux</div>
-                    }
+                    <div class="col">@item.MachineInfo.MachineSystem</div>
                     <div class="col">@item.MachineInfo.MachineDiskCount</div>
                     <div class="col">@item.MachineInfo.MachineMemory</div>
                     <div class="col">同意</div>
@@ -97,14 +90,7 @@
             {
                 <div class="row">
                     <div class="col">@item.MachineInfo.MachineIP</div>
-                    @if (item.MachineInfo.MachineSystem == 0)
-                    {
-                        <div class="col">Windows</div>
-                    }
-                    else
-                    {
-                        <div class="col">Linux</div>
-                    }
+                    <div class="col">@item.MachineInfo.MachineSystem</div>
                     <div class="col">@item.MachineInfo.MachineDiskCount</div>
                     <div class="col">@item.MachineInfo.MachineMemory</div>
                     <div class="col">待审批</div>
@@ -132,23 +118,16 @@
         {
             @if (item.MachApplyAndReturn.ExamineResult == 1)
             {
-                <div class="row">
-                    <div class="col">@item.MachineInfo.MachineIP</div>
-                    @if (item.MachineInfo.MachineSystem == 0)
-                    {
-                        <div class="col">Windows</div>
-                    }
-                    else
-                    {
-                        <div class="col">Linux</div>
-                    }
-                    <div class="col">@item.MachineInfo.MachineDiskCount</div>
-                    <div class="col">@item.MachineInfo.MachineMemory</div>
-                    <div class="col">拒绝</div>
-                    <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
-                    <div class="col">@item.MachApplyAndReturn.ResultTime</div>
-                    <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
-                </div><hr />
+    <div class="row">
+        <div class="col">@item.MachineInfo.MachineIP</div>
+        <div class="col">@item.MachineInfo.MachineSystem</div>
+        <div class="col">@item.MachineInfo.MachineDiskCount</div>
+        <div class="col">@item.MachineInfo.MachineMemory</div>
+        <div class="col">拒绝</div>
+        <div class="col">@item.MachApplyAndReturn.ApplyTime</div>
+        <div class="col">@item.MachApplyAndReturn.ResultTime</div>
+        <div class="col" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" title=@item.MachApplyAndReturn.Remark>@item.MachApplyAndReturn.Remark</div>
+    </div><hr />
             }
         }
     </div>

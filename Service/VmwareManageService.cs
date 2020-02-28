@@ -41,7 +41,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="status">虚拟机状态</param>
         /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
-        public async Task<PaginatedList<ReturnMachineInfoApplyData>> SelectAll(string name = "", int? type = -1, int? status = -1, int? pageIndex = 1)
+        public async Task<PaginatedList<ReturnMachineInfoApplyData>> SelectAll(string name = "", string type = "", int? status = -1, int? pageIndex = 1)
         {
             var list = from m1 in _context.MachineInfo
                        join m2 in (from m3 in _context.MachApplyAndReturn
@@ -62,9 +62,9 @@ namespace Moetech.Zhuangzhou.Service
                        };
 
             // 操作系统类型
-            if (type != -1)
+            if (!string.IsNullOrWhiteSpace(type))
             {
-                list = list.Where(o => o.MachineInfo.MachineSystem == type);
+                list = list.Where(o => o.MachineInfo.MachineSystem.Contains(type));
             }
 
             // 虚拟机状态
@@ -289,6 +289,20 @@ namespace Moetech.Zhuangzhou.Service
                 }
             }
             return rsultInt > 0 ? true : false;
+        }
+       
+        public  bool CheckHost(string host)
+        {
+            var machineIP = from m in _context.MachineInfo.Where(s => s.MachineIP == host) select m;
+
+            if (machineIP.ToList().Count > 0)
+            {
+                return  true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
