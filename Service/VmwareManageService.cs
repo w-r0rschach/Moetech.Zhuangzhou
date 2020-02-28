@@ -347,14 +347,7 @@ namespace Moetech.Zhuangzhou.Service
             if (personInfo != null)
             {
                 ReturnMachineInfoApplyData info = personInfo.ToList()[0];
-                if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
-                {
-                    string subject = "虚拟机到期回收通知";
-                    string content = $"由于检测到你申请的虚拟机{info.MachineInfo.MachineIP}许久未使用，管理员已强制回收该虚拟机。";
-                    EmailHelper helper = new EmailHelper();
-                    var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
-                    await helper.SendEMailAsync(subject, content, address);
-                }
+                await SendMailFctory.AdminiSendMailAsync(info);
             }
         }
     }
