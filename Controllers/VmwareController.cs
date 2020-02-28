@@ -55,9 +55,9 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns>IActionResult</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Apply(int machineSystem, double machineDiskCount, double machineMemory, int freeNumber)
+        public IActionResult Apply(string machineSystem, double machineDiskCount, double machineMemory, int freeNumber)
         {
-            if (machineSystem < 0 || machineSystem > 1 || machineDiskCount == 0 || machineMemory == 0 || freeNumber == 0)
+            if (string.IsNullOrWhiteSpace(machineSystem) || machineDiskCount == 0 || machineMemory == 0 || freeNumber == 0)
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = "数据非法，操作终止！";
@@ -79,7 +79,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// Vmware/SubmitApply
         /// 提交申请
         /// </summary>
-        /// <param name="machineSystem">操作系统 0：Windows 1：Linux</param>
+        /// <param name="machineSystem">操作系统</param>
         /// <param name="machineDiskCount">硬盘大小/G</param>
         /// <param name="machineMemory">内存大小/G</param>
         /// <param name="applyNumber">申请数量</param>

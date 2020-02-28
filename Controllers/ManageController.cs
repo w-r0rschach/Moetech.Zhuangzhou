@@ -191,7 +191,7 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
         {
-            if (_vmwareManage.CheckHost(machineInfo.MachineIP))
+            if (_vmwareManage.CheckHost(machineInfo.MachineIP, machineInfo.MachineId))
             {
                 ViewData["Title"] = "新增失败";
                 ViewData["Message"] = $"IP地址:{machineInfo.MachineIP },已存在！返回<a href='/Manage/Index'>管理虚拟机</a>";
@@ -247,7 +247,7 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
         {
-            if (_vmwareManage.CheckHost(machineInfo.MachineIP))
+            if (_vmwareManage.CheckHost(machineInfo.MachineIP, machineInfo.MachineId))
             {
                 ViewData["Title"] = "编辑失败";
                 ViewData["Message"] =$"IP地址:{machineInfo.MachineIP },已存在！返回<a href='/Manage/Index'>管理虚拟机</a>";

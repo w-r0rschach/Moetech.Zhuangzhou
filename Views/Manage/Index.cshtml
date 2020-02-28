@@ -19,7 +19,7 @@
 <div class="form-row">
     <div class="form-group col-md-3">
         <label>操作系统</label>
-        <input class="form-control" type="text" asp-for="@type" name="name" />
+        <input class="form-control" type="text" asp-for="@type" name="type" />
     </div>
     <div class="form-group col-md-3">
         <label>状态</label>
@@ -185,7 +185,7 @@
 
     // 查询数据
     function select() {
-        var type = $('select[name=type]').val().trim();
+        var type = $('input[name=type]').val().trim();
         var status = $('select[name=status]').val().trim();
         var name = $('input[name=name]').val().trim();
         window.location.href = "/Manage/Index?name=" + name + "&type=" + type + "&status=" + status + "&pageIndex=" + @Model.PageIndex;

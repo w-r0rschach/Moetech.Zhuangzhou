@@ -91,6 +91,6 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <param name="host">IP地址</param>
         /// <returns> true 存在  否则不存在</returns>
-        bool CheckHost(string host);
+        bool CheckHost(string host, int machineId = 0);
     }
 }

@@ -20,12 +20,12 @@
 {
     <hr />
     <div class="row">
-        <div class="col col-sm-2">@item.MachineSystem</div>
+        <div class="col col-sm-3">@item.MachineSystem</div>
         <div class="col col-sm-2">@item.MachineDiskCount</div>
         <div class="col col-sm-2">@item.MachineMemory</div>
         <div class="col col-sm-2">@item.MachineState</div>
         <div class="col col-sm-3">
-            <a class="btn btn-primary btn-sm" href="javascript:apply(@item.MachineSystem,@item.MachineDiskCount,@item.MachineMemory,@item.MachineState)">申请</a>
+            <a class="btn btn-primary btn-sm" href="javascript:apply('@item.MachineSystem',@item.MachineDiskCount,@item.MachineMemory,@item.MachineState)">申请</a>
         </div>
     </div>
 }

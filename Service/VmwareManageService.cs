@@ -290,12 +290,32 @@ namespace Moetech.Zhuangzhou.Service
             }
             return rsultInt > 0 ? true : false;
         }
-       
-        public  bool CheckHost(string host)
+        /// <summary>
+        /// 判断是否存在重复ip地址
+        /// 实现：
+        /// 1、machineId为0时为新增操作，执行新增验证；
+        /// 反之为修改排除当前Id并验证是否存在相同Ip
+        /// </summary>
+        /// <param name="host">ip地址</param>
+        /// <param name="machineId">虚拟机Id</param>
+        /// <returns></returns>
+        public bool CheckHost(string host,int  machineId=0)
         {
-            var machineIP = from m in _context.MachineInfo.Where(s => s.MachineIP == host) select m;
+            List<MachineInfo> machineInfo;
+            if (machineId>0)
+            {
+             var   info= from m in _context.MachineInfo.Where(s => s.MachineIP == host
+                             &&s.MachineId!=machineId) select m;
+                machineInfo = info.ToList();
+            }
+            else
+            {
+                var info = from m in _context.MachineInfo.Where(s => s.MachineIP == host)
+                           select m;
+                machineInfo = info.ToList();
+            }
 
-            if (machineIP.ToList().Count > 0)
+            if (machineInfo.Count > 0)
             {
                 return  true;
             }
