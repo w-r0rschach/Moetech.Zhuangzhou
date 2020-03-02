@@ -2,6 +2,7 @@
 using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Common.EnumDefine;
 using Moetech.Zhuangzhou.Data;
+using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Models;
 using System;
@@ -135,10 +136,12 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="info">用户实体对象</param>
         /// <returns></returns>
-        public void Create(CommonPersonnelInfo info)
+        public async Task CreateAsync(CommonPersonnelInfo info)
         {
             _context.Add(info);
             _context.SaveChanges();
+            //新增员工是发送邮件
+            await SendMailFctory.PersonalSendMailAsync(info);
         }
 
         /// <summary>

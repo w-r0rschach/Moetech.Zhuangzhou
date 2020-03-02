@@ -54,7 +54,6 @@ namespace Moetech.Zhuangzhou.Controllers
             return View(commonPersonnelInfo);
         }
 
-        // GET: PersonnelInfo/Create
         public IActionResult Create()
         {
             CommonPersonnelInfo personnelInfo = new CommonPersonnelInfo();
@@ -62,9 +61,6 @@ namespace Moetech.Zhuangzhou.Controllers
             return View(personnelInfo);
         }
 
-        // POST: PersonnelInfo/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("PersonnelId,PersonnelNo,PersonnelName,DepId,Avatar,PersonnelSex,BirthDate,IdentityCard," +
@@ -85,7 +81,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             if (ModelState.IsValid)
             {
-                _user.Create(commonPersonnelInfo);
+                _user.CreateAsync(commonPersonnelInfo);
                 return RedirectToAction(nameof(Index));
             }
 

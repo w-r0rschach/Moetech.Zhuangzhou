@@ -57,7 +57,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <param name="info">用户实体对象</param>
         /// <returns></returns>
-        void Create(CommonPersonnelInfo info);
+        Task CreateAsync(CommonPersonnelInfo info);
 
         /// <summary>
         /// 更新用户信息

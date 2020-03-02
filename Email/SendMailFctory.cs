@@ -1,5 +1,6 @@
 ﻿using MimeKit;
 using Moetech.Zhuangzhou.Common;
+using Moetech.Zhuangzhou.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Moetech.Zhuangzhou.Email
         {
             if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
             {
-                string subject = "虚拟机到期提醒";
+                string subject = "虚拟机到期提醒通知";
                 string content = $"你申请的虚拟机（{info.MachineInfo.MachineIP}）即将在（{info.MachApplyAndReturn.ResultTime}）到期，请及时归还或者续期，否则在到期之后系统将强制回收该虚拟机。";
                 EmailHelper helper = new EmailHelper();
                 var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
@@ -61,17 +62,34 @@ namespace Moetech.Zhuangzhou.Email
         /// 新增员工时发送邮件
         /// </summary>
         /// <param name="info"></param>
-        public static async Task PersonalSendMailAsync(ReturnMachineInfoApplyData info) 
+        public static async Task PersonalSendMailAsync(CommonPersonnelInfo info)
         {
+            if (!string.IsNullOrWhiteSpace(info.Mailbox))
+            {
+                string subject = "系统通知";
+                string content = $"欢迎新用户{info.PersonnelName}\r\n" +
+                    $"虚拟机的地址为https://localhost:44339/User/Login,你的登录账户名为{info.UserName}，密码为{info.Password}";
+                EmailHelper helper = new EmailHelper();
+                var address = new MailboxAddress[] { new MailboxAddress(info.Mailbox) };
+                await helper.SendEMailAsync(subject, content, address);
+            }
         }
 
         /// <summary>
         /// 审批发送邮件
         /// </summary>
         /// <param name="info"></param>
-        public static async Task ApprovalSendMailAsync(ReturnMachineInfoApplyData info)
+        public static async Task ApprovalSendMailAsync(ReturnMachineInfoApplyData info,int resultInt)
         {
-
+            string resultStr = resultInt == 2 ? "同意" : "拒绝";
+            if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
+            {
+                string subject = "审批结果通知";
+                string content =   $"管理员已{resultStr}你对虚拟机的申请。";
+                EmailHelper helper = new EmailHelper();
+                var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
+                await helper.SendEMailAsync(subject, content, address);
+            }
         }
 
     }
