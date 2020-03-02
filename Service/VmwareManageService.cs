@@ -294,8 +294,11 @@ namespace Moetech.Zhuangzhou.Service
                     rsultInt = 0;
                 }
             }
-            //发送审批结果邮件
-            await SendMailFctory.ApprovalSendMailAsync(MachApplyAndReturnInfo.ToList()[0], state);
+            if (MachApplyAndReturnInfo.ToList().Count>0)
+            {
+                //发送审批结果邮件
+                await SendMailFctory.ApprovalSendMailAsync(MachApplyAndReturnInfo.ToList()[0], state);
+            }
 
             return rsultInt > 0 ? true : false;
         }
