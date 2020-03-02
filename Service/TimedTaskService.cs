@@ -59,18 +59,20 @@ namespace Moetech.Zhuangzhou.Service
                         //先找到对应人员的人员信息
                         var personInfo = from m in _context.CommonPersonnelInfo
                                          from n in _context.MachineInfo
-                                         where m.PersonnelId == machApplyAndReturns[i].ApplyUserID && n.MachineId == machApplyAndReturns[i].MachineInfoID
+                                         from t in _context.MachApplyAndReturn
+                                         where m.PersonnelId == machApplyAndReturns[i].ApplyUserID && 
+                                         n.MachineId == machApplyAndReturns[i].MachineInfoID &&
+                                         t.ApplyAndReturnId == machApplyAndReturns[i].ApplyAndReturnId
                                          select new ReturnMachineInfoApplyData
                                          {
                                              MachineInfo = n,
-                                             CommonPersonnelInfo = m
+                                             CommonPersonnelInfo = m,
+                                             MachApplyAndReturn = t
                                          };
                         //获取到人员信息
                         var data = personInfo.ToList().ElementAt(0);
                         //发送邮件
-                        string subject = "虚拟机到期提醒";
-                        string content = $"你申请的虚拟机（{data.MachineInfo.MachineIP}）即将在（{machApplyAndReturns[i].ResultTime}）到期，请及时归还或者续期，否则在到期之后系统将强制回收该虚拟机。";
-                        await SendMail(data.CommonPersonnelInfo.Mailbox,subject,content);
+                        await SendMailFctory.RemindSendMailAsync(data);
                         //添加日志记录 TODO
                     }
                 }
@@ -96,11 +98,14 @@ namespace Moetech.Zhuangzhou.Service
                     //找到个人信息
                     var personInfo = from m in _context.CommonPersonnelInfo
                                      from n in _context.MachineInfo
-                                     where m.PersonnelId == maches[i].ApplyUserID && n.MachineId == maches[i].MachineInfoID
+                                     from t in _context.MachApplyAndReturn
+                                     where m.PersonnelId == maches[i].ApplyUserID && n.MachineId == maches[i].MachineInfoID 
+                                     && t.ApplyAndReturnId == maches[i].ApplyAndReturnId
                                      select new ReturnMachineInfoApplyData
                                      {
                                          MachineInfo = n,
-                                         CommonPersonnelInfo = m
+                                         CommonPersonnelInfo = m,
+                                         MachApplyAndReturn = t
                                      };
                     //回收虚拟机
                     int result = _vmwareManage.Recycle(maches[i].MachineInfoID, maches[i].ApplyAndReturnId);
@@ -109,30 +114,11 @@ namespace Moetech.Zhuangzhou.Service
                     //发送邮件
                     if (result == 1) 
                     {
-                        var subject = "虚拟机到期回收通知";
-                        var content = $"你申请的虚拟机（{data.MachineInfo.MachineIP}）在（{maches[i].ResultTime}）已到期，系统已自动回收该虚拟机。";
-                        await SendMail(data.CommonPersonnelInfo.Mailbox,subject,content);
+                        await SendMailFctory.SysSendMailAsync(data);
                         //添加日志信息 TODO
                     }
                 }
                 
-            }
-        }
-
-        /// <summary>
-        /// 发送邮件(到期提醒)
-        /// </summary>
-        /// <param name="Mailbox">邮箱</param>
-        /// <param name="subject">邮件标题</param>
-        /// <param name="content">邮件内容</param>
-        /// <returns></returns>
-        public async Task SendMail(string Mailbox, string subject, string content)
-        {
-            if (!string.IsNullOrWhiteSpace(Mailbox))
-            {
-                EmailHelper helper = new EmailHelper();
-                var address = new MailboxAddress[] { new MailboxAddress(Mailbox) };
-                await helper.SendEMailAsync(subject, content, address);
             }
         }
     }

@@ -273,13 +273,17 @@ namespace Moetech.Zhuangzhou.Service
         {
             int rsultInt = 0;
             var MachApplyAndReturnInfo = from m in _context.MachApplyAndReturn
+                                         from n in _context.CommonPersonnelInfo
                                          where m.ApplyUserID == ApplyUserID && m.ApplyTime == ApplyTime &&
-                                               m.ResultTime == ResultTime && m.Remark == Remark
-                                         select m;
+                                               m.ResultTime == ResultTime && m.Remark == Remark && n.PersonnelId == ApplyUserID
+                                         select new ReturnMachineInfoApplyData { 
+                                               MachApplyAndReturn = m,
+                                               CommonPersonnelInfo = n
+                                         };
 
             foreach (var item in MachApplyAndReturnInfo.ToList())
             {
-                int result = await SubmitApprove(item.MachineInfoID, item.ApplyAndReturnId, state, userId);
+                int result = await SubmitApprove(item.MachApplyAndReturn.MachineInfoID, item.MachApplyAndReturn.ApplyAndReturnId, state, userId);
 
                 if (result > 0)
                 {
@@ -290,6 +294,9 @@ namespace Moetech.Zhuangzhou.Service
                     rsultInt = 0;
                 }
             }
+            //发送审批结果邮件
+            await SendMailFctory.ApprovalSendMailAsync(MachApplyAndReturnInfo.ToList()[0], state);
+
             return rsultInt > 0 ? true : false;
         }
         /// <summary>
@@ -347,14 +354,7 @@ namespace Moetech.Zhuangzhou.Service
             if (personInfo != null)
             {
                 ReturnMachineInfoApplyData info = personInfo.ToList()[0];
-                if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
-                {
-                    string subject = "虚拟机到期回收通知";
-                    string content = $"由于检测到你申请的虚拟机{info.MachineInfo.MachineIP}许久未使用，管理员已强制回收该虚拟机。";
-                    EmailHelper helper = new EmailHelper();
-                    var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
-                    await helper.SendEMailAsync(subject, content, address);
-                }
+                await SendMailFctory.AdminiSendMailAsync(info);
             }
         }
     }

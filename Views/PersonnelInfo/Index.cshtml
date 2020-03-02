@@ -10,7 +10,7 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1>员工列表</h1>
 
 <div class="form-row">
     <div class="form-group col-md-3">
@@ -54,15 +54,11 @@
 
                 @if (item.DepId == 0)
                 {
-                    <td>
-                        普通
-                    </td>
+                    <td>普通</td>
                 }
                 else
                 {
-                    <td>
-                        管理
-                    </td>
+                    <td>管理</td>
                 }
 
                 <td>
@@ -94,14 +90,26 @@
 {
     <div class="row justify-content-center mt-4">
         <ul class="pagination">
+            <li class="page-item"><a class="page-link btn @prevDisabled" asp-action="Index" asp-route-name="@name" asp-route-pageIndex="@(Model.PageIndex - 1)">首页</a></li>
             <li class="page-item"><a class="page-link btn @prevDisabled" asp-action="Index" asp-route-name="@name" asp-route-pageIndex="@(Model.PageIndex - 1)">上一页</a></li>
-
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(Model.PageIndex == i ? "active":"")"><a class="page-link" asp-route-name="@name" asp-route-pageIndex="@i">@i</a></li>
-            }
-
             <li class="page-item"><a class="page-link btn @nextDisabled" asp-action="Index" asp-route-name="@name" asp-route-pageIndex="@(Model.PageIndex + 1)">下一页</a></li>
+            <li class="page-item"><a class="page-link btn @nextDisabled" asp-action="Index" asp-route-name="@name" asp-route-pageIndex="@(Model.PageIndex + 1)">尾页</a></li>
+            <li class="page-item">
+                <select class="page-link btn" style="font-size:13px;" name="pageIndex" onchange="selectJump()">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        if (Model.PageIndex == i)
+                        {
+                            <option selected value="@i">@i</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </li>
+            <li class="page-item"><span class="page-link btn" style="border:none;">当前第@(Model.PageIndex)页，共@(Model.TotalPages)页</span></li>
         </ul>
     </div>
 }
@@ -111,5 +119,12 @@
     function select() {
         var name = $('input[name=name]').val().trim();
         window.location.href = "/PersonnelInfo/Index?name=" + name + "&pageIndex=" + @Model.PageIndex;
+    };
+
+    // 分页跳转
+    function selectJump() {
+        var name = $('input[name=name]').val().trim();
+        var pageIndex = $('select[name=pageIndex]').val().trim();
+        window.location.href = "/PersonnelInfo/Index?name=" + name + "&pageIndex=" + pageIndex;
     };
 </script>

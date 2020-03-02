@@ -23,11 +23,6 @@ namespace Moetech.Zhuangzhou.Controllers
         private IUser _user;
 
         /// <summary>
-        /// 每页条数
-        /// </summary>
-        private readonly int pageSize = 10;
-
-        /// <summary>
         /// 角色 
         /// </summary>
         public override int[] Role { get; set; } = { 1 };
@@ -40,7 +35,7 @@ namespace Moetech.Zhuangzhou.Controllers
         // GET: PersonnelInfo
         public async Task<IActionResult> Index(string name = "", int? pageIndex = 1)
         {
-            var PagingList=await _user.GetUserInfo(name, pageIndex ?? 1);
+            var PagingList = await _user.GetUserInfo(name, pageIndex ?? 1);
             // 查询条件参数
             ViewBag.name = name;
             return View(PagingList);
@@ -61,20 +56,16 @@ namespace Moetech.Zhuangzhou.Controllers
             return View(commonPersonnelInfo);
         }
 
-        // GET: PersonnelInfo/Create
         public IActionResult Create()
         {
             CommonPersonnelInfo personnelInfo = new CommonPersonnelInfo();
-            personnelInfo.PersonnelNo = _user.GetMaxPersonnelNo()+1;
+            personnelInfo.PersonnelNo = _user.GetMaxPersonnelNo() + 1;
             return View(personnelInfo);
         }
 
-        // POST: PersonnelInfo/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public  IActionResult Create([Bind("PersonnelId,PersonnelNo,PersonnelName,DepId,Avatar,PersonnelSex,BirthDate,IdentityCard," +
+        public IActionResult Create([Bind("PersonnelId,PersonnelNo,PersonnelName,DepId,Avatar,PersonnelSex,BirthDate,IdentityCard," +
             "IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime,DepartureTime," +
             "TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
         {
@@ -84,18 +75,18 @@ namespace Moetech.Zhuangzhou.Controllers
                 ViewData["Message"] = $"员工工号:{commonPersonnelInfo.PersonnelNo},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
                 return View("Views/Shared/Tip.cshtml");
             }
-            if (_user.CheckUserName(commonPersonnelInfo.UserName,OperationUserType.USERNAME))
+            if (_user.CheckUserName(commonPersonnelInfo.UserName, OperationUserType.USERNAME))
             {
                 ViewData["Title"] = "操作失败";
-                ViewData["Message"] =$"用户名:{commonPersonnelInfo.UserName},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
+                ViewData["Message"] = $"用户名:{commonPersonnelInfo.UserName},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
                 return View("Views/Shared/Tip.cshtml");
             }
-                if (ModelState.IsValid)
-                {
-                    _user.Create(commonPersonnelInfo);
-                    return RedirectToAction(nameof(Index));
-                }
-             
+            if (ModelState.IsValid)
+            {
+                _user.CreateAsync(commonPersonnelInfo);
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(commonPersonnelInfo);
         }
 
@@ -107,7 +98,7 @@ namespace Moetech.Zhuangzhou.Controllers
                 return NotFound();
             }
 
-            var commonPersonnelInfo =await _user.Details(id ?? 0);
+            var commonPersonnelInfo = await _user.Details(id ?? 0);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
@@ -124,13 +115,13 @@ namespace Moetech.Zhuangzhou.Controllers
             "IdentityCard,IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime," +
             "DepartureTime,TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
         {
-            if (_user.CheckUserName(commonPersonnelInfo.PersonnelNo, OperationUserType.WORKNUMBER,id))
+            if (_user.CheckUserName(commonPersonnelInfo.PersonnelNo, OperationUserType.WORKNUMBER, id))
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = $"员工工号:{commonPersonnelInfo.PersonnelNo},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
                 return View("Views/Shared/Tip.cshtml");
             }
-            if (_user.CheckUserName(commonPersonnelInfo.UserName,OperationUserType.USERNAME,id))
+            if (_user.CheckUserName(commonPersonnelInfo.UserName, OperationUserType.USERNAME, id))
             {
                 ViewData["Title"] = "操作失败";
                 ViewData["Message"] = $"用户名:{commonPersonnelInfo.UserName},已存在！查看<a href='/PersonnelInfo/Index'>员工管理</a>";
@@ -149,8 +140,8 @@ namespace Moetech.Zhuangzhou.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                        throw;
-                    
+                    throw;
+
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -177,7 +168,7 @@ namespace Moetech.Zhuangzhou.Controllers
         // POST: PersonnelInfo/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public  IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             _user.DeleteConfirmed(id);
 
