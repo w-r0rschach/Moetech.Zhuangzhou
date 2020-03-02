@@ -13,8 +13,8 @@
     <dl class="row">
         <dt class="col-sm-2">@Html.DisplayNameFor(model => model.MachineIP)</dt>
         <dd class="col-sm-10">@Model.MachineIP</dd>
-        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.MachineSystem)</dt> 
-        <dd class="col-sm-10">@Model.MachineSystem</dd> 
+        <dt class="col-sm-2">@Html.DisplayNameFor(model => model.MachineSystem)</dt>
+        <dd class="col-sm-10">@Model.MachineSystem</dd>
         <dt class="col-sm-2">@Html.DisplayNameFor(model => model.MachineDiskCount)</dt>
         <dd class="col-sm-10">@Model.MachineDiskCount</dd>
         <dt class="col-sm-2">@Html.DisplayNameFor(model => model.MachineMemory)</dt>
@@ -40,9 +40,24 @@
         <dd class="col-sm-10">@Model.MachinePassword</dd>
     </dl>
 
-    <form asp-action="Delete">
+
+    <form asp-action="Delete" id="delForm">
         <input type="hidden" asp-for="MachineId" />
-        <input type="submit" value="删除" class="btn btn-danger" /> |
+        <input type="button" onclick="del(@Model.MachineId)" value="删除" class="btn btn-danger" />
         <a asp-action="Index">返回列表</a>
     </form>
 </div>
+
+
+<script type="text/javascript" > 
+    function del() {
+        layer.confirm('确定删除这台虚拟机吗？', {
+            title: "提示",
+            btn: ['确定', '取消'],//按钮
+        }, function () {
+                document: delForm.submit();
+        },function(){
+           
+        });
+    }
+</script>

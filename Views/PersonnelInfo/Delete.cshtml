@@ -227,9 +227,24 @@
         </dd>
     </dl>
 
-    <form asp-action="Delete">
+    <form asp-action="Delete" id="delForm">
         <input type="hidden" asp-for="PersonnelId" />
-        <input type="submit" value="删除" class="btn btn-danger" /> |
+        <input type="button" value="删除" class="btn btn-danger" onclick="del(@Model.PersonnelId)"/> |
         <a asp-action="Index">返回列表</a>
     </form>
+    
 </div>
+
+
+<script type="text/javascript">
+    function del() {
+        layer.confirm('确定删除该人员信息吗？', {
+            title: "提示",
+            btn: ['确定', '取消'],//按钮
+        }, function () {
+                document: delForm.submit();
+        },function(){
+
+        });
+    }
+</script>
