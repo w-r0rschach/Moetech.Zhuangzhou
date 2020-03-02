@@ -114,6 +114,24 @@ namespace Moetech.Zhuangzhou.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    LogId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ModuleName = table.Column<string>(maxLength: 255, nullable: false),
+                    OpenationType = table.Column<int>(nullable: false),
+                    Level = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    Content = table.Column<string>(maxLength: 2048, nullable: false),
+                    OccurredTime = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.LogId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MachApplyAndReturn",
                 columns: table => new
                 {
@@ -139,13 +157,13 @@ namespace Moetech.Zhuangzhou.Migrations
                 {
                     MachineId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    MachineIP = table.Column<string>(maxLength: 20, nullable: true),
-                    MachineSystem = table.Column<string>(maxLength: 50, nullable: true),
+                    MachineIP = table.Column<string>(maxLength: 20, nullable: false),
+                    MachineSystem = table.Column<string>(maxLength: 50, nullable: false),
                     MachineDiskCount = table.Column<double>(nullable: false),
                     MachineMemory = table.Column<double>(nullable: false),
                     MachineState = table.Column<int>(nullable: false),
-                    MachineUser = table.Column<string>(maxLength: 20, nullable: true),
-                    MachinePassword = table.Column<string>(maxLength: 20, nullable: true)
+                    MachineUser = table.Column<string>(maxLength: 20, nullable: false),
+                    MachinePassword = table.Column<string>(maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -172,6 +190,9 @@ namespace Moetech.Zhuangzhou.Migrations
 
             migrationBuilder.DropTable(
                 name: "CommonRoleAuthority");
+
+            migrationBuilder.DropTable(
+                name: "Logs");
 
             migrationBuilder.DropTable(
                 name: "MachApplyAndReturn");

@@ -9,7 +9,7 @@ using Moetech.Zhuangzhou.Data;
 namespace Moetech.Zhuangzhou.Migrations
 {
     [DbContext(typeof(VirtualMachineDB))]
-    [Migration("20200227083605_InitialMySqlCreate")]
+    [Migration("20200302081849_InitialMySqlCreate")]
     partial class InitialMySqlCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -204,6 +204,39 @@ namespace Moetech.Zhuangzhou.Migrations
                     b.ToTable("CommonRoleAuthority");
                 });
 
+            modelBuilder.Entity("Moetech.Zhuangzhou.Models.Logs", b =>
+                {
+                    b.Property<int>("LogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasMaxLength(2048);
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModuleName")
+                        .IsRequired()
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("OccurredTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("OpenationType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LogId");
+
+                    b.ToTable("Logs");
+                });
+
             modelBuilder.Entity("Moetech.Zhuangzhou.Models.MachApplyAndReturn", b =>
                 {
                     b.Property<int>("ApplyAndReturnId")
@@ -250,6 +283,7 @@ namespace Moetech.Zhuangzhou.Migrations
                         .HasColumnType("double");
 
                     b.Property<string>("MachineIP")
+                        .IsRequired()
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
@@ -257,6 +291,7 @@ namespace Moetech.Zhuangzhou.Migrations
                         .HasColumnType("double");
 
                     b.Property<string>("MachinePassword")
+                        .IsRequired()
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 
@@ -264,10 +299,12 @@ namespace Moetech.Zhuangzhou.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("MachineSystem")
+                        .IsRequired()
                         .HasColumnType("varchar(50) CHARACTER SET utf8mb4")
                         .HasMaxLength(50);
 
                     b.Property<string>("MachineUser")
+                        .IsRequired()
                         .HasColumnType("varchar(20) CHARACTER SET utf8mb4")
                         .HasMaxLength(20);
 

@@ -57,5 +57,10 @@ namespace Moetech.Zhuangzhou.Data
         /// 虚拟机信息
         /// </summary>
         public DbSet<MachineInfo> MachineInfo { get; set; }
+
+        /// <summary>
+        /// 日志信息
+        /// </summary>
+        public DbSet<Logs> Logs { get; set; }
     }
 }
