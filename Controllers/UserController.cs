@@ -11,6 +11,7 @@ using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Models;
+using Newtonsoft.Json;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -79,6 +80,6 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction(nameof(Login));
-        }
+        } 
     }
 }

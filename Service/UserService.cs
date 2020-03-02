@@ -164,5 +164,18 @@ namespace Moetech.Zhuangzhou.Service
         {
             return _context.CommonPersonnelInfo.Max(m => m.PersonnelNo);
         }
+        /// <summary>
+        /// 根据主键修改用户密码
+        /// </summary>
+        /// <param name="id">主键</param>
+        /// <param name="password">新密码</param>
+        /// <returns></returns>
+      public  int ModifyPassWord(int id, string password)
+        {
+            CommonPersonnelInfo commonPersonnel = _context.CommonPersonnelInfo.Where(s=>s.PersonnelId==id).FirstOrDefault();
+            commonPersonnel.Password = password;
+            _context.Update(commonPersonnel);
+          return  _context.SaveChanges();
+        }
     }
 }

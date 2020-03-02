@@ -22,7 +22,7 @@
                         {
                             @if (ViewBag.User.DepId == 0)
                             {
-                                <li class="navbar-brand"><a class="navbar-brand" asp-area="" asp-controller="Vmware" asp-action="Index">申请虚拟机</a></li>
+                                <li class="nav-item"><a class="navbar-brand" asp-area="" asp-controller="Vmware" asp-action="Index">申请虚拟机</a></li>
                                 <li class="nav-item"><a class="nav-link text-dark" asp-area="" asp-controller="Vmware" asp-action="MyVmware">我的虚拟机</a></li>
                             }
                             else
@@ -47,9 +47,9 @@
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <div class="nav-link text-dark">@ViewBag.User.PersonnelName</div>
-                            </li>
+                    <li class="nav-item">
+                         <a class="nav-link text-dark" asp-area="" asp-controller="Reset" asp-action="Reset">@ViewBag.User.PersonnelName</a>
+                    </li>
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="LoginOut">退出</a>

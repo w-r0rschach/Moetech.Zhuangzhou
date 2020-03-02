@@ -72,5 +72,12 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <returns></returns>
         int GetMaxPersonnelNo();
+        /// <summary>
+        /// 根据主键修改用户密码
+        /// </summary>
+        /// <param name="id">主键</param>
+        /// <param name="password">新密码</param>
+        /// <returns></returns>
+        int ModifyPassWord(int id, string password); 
     }
 }
