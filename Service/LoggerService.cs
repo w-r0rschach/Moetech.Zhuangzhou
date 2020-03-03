@@ -99,12 +99,13 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="level">日志等级</param>
         /// <param name="openationType">操作类型</param>
         /// <param name="Content">日志内容</param>
-        public void LoggerInfo(string moduleName, string Content,int userId=0, LogLevel level=LogLevel.Information, OperationLogType openationType=OperationLogType.NONE )
+        public void LoggerInfo(string moduleName, string Content,int userId=0, LogLevel level=LogLevel.Information, 
+            OperationLogType openationType=OperationLogType.NONE )
         {
             Logs.UserId = userId;
             Logs.ModuleName = moduleName;
-            Logs.Level = level;
-            Logs.OpenationType = openationType;
+            Logs.Level =(int)level;
+            Logs.OpenationType =(int)openationType;
             Logs.Content = Content;
             LoggerInfo(Logs);
         }

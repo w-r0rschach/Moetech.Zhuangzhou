@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Threading.Tasks;
+using log4net;
+using log4net.Config;
+using log4net.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,9 +26,13 @@ namespace Moetech.Zhuangzhou
 {
     public class Startup
     {
+        public static ILoggerRepository repository { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            repository = LogManager.CreateRepository("NETCoreRepository");
+            XmlConfigurator.Configure(repository, new FileInfo(Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory, "log4net.config")));
         }
 
         public IConfiguration Configuration { get; }
@@ -53,6 +61,7 @@ namespace Moetech.Zhuangzhou
             services.AddScoped<IUser, UserService>();
             services.AddScoped<IVmware, VmwareService>();
 			services.AddScoped<IVmwareManage, VmwareManageService>();
+            services.AddScoped<ILogs, LoggerService>();
 
             services.Configure<CookiePolicyOptions>(options =>
             {
