@@ -92,5 +92,20 @@ namespace Moetech.Zhuangzhou.Email
             }
         }
 
+        /// <summary>
+        /// 审批提醒管理员
+        /// </summary>
+        /// <param name="info"></param>
+        public static async Task ApprovalSendMailManageAsync(CommonPersonnelInfo info)
+        {
+            if (!string.IsNullOrWhiteSpace(info.Mailbox))
+            {
+                string subject = "申请通知";
+                string content = $"{info.PersonnelName}正在申请虚拟机，请管理员尽快对申请做出审批。";
+                EmailHelper helper = new EmailHelper();
+                var address = new MailboxAddress[] { new MailboxAddress(info.Mailbox) };
+                await helper.SendEMailAsync(subject, content, address);
+            }
+        }
     }
 }
