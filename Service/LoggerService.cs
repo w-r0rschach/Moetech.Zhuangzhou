@@ -104,8 +104,8 @@ namespace Moetech.Zhuangzhou.Service
         {
             Logs.UserId = userId;
             Logs.ModuleName = moduleName;
-            Logs.Level =(int)level;
-            Logs.OpenationType =(int)openationType;
+            Logs.Level =level;
+            Logs.OpenationType =openationType;
             Logs.Content = Content;
             LoggerInfo(Logs);
         }

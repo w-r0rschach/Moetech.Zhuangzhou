@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Moetech.Zhuangzhou.Models;
 using Moetech.Zhuangzhou.Interface;
+using Microsoft.Extensions.Logging;
+using Moetech.Zhuangzhou.Common.EnumDefine;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -20,19 +22,26 @@ namespace Moetech.Zhuangzhou.Controllers
         /// 虚拟机管理接口
         /// </summary>
         private readonly IVmwareManage _vmwareManage;
-
+        /// <summary>
+        /// 日志接口
+        /// </summary>
+        private readonly ILogs _logs;
         /// <summary>
         /// 角色 
         /// </summary>
         public override int[] Role { get; set; } = { 1 };
-
+        // 当前用户信息
+        CommonPersonnelInfo userInfo;
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="vmwareManage">虚拟机接口</param>
-        public ManageController(IVmwareManage vmwareManage)
+        public ManageController(IVmwareManage vmwareManage,ILogs logs)
         {
+            _logs = logs;
             _vmwareManage = vmwareManage;
+            userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            _logs.LoggerInfo("虚拟机管理-列表","初始化虚拟机管理参数");
         }
 
         /// <summary>
@@ -47,6 +56,10 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(string name = "", string type ="", int? status = -1, int? pageIndex = 1)
         {
+            _logs.LoggerInfo("虚拟机管理-列表", $"{userInfo.PersonnelName} 查询了 申请人为：{name};" +
+                $"操作系统类型为：{type}；虚拟机状态为：{status} 的虚拟机信息",userInfo.PersonnelId,LogLevel.Information,
+                OperationLogType.SELECT);
+
             var list = await _vmwareManage.SelectAll(name, type, status, pageIndex);
 
             // 查询条件参数
@@ -64,7 +77,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
         public async Task<IActionResult> Approve(int? pageIndex = 1)
-        {
+        { 
             var list = await _vmwareManage.SelectApprove(pageIndex ?? 1);
 
             return View(list);
@@ -83,8 +96,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> SubmitApprove(int applyUserID, DateTime applyTime, DateTime resultTime, string remark, int state)
         {
-            // 当前用户信息
-            CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+           
 
             if (applyUserID == 0 || string.IsNullOrWhiteSpace(remark) || remark.Length > 255 || state < 1 || state > 2)
             {

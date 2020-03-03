@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MimeKit;
+using Moetech.Zhuangzhou.Common.EnumDefine;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
@@ -21,10 +23,16 @@ namespace Moetech.Zhuangzhou.Controllers
         /// 用户接口
         /// </summary>
         private IUser _user;
+        /// <summary>
+        /// 日志接口
+        /// </summary>
+        private ILogs _logs;
 
-        public UserController(IUser user)
+        public UserController(IUser user, ILogs logs)
         {
             _user = user;
+            _logs = logs;
+            _logs.LoggerInfo("用户登录-初始化","用户登录初始化参数");
         }
 
         /// <summary>
@@ -33,6 +41,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public IActionResult Login()
         {
+            _logs.LoggerInfo("用户登录-初始化", "用户登录初始化视图");
             return View();
         }
 
@@ -66,10 +75,18 @@ namespace Moetech.Zhuangzhou.Controllers
 
             if (user.DepId == 1)
             {
+                _logs.LoggerInfo("用户登录-登录处理", $"管理员:{user.PersonnelName} 登录成功",user.PersonnelId,
+                    LogLevel.Information,OperationLogType.SELECT);
+
                 return RedirectToAction("Index", "Manage");
             }
+            else
+            {
+                _logs.LoggerInfo("用户登录-登录处理", $"普通用户:{user.PersonnelName} 登录成功", user.PersonnelId,
+                   LogLevel.Information, OperationLogType.SELECT);
 
-            return RedirectToAction("Index", "Vmware");
+                return RedirectToAction("Index", "Vmware"); 
+            } 
         }
 
         /// <summary>
@@ -78,6 +95,11 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public IActionResult LoginOut()
         {
+            CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            string userType = userInfo.DepId == 1 ? "管理员" : "普通用户";
+
+            _logs.LoggerInfo("用户登录-登录处理", $"{userType}:{userInfo.PersonnelName} 退出成功", userInfo.PersonnelId);
+
             HttpContext.Session.Clear();
             return RedirectToAction(nameof(Login));
         } 

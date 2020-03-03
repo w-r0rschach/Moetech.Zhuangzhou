@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Moetech.Zhuangzhou.Common.EnumDefine;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -30,14 +32,14 @@ namespace Moetech.Zhuangzhou.Models
         /// </summary>
         [Required]
         [Display(Name = "操作类型")]
-        public int OpenationType { get; set; }
+        public OperationLogType OpenationType { get; set; }
 
         /// <summary>
         /// 日志等级
         /// </summary>
         [Required]
         [Display(Name = "日志等级")]
-        public int Level { get; set; }
+        public LogLevel Level { get; set; }
 
         /// <summary>
         /// 用户ID
