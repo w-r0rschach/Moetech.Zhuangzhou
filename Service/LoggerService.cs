@@ -56,7 +56,7 @@ namespace Moetech.Zhuangzhou.Service
                 }
                 else
                 {
-                    LogInfo(logs.Level,message);
+                   // LogInfo(logs.Level,message);
                 }
             }
         } 
