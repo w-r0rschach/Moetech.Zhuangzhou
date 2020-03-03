@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Moetech.Zhuangzhou.Migrations
 {
-    public partial class InitialMySqlCreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -169,6 +169,24 @@ namespace Moetech.Zhuangzhou.Migrations
                 {
                     table.PrimaryKey("PK_MachineInfo", x => x.MachineId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "MessageWarns",
+                columns: table => new
+                {
+                    MessageId = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    MessageTitle = table.Column<string>(maxLength: 100, nullable: true),
+                    MessageContent = table.Column<string>(maxLength: 255, nullable: true),
+                    PonsonalId = table.Column<int>(nullable: false),
+                    MessageWarnDate = table.Column<DateTime>(nullable: false),
+                    MessageType = table.Column<int>(nullable: false),
+                    MessageReadDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MessageWarns", x => x.MessageId);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -199,6 +217,9 @@ namespace Moetech.Zhuangzhou.Migrations
 
             migrationBuilder.DropTable(
                 name: "MachineInfo");
+
+            migrationBuilder.DropTable(
+                name: "MessageWarns");
         }
     }
 }

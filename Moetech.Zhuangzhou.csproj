@@ -6,9 +6,13 @@
 
   <ItemGroup>
     <Compile Remove="Doc\**" />
+    <Compile Remove="vSphere\**" />
     <Content Remove="Doc\**" />
+    <Content Remove="vSphere\**" />
     <EmbeddedResource Remove="Doc\**" />
+    <EmbeddedResource Remove="vSphere\**" />
     <None Remove="Doc\**" />
+    <None Remove="vSphere\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,10 +39,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="vSphere\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

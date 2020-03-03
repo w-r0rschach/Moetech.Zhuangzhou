@@ -310,6 +310,37 @@ namespace Moetech.Zhuangzhou.Migrations
 
                     b.ToTable("MachineInfo");
                 });
+
+            modelBuilder.Entity("Moetech.Zhuangzhou.Models.MessageWarn", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("MessageContent")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
+                        .HasMaxLength(255);
+
+                    b.Property<DateTime>("MessageReadDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("MessageTitle")
+                        .HasColumnType("varchar(100) CHARACTER SET utf8mb4")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("MessageWarnDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("PonsonalId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MessageId");
+
+                    b.ToTable("MessageWarns");
+                });
 #pragma warning restore 612, 618
         }
     }
