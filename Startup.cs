@@ -62,7 +62,6 @@ namespace Moetech.Zhuangzhou
             services.AddScoped<IVmware, VmwareService>();
 			services.AddScoped<IVmwareManage, VmwareManageService>();
             services.AddScoped<ILogs, LoggerService>();
-
             services.Configure<CookiePolicyOptions>(options =>
             {
                //这个lambda决定对于一个给定的请求是否需要用户对非必需cookie的同意。

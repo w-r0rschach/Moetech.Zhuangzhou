@@ -25,23 +25,23 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 日志接口
         /// </summary>
-        private readonly ILogs _logs;
+        private ILogs _log;
         /// <summary>
         /// 角色 
         /// </summary>
         public override int[] Role { get; set; } = { 1 };
+
         // 当前用户信息
-        CommonPersonnelInfo userInfo;
+        readonly CommonPersonnelInfo userInfo;
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="vmwareManage">虚拟机接口</param>
         public ManageController(IVmwareManage vmwareManage,ILogs logs)
         {
-            _logs = logs;
+            _log = logs;
             _vmwareManage = vmwareManage;
-            userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            _logs.LoggerInfo("虚拟机管理-列表","初始化虚拟机管理参数");
+            _log.LoggerInfo("虚拟机管理-列表","初始化虚拟机列表信息");
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(string name = "", string type ="", int? status = -1, int? pageIndex = 1)
         {
-            _logs.LoggerInfo("虚拟机管理-列表", $"{userInfo.PersonnelName} 查询了 申请人为：{name};" +
+            _log.LoggerInfo("虚拟机管理-列表", $"{userInfo.PersonnelName} 查询了 申请人为：{name};" +
                 $"操作系统类型为：{type}；虚拟机状态为：{status} 的虚拟机信息",userInfo.PersonnelId,LogLevel.Information,
                 OperationLogType.SELECT);
 

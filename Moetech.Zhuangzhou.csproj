@@ -6,9 +6,13 @@
 
   <ItemGroup>
     <Compile Remove="Doc\**" />
+    <Compile Remove="Log\**" />
     <Content Remove="Doc\**" />
+    <Content Remove="Log\**" />
     <EmbeddedResource Remove="Doc\**" />
+    <EmbeddedResource Remove="Log\**" />
     <None Remove="Doc\**" />
+    <None Remove="Log\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+<PackageReference Include="log4net" Version="2.0.8" />
     <None Include="wwwroot\layer\layer.js" />
     <None Include="wwwroot\layer\mobile\layer.js" />
   </ItemGroup>

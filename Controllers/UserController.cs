@@ -26,13 +26,12 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 日志接口
         /// </summary>
-        private ILogs _logs;
-
-        public UserController(IUser user, ILogs logs)
+        private ILogs _log;
+        public UserController(IUser user,ILogs logs)
         {
-            _user = user;
-            _logs = logs;
-            _logs.LoggerInfo("用户登录-初始化","用户登录初始化参数");
+            _log = logs;
+            _user = user;  
+            _log.LoggerInfo("用户登录-初始化","用户登录初始化参数");
         }
 
         /// <summary>
@@ -40,8 +39,8 @@ namespace Moetech.Zhuangzhou.Controllers
         /// </summary>
         /// <returns></returns>
         public IActionResult Login()
-        {
-            _logs.LoggerInfo("用户登录-初始化", "用户登录初始化视图");
+        { 
+            _log.LoggerInfo("用户登录-初始化","初始化登录视图");
             return View();
         }
 
@@ -68,25 +67,23 @@ namespace Moetech.Zhuangzhou.Controllers
                 ViewData["Message"] = "账号或密码错误。";
                 return View("Views/User/Login.cshtml");
             }
-
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(user);
             // 存入Session
             HttpContext.Session.Set("User", System.Text.Encoding.UTF8.GetBytes(json));
-
             if (user.DepId == 1)
             {
-                _logs.LoggerInfo("用户登录-登录处理", $"管理员:{user.PersonnelName} 登录成功",user.PersonnelId,
-                    LogLevel.Information,OperationLogType.SELECT);
+                _log.LoggerInfo( "用户登录-登录处理", $"管理员：{user.PersonnelName} 登录成功", 
+                    user.PersonnelId, LogLevel.Information, OperationLogType.SELECT );
 
                 return RedirectToAction("Index", "Manage");
             }
             else
             {
-                _logs.LoggerInfo("用户登录-登录处理", $"普通用户:{user.PersonnelName} 登录成功", user.PersonnelId,
-                   LogLevel.Information, OperationLogType.SELECT);
+                _log.LoggerInfo( "用户登录-登录处理",$"普通用户：{user.PersonnelName} 登录成功",
+                    user.PersonnelId, LogLevel.Information,OperationLogType.SELECT );
 
-                return RedirectToAction("Index", "Vmware"); 
-            } 
+                return RedirectToAction("Index", "Vmware");
+            }
         }
 
         /// <summary>
@@ -95,10 +92,12 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public IActionResult LoginOut()
         {
+            // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            string userType = userInfo.DepId == 1 ? "管理员" : "普通用户";
 
-            _logs.LoggerInfo("用户登录-登录处理", $"{userType}:{userInfo.PersonnelName} 退出成功", userInfo.PersonnelId);
+            string userType = userInfo.DepId == 1 ? "管理员" : "普通用户";
+            _log.LoggerInfo( "用户登录-退出",$"{userType}：{userInfo.PersonnelName} 退出成功",
+                userInfo.PersonnelId, LogLevel.Information,OperationLogType.NONE );
 
             HttpContext.Session.Clear();
             return RedirectToAction(nameof(Login));
