@@ -62,5 +62,11 @@ namespace Moetech.Zhuangzhou.Data
         /// 日志信息
         /// </summary>
         public DbSet<Logs> Logs { get; set; }
+
+        /// <summary>
+        /// 消息提醒
+        /// </summary>
+        public DbSet<MessageWarn> MessageWarns { get; set; }
+
     }
 }
