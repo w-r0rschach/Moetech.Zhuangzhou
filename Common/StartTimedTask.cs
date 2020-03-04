@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Moetech.Zhuangzhou.Interface;
+using Moetech.Zhuangzhou.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +45,7 @@ namespace Moetech.Zhuangzhou.Common
         /// <param name="state"></param>
         public void WorkTask(object state)
         {
+            
             // 注入数据库服务
             using var scope = _services.CreateScope();
             var task = scope.ServiceProvider.GetRequiredService<ITimedTask>();

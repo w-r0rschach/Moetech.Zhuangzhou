@@ -25,16 +25,17 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <summary>
         /// 角色 
         /// </summary>
-        public override int[] Role { get; set; } = { 1 };
-
+        public override int[] Role { get; set; } = { 1 }; 
         public PersonnelInfoController(IUser user)
         {
             _user = user;
+           
         }
 
         // GET: PersonnelInfo
         public async Task<IActionResult> Index(string name = "", int? pageIndex = 1)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             var PagingList = await _user.GetUserInfo(name, pageIndex ?? 1);
             // 查询条件参数
             ViewBag.name = name;
@@ -44,11 +45,12 @@ namespace Moetech.Zhuangzhou.Controllers
         // GET: PersonnelInfo/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == null)
             {
                 return NotFound();
             }
-            var commonPersonnelInfo = await _user.Details(id ?? 0);
+            var commonPersonnelInfo = await _user.Details(userInfo, id ?? 0);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
@@ -69,6 +71,7 @@ namespace Moetech.Zhuangzhou.Controllers
             "IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime,DepartureTime," +
             "TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (_user.CheckUserName(commonPersonnelInfo.PersonnelNo, OperationUserType.WORKNUMBER))
             {
                 ViewData["Title"] = "操作失败";
@@ -83,7 +86,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             if (ModelState.IsValid)
             {
-                _user.CreateAsync(commonPersonnelInfo);
+                _user.CreateAsync(userInfo,commonPersonnelInfo);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -93,12 +96,13 @@ namespace Moetech.Zhuangzhou.Controllers
         // GET: PersonnelInfo/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == null)
             {
                 return NotFound();
             }
 
-            var commonPersonnelInfo = await _user.Details(id ?? 0);
+            var commonPersonnelInfo = await _user.Details(userInfo,id ?? 0);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
@@ -115,6 +119,7 @@ namespace Moetech.Zhuangzhou.Controllers
             "IdentityCard,IsWork,Nation,MaritalStatus,LiveAddress,Phone,WeChatAccount,Mailbox,Degree,Address,OnboardingTime," +
             "DepartureTime,TrialTime,IsStruggle,IsSecrecy,UserName,Password,AppMaxCount")] CommonPersonnelInfo commonPersonnelInfo)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (_user.CheckUserName(commonPersonnelInfo.PersonnelNo, OperationUserType.WORKNUMBER, id))
             {
                 ViewData["Title"] = "操作失败";
@@ -136,7 +141,7 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 try
                 {
-                    _user.Edit(commonPersonnelInfo);
+                    _user.Edit(userInfo,commonPersonnelInfo);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -151,12 +156,13 @@ namespace Moetech.Zhuangzhou.Controllers
         // GET: PersonnelInfo/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == null)
             {
                 return NotFound();
             }
 
-            var commonPersonnelInfo = await _user.Details(id ?? 0);
+            var commonPersonnelInfo = await _user.Details(userInfo,id ?? 0);
             if (commonPersonnelInfo == null)
             {
                 return NotFound();
@@ -170,7 +176,8 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            _user.DeleteConfirmed(id);
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            _user.DeleteConfirmed(userInfo,id);
 
             return RedirectToAction(nameof(Index));
         }

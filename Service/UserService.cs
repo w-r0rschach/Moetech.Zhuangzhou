@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Common.EnumDefine;
 using Moetech.Zhuangzhou.Data;
@@ -21,15 +22,19 @@ namespace Moetech.Zhuangzhou.Service
         /// 每页条数
         /// </summary>
         private readonly int pageSize = 10;
-
+        /// <summary>
+        /// 日志接口
+        /// </summary>
+        private readonly ILogs _logs;
         /// <summary>
         /// 数据量上下文
         /// </summary>
         private VirtualMachineDB _context;
 
-        public UserService(VirtualMachineDB context)
+        public UserService(VirtualMachineDB context,ILogs logs)
         {
             _context = context;
+            _logs = logs;
         }
 
         /// <summary>
@@ -48,9 +53,11 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="id">实体主键</param>
         /// <returns></returns>
-        public CommonPersonnelInfo GetPersonnelInfo(int id)
+        public CommonPersonnelInfo GetPersonnelInfo(CommonPersonnelInfo personnelInfo,int id)
         {
             var personeInfo = from m in _context.CommonPersonnelInfo.Where(s => s.PersonnelId == id) select m;
+            _logs.LoggerInfo("用户信息-查询",$"{personnelInfo.PersonnelName} 查询了 用户：{personeInfo.FirstOrDefault().UserName} 的详细信息!",
+                personnelInfo.PersonnelId,LogLevel.Information,OperationLogType.SELECT);
             return personeInfo.FirstOrDefault();
         }
 
@@ -126,9 +133,14 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
-        public Task<CommonPersonnelInfo> Details(int id)
+        public Task<CommonPersonnelInfo> Details(CommonPersonnelInfo personnelInfo,int id)
         {
-            return _context.CommonPersonnelInfo.FirstOrDefaultAsync(m => m.PersonnelId == id);
+            var personeInfo = _context.CommonPersonnelInfo.FirstOrDefaultAsync(m => m.PersonnelId == id);
+
+            _logs.LoggerInfo("用户信息-查询", $"{personnelInfo.PersonnelName} 查询了 用户：{personeInfo.Result.UserName} 的详细信息!",
+                personnelInfo.PersonnelId, LogLevel.Information, OperationLogType.SELECT);
+
+            return personeInfo;
         }
 
         /// <summary>
@@ -136,8 +148,11 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="info">用户实体对象</param>
         /// <returns></returns>
-        public async Task CreateAsync(CommonPersonnelInfo info)
+        public async Task CreateAsync(CommonPersonnelInfo personnelInfo,CommonPersonnelInfo info)
         {
+          await  _logs.LoggerInfo("用户信息-新增", $"{personnelInfo.PersonnelName} 新增了用户名称：{info.UserName} 的用户!",
+           personnelInfo.PersonnelId, LogLevel.Information, OperationLogType.ADD);
+
             _context.Add(info);
             _context.SaveChanges();
             //新增员工时发送邮件
@@ -152,8 +167,11 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="id">用户Id</param>
         /// <param name="info"></param>
         /// <returns></returns>
-        public void Edit(CommonPersonnelInfo info)
+        public void Edit(CommonPersonnelInfo personnelInfo,CommonPersonnelInfo info)
         {
+            _logs.LoggerInfo("用户信息-修改", $"{personnelInfo.PersonnelName} 更新了用户名称：{info.UserName} 的详细信息!",
+        personnelInfo.PersonnelId, LogLevel.Information, OperationLogType.MODIFY);
+
             _context.Update(info);
             _context.SaveChanges();
         }
@@ -163,11 +181,15 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="id">主键</param>
         /// <returns></returns>
-        public void DeleteConfirmed(int id)
+        public void DeleteConfirmed(CommonPersonnelInfo personnelInfo,int id)
         {
-            var commonPersonnelInfo = Details(id).Result;
-            _context.CommonPersonnelInfo.Remove(commonPersonnelInfo);
+            var commonPersonnelInfo = Details(personnelInfo,id).Result;
+            _context.CommonPersonnelInfo.Remove(commonPersonnelInfo); 
             _context.SaveChanges();
+
+            _logs.LoggerInfo("用户信息-删除", $"{personnelInfo.PersonnelName} 删除了用户名称：{commonPersonnelInfo.UserName} 的详细信息!",
+       personnelInfo.PersonnelId, LogLevel.Information, OperationLogType.DELETE);
+
         }
 
         /// <summary>
@@ -184,12 +206,16 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="id">主键</param>
         /// <param name="password">新密码</param>
         /// <returns></returns>
-      public  int ModifyPassWord(int id, string password)
+      public  int ModifyPassWord(CommonPersonnelInfo personnelInfo,int id, string password)
         {
             CommonPersonnelInfo commonPersonnel = _context.CommonPersonnelInfo.Where(s=>s.PersonnelId==id).FirstOrDefault();
             commonPersonnel.Password = password;
-            _context.Update(commonPersonnel);
-          return  _context.SaveChanges();
+
+            _logs.LoggerInfo("用户信息-修改密码", $"{personnelInfo.PersonnelName} 修改了 用户名为：{commonPersonnel.UserName} 的密码!",
+      personnelInfo.PersonnelId, LogLevel.Information, OperationLogType.DELETE);
+
+            _context.Update(commonPersonnel); 
+            return  _context.SaveChanges();
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="logs">日志信息操作类</param>
         /// <remarks>对象参数是说明:Content,ModuleName,不能为空，UserId不能小于0</remarks>
-        public void LoggerInfo(Logs logs)
+        public async Task LoggerInfoAsync(Logs logs)
         {
             if (string.IsNullOrWhiteSpace(logs.Content) ||
                 string.IsNullOrWhiteSpace(logs.ModuleName)||
@@ -53,11 +53,11 @@ namespace Moetech.Zhuangzhou.Service
                 {
                     ///将对象值存储到数据库中
                     _context.Add(logs);
-                    _context.SaveChanges();
+                //  await  _context.SaveChangesAsync();
                 }
                 else
                 {
-                   // LogInfo(logs.Level,message);
+                    LogInfo(logs.Level,message);
                 }
             }
         } 
@@ -66,7 +66,7 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="level">日志等级</param>
         /// <param name="message">日志内容</param>
-        private void LogInfo(LogLevel level,string message)
+        private  void LogInfo(LogLevel level,string message)
         {
             switch (level)
             {
@@ -100,7 +100,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="level">日志等级</param>
         /// <param name="openationType">操作类型</param>
         /// <param name="Content">日志内容</param>
-        public void LoggerInfo(string moduleName, string Content,int userId=0, LogLevel level=LogLevel.Information, 
+        public async Task  LoggerInfo(string moduleName, string Content,int userId=0, LogLevel level=LogLevel.Information, 
             OperationLogType openationType=OperationLogType.NONE )
         {
             Logs.UserId = userId;
@@ -108,7 +108,7 @@ namespace Moetech.Zhuangzhou.Service
             Logs.Level =level;
             Logs.OpenationType =openationType;
             Logs.Content = Content;
-            LoggerInfo(Logs);
+           await LoggerInfoAsync(Logs);
         }
     }
 }

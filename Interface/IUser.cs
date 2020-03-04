@@ -25,8 +25,9 @@ namespace Moetech.Zhuangzhou.Interface
         /// 根据主键获取实体
         /// </summary>
         /// <param name="id">实体主键</param>
+        /// <param name="personnelInfo">当前操作用户</param>
         /// <returns></returns>
-        CommonPersonnelInfo GetPersonnelInfo(int id);
+        CommonPersonnelInfo GetPersonnelInfo(CommonPersonnelInfo personnelInfo, int id);
 
         /// <summary>
         /// 验证数据是否存在
@@ -49,30 +50,34 @@ namespace Moetech.Zhuangzhou.Interface
         /// 根据主键查询实体
         /// </summary>
         /// <param name="id">主键</param>
+        /// <param name="personnelInfo">当前操作用户</param>
         /// <returns></returns>
-        Task<CommonPersonnelInfo> Details(int id);
+        Task<CommonPersonnelInfo> Details(CommonPersonnelInfo personnelInfo, int id);
 
         /// <summary>
         /// 创建用户信息
         /// </summary>
         /// <param name="info">用户实体对象</param>
+        /// <param name="personnelInfo">当前操作用户</param>
         /// <returns></returns>
-        Task CreateAsync(CommonPersonnelInfo info);
+        Task CreateAsync(CommonPersonnelInfo personnelInfo, CommonPersonnelInfo info);
 
         /// <summary>
         /// 更新用户信息
         /// </summary>
         /// <param name="id">用户Id</param>
         /// <param name="info"></param>
+        /// <param name="personnelInfo">当前操作用户</param>
         /// <returns></returns>
-        void Edit(CommonPersonnelInfo info);
+        void Edit(CommonPersonnelInfo personnelInfo,CommonPersonnelInfo info);
 
         /// <summary>
         /// 根据用户主键删除用户实体
         /// </summary>
         /// <param name="id">主键</param>
+        /// <param name="personnelInfo">当前操作用户</param>
         /// <returns></returns>
-        void DeleteConfirmed(int id);
+        void DeleteConfirmed(CommonPersonnelInfo personnelInfo,int id);
 
         /// <summary>
         /// 获取最大员工工号
@@ -84,7 +89,8 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <param name="id">主键</param>
         /// <param name="password">新密码</param>
+        /// <param name="personnelInfo">当前操作用户</param>
         /// <returns></returns>
-        int ModifyPassWord(int id, string password); 
+        int ModifyPassWord(CommonPersonnelInfo personnelInfo,int id, string password); 
     }
 }

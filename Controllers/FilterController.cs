@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Moetech.Zhuangzhou.Models;
+using Moetech.Zhuangzhou.Common;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -48,8 +49,7 @@ namespace Moetech.Zhuangzhou.Controllers
                 else
                 {
                     // _Layout.cshtml页面使用
-                    ViewBag.User = commonPersonnelInfo;
-
+                    ViewBag.User = commonPersonnelInfo; 
                     base.OnActionExecuting(context);
                 }
             }

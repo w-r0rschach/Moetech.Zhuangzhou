@@ -17,7 +17,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// 查询虚拟机信息
         /// </summary>
         /// <returns></returns>
-        IQueryable<MachineInfo> SelectVmware();
+        IQueryable<MachineInfo> SelectVmware(CommonPersonnelInfo personnelInfo);
 
         /// <summary>
         /// 提交申请
@@ -33,7 +33,8 @@ namespace Moetech.Zhuangzhou.Interface
         /// 0:待审批
         /// 2:同意
         /// </returns>
-        Task<int> SubmitApplication(string machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo);
+        Task<int> SubmitApplication(string machineSystem, int machineDiskCount, 
+            int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo);
 
         /// <summary>
         /// 我的虚拟机

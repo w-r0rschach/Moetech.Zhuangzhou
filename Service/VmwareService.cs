@@ -11,6 +11,8 @@ using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Models;
 using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Interface;
+using Microsoft.Extensions.Logging;
+using Moetech.Zhuangzhou.Common.EnumDefine;
 
 namespace Moetech.Zhuangzhou.Service
 {
@@ -20,17 +22,25 @@ namespace Moetech.Zhuangzhou.Service
         /// 数据量上下文
         /// </summary>
         private VirtualMachineDB _context;
-
-        public VmwareService(VirtualMachineDB context)
+        /// <summary>
+        /// 日志接口
+        /// </summary>
+        private ILogs _logs;
+        /// <summary>
+        /// 续租时间
+        /// </summary>
+        private readonly int Renewal = 15;
+        public VmwareService(VirtualMachineDB context, ILogs logs)
         {
             _context = context;
+            _logs = logs;
         }
 
         /// <summary>
         /// 查询虚拟机
         /// </summary>
         /// <returns></returns>
-        public IQueryable<MachineInfo> SelectVmware()
+        public IQueryable<MachineInfo> SelectVmware(CommonPersonnelInfo personnelInfo)
         {
             IQueryable<MachineInfo> list = from m in _context.MachineInfo
                                            where m.MachineState == 0    // 空闲状态
@@ -43,6 +53,10 @@ namespace Moetech.Zhuangzhou.Service
                                                MachineMemory = b.Key.MachineMemory,
                                                MachineState = b.Count() // 临时当做剩余数量显示
                                            };
+
+            _logs.LoggerInfo("虚拟机申请-列表", $"{personnelInfo.PersonnelName} 查询了所有可申请的虚拟机",
+                personnelInfo.PersonnelId, LogLevel.Trace, OperationLogType.SELECT);
+
             return list;
         }
 
@@ -60,7 +74,8 @@ namespace Moetech.Zhuangzhou.Service
         /// 0:待审批
         /// 2:同意
         /// </returns>
-        public async Task<int> SubmitApplication(string machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark, CommonPersonnelInfo userInfo)
+        public async Task<int> SubmitApplication(string machineSystem, int machineDiskCount, int machineMemory,
+            int applyNumber, string remark, CommonPersonnelInfo userInfo)
         {
             ///获取当前时间
             DateTime _dateTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
@@ -119,9 +134,13 @@ namespace Moetech.Zhuangzhou.Service
                         ApplyTime = _dateTime,
                         ResultTime = _dateTime.AddDays(15), // 默认申请15天
                         Remark = remark
-                    });
+                    }); 
             }
             await _context.SaveChangesAsync();
+
+            await _logs.LoggerInfo("虚拟机申请-提交申请", $"{userInfo.PersonnelName} 申请了  内存：{list.FirstOrDefault().MachineMemory} " +
+                $"硬盘：{list.FirstOrDefault().MachineDiskCount} 系统：{list.FirstOrDefault().MachineSystem} 的虚拟机 {applyNumber}台",
+                userInfo.PersonnelId, LogLevel.Trace, OperationLogType.MODIFY);
 
             return autoApprove == true ? 2 : 0;
         }
@@ -140,6 +159,10 @@ namespace Moetech.Zhuangzhou.Service
                            MachineInfo = m1,
                            MachApplyAndReturn = m2
                        };
+
+            _logs.LoggerInfo("我的虚拟机-列表", $"{userInfo.PersonnelName} 查询了我的虚拟机数据",
+                userInfo.PersonnelId, LogLevel.Trace, OperationLogType.SELECT);
+
             return list;
         }
 
@@ -172,6 +195,11 @@ namespace Moetech.Zhuangzhou.Service
                 item.MachApplyAndReturn.OprationType = 1;
                 item.MachApplyAndReturn.ResultTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 _context.MachApplyAndReturn.Update(item.MachApplyAndReturn);
+
+
+                await _logs.LoggerInfo("我的虚拟机-列表", $"{userInfo.PersonnelName} 归还了 IP：{item.MachineInfo.MachineIP} 硬盘：{item.MachineInfo.MachineDiskCount} " +
+                    $"内存：{item.MachineInfo.MachineMemory} 的虚拟机",
+                    userInfo.PersonnelId, LogLevel.Trace, OperationLogType.MODIFY);
             }
 
             await _context.SaveChangesAsync();
@@ -184,11 +212,19 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         public async Task<bool> Renew(int id, CommonPersonnelInfo userInfo)
         {
-            int userId = userInfo.PersonnelId;
+            int userId = userInfo.PersonnelId; 
             DateTime _dateTime = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            var machApplyAndReturn = await _context.MachApplyAndReturn.FirstOrDefaultAsync(m => m.ApplyAndReturnId == id && m.OprationType == 0 && m.ApplyUserID == userId);
+            var machApplyAndReturn = from m in _context.MachApplyAndReturn
+                                     join m1 in _context.MachineInfo on  m.MachineInfoID equals m1.MachineId
+                                     where (m.ApplyAndReturnId == id&& m.OprationType == 0 && m.ApplyUserID == userId)
+                                     select new ReturnMachineInfoApplyData
+                                     {
+                                         MachineInfo = m1,
+                                         MachApplyAndReturn = m
+                                     };
 
-            TimeSpan time = (machApplyAndReturn.ResultTime - _dateTime);
+            ReturnMachineInfoApplyData ReurnInfo = machApplyAndReturn.FirstOrDefault();
+            TimeSpan time = (ReurnInfo.MachApplyAndReturn.ResultTime - _dateTime);
 
             // 小于三天才能续租
             if (time.Days > 3)
@@ -197,9 +233,13 @@ namespace Moetech.Zhuangzhou.Service
             }
 
             // 当前时间+15天
-            machApplyAndReturn.ResultTime = _dateTime.AddDays(15);
+            ReurnInfo.MachApplyAndReturn.ResultTime = _dateTime.AddDays(Renewal);
 
-            _context.MachApplyAndReturn.Update(machApplyAndReturn);
+            await _logs.LoggerInfo("我的虚拟机-列表", $"{userInfo.PersonnelName} 将虚拟机 IP：{ReurnInfo.MachineInfo.MachineIP} 硬盘：{ReurnInfo.MachineInfo.MachineDiskCount} " +
+                   $"内存：{ReurnInfo.MachineInfo.MachineMemory} 续租了 {Renewal}天;虚拟机结束时间为:{_dateTime.AddDays(Renewal)}",
+                   userInfo.PersonnelId, LogLevel.Trace, OperationLogType.MODIFY);
+
+            _context.MachApplyAndReturn.Update(ReurnInfo.MachApplyAndReturn);
             await _context.SaveChangesAsync();
             return true;
         }

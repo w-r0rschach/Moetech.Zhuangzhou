@@ -30,9 +30,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// 角色 
         /// </summary>
         public override int[] Role { get; set; } = { 1 };
-
-        // 当前用户信息
-        readonly CommonPersonnelInfo userInfo;
+ 
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -41,6 +39,7 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             _log = logs;
             _vmwareManage = vmwareManage;
+           
             _log.LoggerInfo("虚拟机管理-列表","初始化虚拟机列表信息");
         }
 
@@ -56,11 +55,8 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Index(string name = "", string type ="", int? status = -1, int? pageIndex = 1)
         {
-            _log.LoggerInfo("虚拟机管理-列表", $"{userInfo.PersonnelName} 查询了 申请人为：{name};" +
-                $"操作系统类型为：{type}；虚拟机状态为：{status} 的虚拟机信息",userInfo.PersonnelId,LogLevel.Information,
-                OperationLogType.SELECT);
-
-            var list = await _vmwareManage.SelectAll(name, type, status, pageIndex);
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            var list = await _vmwareManage.SelectAll(userInfo,name, type, status, pageIndex);
 
             // 查询条件参数
             ViewBag.name = name;
@@ -77,8 +73,9 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
         public async Task<IActionResult> Approve(int? pageIndex = 1)
-        { 
-            var list = await _vmwareManage.SelectApprove(pageIndex ?? 1);
+        {
+            CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            var list = await _vmwareManage.SelectApprove(userInfo,pageIndex ?? 1);
 
             return View(list);
         }
@@ -107,7 +104,8 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             else
             {
-                var result = await _vmwareManage.ResultSubmitApprove(applyUserID, applyTime, resultTime, remark, state, userInfo.PersonnelId);
+                CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+                var result = await _vmwareManage.ResultSubmitApprove(userInfo,applyUserID, applyTime, resultTime, remark, state, userInfo.PersonnelId);
                 if (!result)
                 {
                     ViewData["Title"] = "操作失败";
@@ -132,8 +130,9 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public IActionResult Recycle(int mid, int rid,int pid)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             //回收虚拟机
-            int result = _vmwareManage.Recycle(mid, rid);
+            int result = _vmwareManage.Recycle(userInfo,mid, rid);
             
             if (result == -1)
             {
@@ -167,13 +166,14 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == null)
             {
                 return NotFound();
             }
             else
             {
-                var machineInfo = await _vmwareManage.Details(id);
+                var machineInfo = await _vmwareManage.Details(userInfo,id);
 
                 if (machineInfo == null)
                 {
@@ -208,6 +208,7 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (_vmwareManage.CheckHost(machineInfo.MachineIP, machineInfo.MachineId))
             {
                 ViewData["Title"] = "新增失败";
@@ -216,7 +217,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             if (ModelState.IsValid)
             {
-                await _vmwareManage.Save(machineInfo);
+                await _vmwareManage.Save(machineInfo, userInfo);
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -234,13 +235,14 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Edit(int? id)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == null)
             {
                 return NotFound();
             }
             else
             {
-                var machineInfo = await _vmwareManage.Details(id);
+                var machineInfo = await _vmwareManage.Details(userInfo,id);
                 if (machineInfo == null)
                 {
                     return NotFound();
@@ -264,6 +266,7 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MachineId,MachineIP,MachineSystem,MachineDiskCount,MachineMemory,MachineState,MachineUser,MachinePassword")] MachineInfo machineInfo)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (_vmwareManage.CheckHost(machineInfo.MachineIP, machineInfo.MachineId))
             {
                 ViewData["Title"] = "编辑失败";
@@ -278,7 +281,7 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _vmwareManage.Update(machineInfo);
+                    await _vmwareManage.Update(userInfo,machineInfo);
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -297,13 +300,14 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Delete(int? id)
         {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == null)
             {
                 return NotFound();
             }
             else
             {
-                var machineInfo = await _vmwareManage.Details(id);
+                var machineInfo = await _vmwareManage.Details(userInfo,id);
                 if (machineInfo == null)
                 {
                     return NotFound();
@@ -326,8 +330,9 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var machineInfo = await _vmwareManage.Details(id);
-            await _vmwareManage.Delete(machineInfo);
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            var machineInfo = await _vmwareManage.Details(userInfo,id);
+            await _vmwareManage.Delete(userInfo,machineInfo);
             return RedirectToAction(nameof(Index));
         }
     }

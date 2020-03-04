@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,12 +30,12 @@ namespace Moetech.Zhuangzhou.Service
         /// 数据量上下文
         /// </summary>
         private readonly VirtualMachineDB _context;
-
         public TimedTaskService(ILogger<TimedTaskService> logger, VirtualMachineDB context,IVmwareManage vmwareManage)
         {
             _logger = logger;
             _context = context;
             _vmwareManage = vmwareManage;
+
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace Moetech.Zhuangzhou.Service
         /// 检查虚拟机是否到期，到期则发送邮件
         /// </summary>
         public async Task CheckMaturityAsync()
-        {
+        { 
             //查询正在使用中的,并且归还时间已到期的虚拟机
             var info = from n in _context.MachApplyAndReturn
                        where n.OprationType == 0 && n.ExamineResult == 2 && n.ResultTime <= DateTime.Now
@@ -111,18 +113,19 @@ namespace Moetech.Zhuangzhou.Service
                                          MachApplyAndReturn = t
                                      };
                     //回收虚拟机
-                    int result = _vmwareManage.Recycle(maches[i].MachineInfoID, maches[i].ApplyAndReturnId);
+
+                   // int result = _vmwareManage.Recycle(userInfo,maches[i].MachineInfoID, maches[i].ApplyAndReturnId);
                     //获取到人员信息
                     var data = personInfo.ToList().ElementAt(0);
                     //发送邮件
-                    if (result == 1) 
-                    {
-                        //发送邮件
-                        MessageWarn messageWarn = await SendMailFctory.SysSendMailAsync(data);
-                        //添加提醒记录信息
-                        //_context.MessageWarns.Add(messageWarn);
-                        //await _context.SaveChangesAsync();
-                    }
+                    //if (result == 1) 
+                    //{
+                    //    //发送邮件
+                    //    MessageWarn messageWarn = await SendMailFctory.SysSendMailAsync(data);
+                    //    //添加提醒记录信息
+                    //    //_context.MessageWarns.Add(messageWarn);
+                    //    //await _context.SaveChangesAsync();
+                    //}
                 }
                 
             }

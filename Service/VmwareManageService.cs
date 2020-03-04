@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MimeKit;
 using Moetech.Zhuangzhou.Common;
+using Moetech.Zhuangzhou.Common.EnumDefine;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Email;
 using Moetech.Zhuangzhou.Interface;
@@ -23,15 +25,19 @@ namespace Moetech.Zhuangzhou.Service
         /// 每页条数
         /// </summary>
         private readonly int pageSize = 10;
-
         /// <summary>
         /// 数据量上下文
         /// </summary>
         private readonly VirtualMachineDB _context;
+        /// <summary>
+        /// 日志接口
+        /// </summary>
+        private readonly ILogs _logs;
 
-        public VmwareManageService(VirtualMachineDB context)
+        public VmwareManageService(VirtualMachineDB context,ILogs logs)
         {
             _context = context;
+            _logs = logs;
         }
 
         /// <summary>
@@ -41,8 +47,10 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="type">操作系统</param>
         /// <param name="status">虚拟机状态</param>
         /// <param name="pageIndex">当前页</param>
+        /// <param name="personnelInfo">登录用户信息</param>
         /// <returns></returns>
-        public async Task<PaginatedList<ReturnMachineInfoApplyData>> SelectAll(string name = "", string type = "", int? status = -1, int? pageIndex = 1)
+        public async Task<PaginatedList<ReturnMachineInfoApplyData>> SelectAll(CommonPersonnelInfo personnelInfo,string name = "",
+            string type = "", int? status = -1, int? pageIndex = 1)
         {
             var list = from m1 in _context.MachineInfo
                        join m2 in (from m3 in _context.MachApplyAndReturn
@@ -80,6 +88,9 @@ namespace Moetech.Zhuangzhou.Service
                 list = list.Where(o => o.CommonPersonnelInfo.PersonnelName.Contains(name));
             }
 
+            await _logs.LoggerInfo("虚拟机管理-列表", $"{personnelInfo.PersonnelName} 查询了 申请人为：{name};" +
+              $"操作系统类型为：{type}；虚拟机状态为：{status} 的虚拟机信息", personnelInfo.PersonnelId, LogLevel.Information,
+              OperationLogType.SELECT);
             return await PaginatedList<ReturnMachineInfoApplyData>.CreateAsync(list.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
 
@@ -89,7 +100,7 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="pageIndex">当前页</param>
         /// <returns></returns>
-        public async Task<PaginatedList<ReturnData>> SelectApprove(int? pageIndex = 1)
+        public async Task<PaginatedList<ReturnData>> SelectApprove(CommonPersonnelInfo personnelInfo, int? pageIndex = 1)
         {
             var machApplyAndReturn = from m in _context.MachApplyAndReturn
                                      join m1 in _context.MachineInfo on m.MachineInfoID equals m1.MachineId
@@ -121,8 +132,10 @@ namespace Moetech.Zhuangzhou.Service
                                          ResultTime = b.Key.ResultTime,
                                          Remark = b.Key.Remark,
                                          NumberCount = b.Count()
-
                                      };
+
+            await _logs.LoggerInfo("虚拟机管理-列表", $"{personnelInfo.PersonnelName} 查询了所有待审批状态的虚拟机",
+                personnelInfo.PersonnelId, LogLevel.Information,OperationLogType.SELECT);
 
             return await PaginatedList<ReturnData>.CreateAsync(machApplyAndReturn.AsNoTracking(), pageIndex ?? 1, pageSize);
         }
@@ -130,21 +143,23 @@ namespace Moetech.Zhuangzhou.Service
 
         /// <summary>
         /// 提交审批虚拟机
-        /// </summary>
+        /// </summary>；
         /// <param name="mid">虚拟机信息ID</param>
         /// <param name="aid">申请归还信息ID</param>
         /// <param name="state">状态1：拒绝  2：同意</param>
         /// <param name="userid">用户ID</param>
         /// <returns></returns>
-        public async Task<int> SubmitApprove(int mid, int aid, int state, int userid)
+        public async Task<int> SubmitApprove(CommonPersonnelInfo personnelInfo, int mid, int aid, int state, int userid)
         {
             var list = from m1 in _context.MachApplyAndReturn
                        join m2 in _context.MachineInfo on m1.MachineInfoID equals m2.MachineId
+                       join m3 in _context.CommonPersonnelInfo on m1.ApplyUserID equals m3.PersonnelId
                        where m1.MachineInfoID == mid && m1.ApplyAndReturnId == aid
                        select new ReturnMachineInfoApplyData
                        {
                            MachApplyAndReturn = m1,
-                           MachineInfo = m2
+                           MachineInfo = m2,
+                           CommonPersonnelInfo=m3
                        };
 
             if (list.Count() == 0)
@@ -161,12 +176,18 @@ namespace Moetech.Zhuangzhou.Service
 
                     _context.MachApplyAndReturn.Update(item.MachApplyAndReturn);
                     _context.MachineInfo.Update(item.MachineInfo);
+
+                    //await _logs.LoggerInfo("虚拟机管理-审批", $"{personnelInfo.PersonnelName} {(state == 1 ? "拒绝" : "同意")} 了" +
+                    //  $" {item.CommonPersonnelInfo.PersonnelName} 的虚拟机申请；虚拟机IP地址:{item.MachineInfo.MachineIP}、" +
+                    //  $" 虚拟机类型：{item.MachineInfo.MachineMemory}、虚拟机内存:{item.MachineInfo.MachineMemory}、" +
+                    //  $"硬盘:{item.MachineInfo.MachineDiskCount}", personnelInfo.PersonnelId,
+                    //  LogLevel.Trace, OperationLogType.MODIFY);
+
+
                 }
-
-                await _context.SaveChangesAsync();
-
-                return 1;
-            }
+              
+ return await _context.SaveChangesAsync();
+            }   
         }
 
         /// <summary>
@@ -175,7 +196,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="mid">虚拟机信息ID</param>
         /// <param name="rid">申请虚拟机记录ID</param>
         /// <returns></returns>
-        public int Recycle(int mid, int rid)
+        public int Recycle(CommonPersonnelInfo personnelInfo, int mid, int rid)
         {
             var list = from m1 in _context.MachineInfo
                        join m2 in _context.MachApplyAndReturn on m1.MachineId equals m2.MachineInfoID
@@ -203,6 +224,9 @@ namespace Moetech.Zhuangzhou.Service
                         _context.MachineInfo.Update(item.MachineInfo);
                         _context.MachApplyAndReturn.Update(item.MachApplyAndReturn);
 
+                        _logs.LoggerInfo("虚拟机管理-回收", $"{personnelInfo.PersonnelName} 强制回收了IP为:{item.MachineInfo.MachineIP}的虚拟机", 
+                            personnelInfo.PersonnelId, LogLevel.Trace, OperationLogType.MODIFY);
+
                     }
                     else
                     {
@@ -220,9 +244,15 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="id">虚拟机ID</param>
         /// <returns></returns>
-        public async Task<MachineInfo> Details(int? id)
+        public async Task<MachineInfo> Details(CommonPersonnelInfo personnelInfo, int? id)
         {
-            return await _context.MachineInfo.FirstOrDefaultAsync(m => m.MachineId == id);
+       
+          var machineInfo = _context.MachineInfo.FirstOrDefaultAsync(m => m.MachineId == id);
+
+            await _logs.LoggerInfo("虚拟机管理-查询", $"{personnelInfo.PersonnelName} 查询了IP为:{machineInfo.Result.MachineIP}的虚拟机",
+                     personnelInfo.PersonnelId, LogLevel.Trace, OperationLogType.SELECT);
+
+            return await machineInfo;
         }
 
         /// <summary>
@@ -230,8 +260,12 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="machineInfo">虚拟机对象</param>
         /// <returns></returns>
-        public async Task<int> Save(MachineInfo machineInfo)
+        public async Task<int> Save(MachineInfo machineInfo, CommonPersonnelInfo personnelInfo)
         {
+            await _logs.LoggerInfo("虚拟机管理-添加", $"{personnelInfo.PersonnelName} 添加了IP为:{machineInfo.MachineIP}，" +
+                $"系统类型：{machineInfo.MachineSystem},硬盘：{machineInfo.MachineDiskCount},内存：{machineInfo.MachineMemory} 的虚拟机",
+                   personnelInfo.PersonnelId, LogLevel.Trace, OperationLogType.ADD);
+
             _context.MachineInfo.Add(machineInfo);
             return await _context.SaveChangesAsync();
         }
@@ -241,8 +275,12 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="machineInfo">虚拟机对象</param>
         /// <returns></returns>
-        public async Task<int> Update(MachineInfo machineInfo)
+        public async Task<int> Update( CommonPersonnelInfo personnelInfo,MachineInfo machineInfo)
         {
+            await _logs.LoggerInfo("虚拟机管理-修改", $"{personnelInfo.PersonnelName} 修改了IP为:{machineInfo.MachineIP}，" +
+               $"系统类型：{machineInfo.MachineSystem},硬盘：{machineInfo.MachineDiskCount},内存：{machineInfo.MachineMemory} 的虚拟机",
+                  personnelInfo.PersonnelId, LogLevel.Trace, OperationLogType.MODIFY);
+
             _context.Update(machineInfo);
             return await _context.SaveChangesAsync();
         }
@@ -252,14 +290,18 @@ namespace Moetech.Zhuangzhou.Service
         /// </summary>
         /// <param name="machineInfo">虚拟机对象</param>
         /// <returns></returns>
-        public async Task<int> Delete(MachineInfo machineInfo)
+        public async Task<int> Delete(CommonPersonnelInfo personnelInfo, MachineInfo machineInfo)
         {
+            await _logs.LoggerInfo("虚拟机管理-删除", $"{personnelInfo.PersonnelName} 删除了IP为:{machineInfo.MachineIP}，" +
+                 $"系统类型：{machineInfo.MachineSystem},硬盘：{machineInfo.MachineDiskCount},内存：{machineInfo.MachineMemory} 的虚拟机",
+                    personnelInfo.PersonnelId, LogLevel.Trace, OperationLogType.DELETE);
+
             _context.MachineInfo.Remove(machineInfo);
             return await _context.SaveChangesAsync();
         }
 
         /// <summary>
-        /// 返回审批状态
+        /// 虚拟机审批
         /// </summary>
         /// <param name="ApplyUserID">申请人</param>
         /// <param name="ApplyTime">申请时间</param>
@@ -268,21 +310,23 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="state">审批状态</param>
         /// <param name="userId">用户Id</param>
         /// <returns></returns>
-        public async Task<bool> ResultSubmitApprove(int ApplyUserID, DateTime ApplyTime, DateTime ResultTime, string Remark, int state, int userId)
+        public async Task<bool> ResultSubmitApprove(CommonPersonnelInfo personnelInfo, int ApplyUserID, DateTime ApplyTime,
+            DateTime ResultTime, string Remark, int state, int userId)
         {
+
             int rsultInt = 0;
             var MachApplyAndReturnInfo = from m in _context.MachApplyAndReturn
-                                         from n in _context.CommonPersonnelInfo
+                                         join m1 in _context.CommonPersonnelInfo on m.ApplyUserID equals m1.PersonnelId 
                                          where m.ApplyUserID == ApplyUserID && m.ApplyTime == ApplyTime &&
-                                               m.ResultTime == ResultTime && m.Remark == Remark && n.PersonnelId == ApplyUserID
+                                               m.ResultTime == ResultTime && m.Remark == Remark && m1.PersonnelId == ApplyUserID
                                          select new ReturnMachineInfoApplyData { 
                                                MachApplyAndReturn = m,
-                                               CommonPersonnelInfo = n
+                                               CommonPersonnelInfo = m1
                                          };
 
             foreach (var item in MachApplyAndReturnInfo.ToList())
             {
-                int result = await SubmitApprove(item.MachApplyAndReturn.MachineInfoID, item.MachApplyAndReturn.ApplyAndReturnId, state, userId);
+                int result = await SubmitApprove(personnelInfo,item.MachApplyAndReturn.MachineInfoID, item.MachApplyAndReturn.ApplyAndReturnId, state, userId);
 
                 if (result > 0)
                 {
@@ -295,6 +339,9 @@ namespace Moetech.Zhuangzhou.Service
             }
             if (MachApplyAndReturnInfo.ToList().Count>0)
             {
+                await _logs.LoggerInfo("虚拟机管理-通知", $"系统已发送邮件通知 {MachApplyAndReturnInfo.ToList()[0].CommonPersonnelInfo.PersonnelName} 审批信息" ,
+                    personnelInfo.PersonnelId, LogLevel.Trace, OperationLogType.DELETE);
+
                 //发送审批结果邮件
                 MessageWarn messageWarn = await SendMailFctory.ApprovalSendMailAsync(MachApplyAndReturnInfo.ToList()[0], state);
                 //_context.MessageWarns.Add(messageWarn);
@@ -345,7 +392,7 @@ namespace Moetech.Zhuangzhou.Service
         /// <param name="machineId">虚拟机Id</param>
         /// <param name="applyPersonId">使用者id</param>
         /// <returns></returns>
-        public async Task SendMail(int machineId, int applyPersonId)
+        public async Task SendMail( int machineId, int applyPersonId)
         {
             var personInfo = from m in _context.CommonPersonnelInfo
                              from n in _context.MachineInfo

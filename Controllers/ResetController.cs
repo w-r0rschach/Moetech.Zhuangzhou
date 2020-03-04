@@ -28,7 +28,7 @@ namespace Moetech.Zhuangzhou.Controllers
         {
             // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            var personnelInfo = _user.GetPersonnelInfo(userInfo.PersonnelId);
+            var personnelInfo = _user.GetPersonnelInfo(userInfo,userInfo.PersonnelId);
             return View(personnelInfo); 
         } 
         /// <summary>    
@@ -38,7 +38,7 @@ namespace Moetech.Zhuangzhou.Controllers
         public IActionResult ModifyPassWord(string pwd)
         {  // 当前用户信息
             CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-            if (_user.ModifyPassWord(userInfo.PersonnelId, pwd) > 0)
+            if (_user.ModifyPassWord(userInfo,userInfo.PersonnelId, pwd) > 0)
             {
                 return RedirectToAction("LoginOut", "User");
             }

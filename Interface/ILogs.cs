@@ -15,7 +15,7 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <param name="logs">日志信息操作类</param>
         /// <remarks>对象参数是说明:Content,ModuleName,不能为空，UserId不能小于0</remarks>
-        void LoggerInfo(Logs logs);
+        Task LoggerInfoAsync(Logs logs);
         /// <summary>
         /// 日志记录
         /// </summary>
@@ -24,6 +24,6 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="level">日志等级</param>
         /// <param name="openationType">操作类型</param>
         /// <param name="Content">日志内容</param>
-        void LoggerInfo(string moduleName, string Content,int userId=0, LogLevel level=LogLevel.Information, OperationLogType openationType=OperationLogType.NONE);
+        Task LoggerInfo(string moduleName, string Content,int userId=0, LogLevel level=LogLevel.Information, OperationLogType openationType=OperationLogType.NONE);
     }
 }

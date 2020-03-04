@@ -22,7 +22,6 @@ namespace Moetech.Zhuangzhou.Controllers
         /// 虚拟机信息接口
         /// </summary>
         private IVmware _vmware;
-
         /// <summary>
         /// 角色 
         /// </summary>
@@ -31,6 +30,7 @@ namespace Moetech.Zhuangzhou.Controllers
         public VmwareController(IVmware vmware)
         {
             _vmware = vmware;
+           
         }
 
         /// <summary>
@@ -41,7 +41,8 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns>IActionResult</returns>
         public async Task<IActionResult> Index()
         {
-            return View(await _vmware.SelectVmware().ToListAsync());
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            return View(await _vmware.SelectVmware(userInfo).ToListAsync());
         }
 
         // <summary>
@@ -90,8 +91,7 @@ namespace Moetech.Zhuangzhou.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitApply(string machineSystem, int machineDiskCount, int machineMemory, int applyNumber, string remark)
         {
-            // 当前用户信息
-            CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
 
             if (string.IsNullOrWhiteSpace(machineSystem) || machineDiskCount == 0 ||
                 machineMemory == 0 || applyNumber == 0 || string.IsNullOrWhiteSpace(remark) || remark.Length > 255)
@@ -135,8 +135,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public IActionResult MyVmware()
         {
-            // 当前用户信息
-            CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             return View(_vmware.MyVmware(userInfo));
         }
 
@@ -146,9 +145,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> EarlyReturn(int id)
         {
-            // 当前用户信息
-            CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == 0)
             {
                 ViewData["Title"] = "操作失败";
@@ -178,9 +175,7 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> Relet(int id)
         {
-            // 当前用户信息
-            CommonPersonnelInfo userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
-
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             if (id == 0)
             {
                 ViewData["Title"] = "操作失败";
