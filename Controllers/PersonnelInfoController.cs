@@ -86,7 +86,7 @@ namespace Moetech.Zhuangzhou.Controllers
             }
             if (ModelState.IsValid)
             {
-                _user.CreateAsync(userInfo,commonPersonnelInfo);
+                _user.CreateAsync(userInfo,commonPersonnelInfo).Wait();
                 return RedirectToAction(nameof(Index));
             }
 

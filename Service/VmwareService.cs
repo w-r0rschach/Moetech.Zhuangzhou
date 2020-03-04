@@ -248,10 +248,28 @@ namespace Moetech.Zhuangzhou.Service
         /// 保存提醒消息记录
         /// </summary>
         /// <param name="messageWarn"></param>
-        public async Task SaveMesageWarn(MessageWarn messageWarn)
+        public async Task SaveMesageWarn(List<MessageWarn> messageWarn)
         {
-            _context.MessageWarns.Add(messageWarn);
-            await _context.SaveChangesAsync();
+            if (messageWarn.Count > 0)
+            {
+                for (int i = 0; i < messageWarn.Count; i++)
+                {
+                    _context.MessageWarns.Add(messageWarn[i]);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 得到管理员信息
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<CommonPersonnelInfo>> GetAdminInfo()
+        {
+            var info = from n in _context.CommonPersonnelInfo
+                       where n.DepId == 1
+                       select n;
+            return info.ToListAsync();
         }
     }
 }

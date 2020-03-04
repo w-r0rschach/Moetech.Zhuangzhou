@@ -1,10 +1,8 @@
 ﻿using MimeKit;
 using Moetech.Zhuangzhou.Common;
-using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Moetech.Zhuangzhou.Email
@@ -30,7 +28,7 @@ namespace Moetech.Zhuangzhou.Email
             }
             else
             {
-                return new MessageWarn();
+                return null;
             }
 
         }
@@ -53,7 +51,7 @@ namespace Moetech.Zhuangzhou.Email
             }
             else
             {
-                return new MessageWarn();
+                return null;
             }
         }
 
@@ -75,7 +73,7 @@ namespace Moetech.Zhuangzhou.Email
             }
             else
             {
-                return new MessageWarn();
+                return null;
             }
         }
 
@@ -98,7 +96,7 @@ namespace Moetech.Zhuangzhou.Email
             }
             else
             {
-                return new MessageWarn();
+                return null;
             }
         }
 
@@ -121,7 +119,7 @@ namespace Moetech.Zhuangzhou.Email
             }
             else
             {
-                return new MessageWarn();
+                return null;
             }
         }
 
@@ -129,21 +127,29 @@ namespace Moetech.Zhuangzhou.Email
         /// 审批提醒管理员
         /// </summary>
         /// <param name="info"></param>
-        public static async Task<MessageWarn> ApprovalSendMailManageAsync(CommonPersonnelInfo info)
+        public static async Task<List<MessageWarn>> ApprovalSendMailManageAsync(List<CommonPersonnelInfo> info)
         {
-            if (!string.IsNullOrWhiteSpace(info.Mailbox))
+            List<MessageWarn> messageWarns = new List<MessageWarn>();
+            if (info.Count > 0)
             {
-                string subject = "申请通知";
-                string content = $"{info.PersonnelName}正在申请虚拟机，请管理员尽快对申请做出审批。";
-                EmailHelper helper = new EmailHelper();
-                var address = new MailboxAddress[] { new MailboxAddress(info.Mailbox) };
-                await helper.SendEMailAsync(subject, content, address);
-                MessageWarn messageWarn = GetMessageWarn(info, subject, content);
-                return messageWarn;
+                for (int i = 0; i < info.Count; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(info[i].Mailbox))
+                    {
+                        string subject = "申请通知";
+                        string content = $"{info[i].PersonnelName}正在申请虚拟机，请管理员尽快对申请做出审批。";
+                        EmailHelper helper = new EmailHelper();
+                        var address = new MailboxAddress[] { new MailboxAddress(info[i].Mailbox) };
+                        await helper.SendEMailAsync(subject, content, address);
+                        MessageWarn messageWarn = GetMessageWarn(info[i], subject, content);
+                        messageWarns.Add(messageWarn);
+                    }
+                }
+                return messageWarns;
             }
-            else 
+            else
             {
-                return new MessageWarn();
+                return messageWarns;
             }
         }
 

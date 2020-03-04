@@ -76,9 +76,8 @@ namespace Moetech.Zhuangzhou.Service
                         //发送邮件
                         MessageWarn messageWarn = await SendMailFctory.RemindSendMailAsync(data);
                         //添加提醒记录信息
-                        //_context.MessageWarns.Add(messageWarn);
-                        //await _context.SaveChangesAsync();
-
+                        _context.MessageWarns.Add(messageWarn);
+                        await _context.SaveChangesAsync();
                     }
                 }
             }
@@ -114,7 +113,7 @@ namespace Moetech.Zhuangzhou.Service
                                      };
                     //回收虚拟机
 
-                   // int result = _vmwareManage.Recycle(userInfo,maches[i].MachineInfoID, maches[i].ApplyAndReturnId);
+                    //int result = _vmwareManage.Recycle(userInfo,maches[i].MachineInfoID, maches[i].ApplyAndReturnId);
                     //获取到人员信息
                     var data = personInfo.ToList().ElementAt(0);
                     //发送邮件
@@ -123,8 +122,8 @@ namespace Moetech.Zhuangzhou.Service
                     //    //发送邮件
                     //    MessageWarn messageWarn = await SendMailFctory.SysSendMailAsync(data);
                     //    //添加提醒记录信息
-                    //    //_context.MessageWarns.Add(messageWarn);
-                    //    //await _context.SaveChangesAsync();
+                    //    _context.MessageWarns.Add(messageWarn);
+                    //    await _context.SaveChangesAsync();
                     //}
                 }
                 

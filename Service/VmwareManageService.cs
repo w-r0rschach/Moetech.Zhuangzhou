@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Abp.Domain.Uow;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MimeKit;
@@ -344,8 +345,8 @@ namespace Moetech.Zhuangzhou.Service
 
                 //发送审批结果邮件
                 MessageWarn messageWarn = await SendMailFctory.ApprovalSendMailAsync(MachApplyAndReturnInfo.ToList()[0], state);
-                //_context.MessageWarns.Add(messageWarn);
-                //await _context.SaveChangesAsync();
+                _context.MessageWarns.Add(messageWarn);
+                await _context.SaveChangesAsync();
             }
 
             return rsultInt > 0 ? true : false;
@@ -408,8 +409,8 @@ namespace Moetech.Zhuangzhou.Service
                 //发送邮件
                 MessageWarn messageWarn = await SendMailFctory.AdminiSendMailAsync(info);
                 //添加提醒记录信息
-                 //_context.MessageWarns.Add(messageWarn);
-                 //_context.SaveChanges();
+                _context.MessageWarns.Add(messageWarn);
+                _context.SaveChanges();
             }
         }
     }

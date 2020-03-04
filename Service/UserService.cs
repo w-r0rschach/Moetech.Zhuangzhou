@@ -157,8 +157,8 @@ namespace Moetech.Zhuangzhou.Service
             _context.SaveChanges();
             //新增员工时发送邮件
             MessageWarn messageWarn = await SendMailFctory.PersonalSendMailAsync(info);
-            //_context.MessageWarns.Add(messageWarn);
-            // await _context.SaveChangesAsync();
+            _context.MessageWarns.Add(messageWarn);
+            await _context.SaveChangesAsync();
         }
 
         /// <summary>

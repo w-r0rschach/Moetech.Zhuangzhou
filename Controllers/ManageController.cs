@@ -93,8 +93,6 @@ namespace Moetech.Zhuangzhou.Controllers
         /// <returns></returns>
         public async Task<IActionResult> SubmitApprove(int applyUserID, DateTime applyTime, DateTime resultTime, string remark, int state)
         {
-           
-
             if (applyUserID == 0 || string.IsNullOrWhiteSpace(remark) || remark.Length > 255 || state < 1 || state > 2)
             {
                 ViewData["Title"] = "操作失败";
@@ -150,9 +148,7 @@ namespace Moetech.Zhuangzhou.Controllers
             {
                 ViewData["Title"] = "回收成功";
                 ViewData["Message"] = "回收成功！返回<a href='/Manage/Index'>管理虚拟机</a>";
-                //回收成功后发送邮件告诉使用者
-                _vmwareManage.SendMail(mid,pid);
-
+                _vmwareManage.SendMail(mid,pid).Wait(); //回收成功后发送邮件告诉使用者
                 return View("Views/Shared/Tip.cshtml");
             }
         }

@@ -56,6 +56,12 @@ namespace Moetech.Zhuangzhou.Interface
         /// 保存提醒消息记录
         /// </summary>
         /// <param name="messageWarn"></param>
-        Task SaveMesageWarn(MessageWarn messageWarn);
+        Task SaveMesageWarn(List<MessageWarn> messageWarn);
+
+        /// <summary>
+        /// 保存提醒消息记录
+        /// </summary>
+        /// <param name="messageWarn"></param>
+        Task<List<CommonPersonnelInfo>> GetAdminInfo();
     }
 }
