@@ -50,5 +50,11 @@ namespace Moetech.Zhuangzhou.Interface
         /// 续租
         /// </summary>
         Task<bool> Renew(int id, CommonPersonnelInfo userInfo);
+
+        /// <summary>
+        /// 保存提醒消息记录
+        /// </summary>
+        /// <param name="messageWarn"></param>
+        Task SaveMesageWarn(MessageWarn messageWarn);
     }
 }

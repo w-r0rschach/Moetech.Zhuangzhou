@@ -140,8 +140,10 @@ namespace Moetech.Zhuangzhou.Service
         {
             _context.Add(info);
             _context.SaveChanges();
-            //新增员工是发送邮件
-            await SendMailFctory.PersonalSendMailAsync(info);
+            //新增员工时发送邮件
+            MessageWarn messageWarn = await SendMailFctory.PersonalSendMailAsync(info);
+            //_context.MessageWarns.Add(messageWarn);
+            // await _context.SaveChangesAsync();
         }
 
         /// <summary>

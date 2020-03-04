@@ -1,5 +1,6 @@
 ﻿using MimeKit;
 using Moetech.Zhuangzhou.Common;
+using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Models;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,12 @@ namespace Moetech.Zhuangzhou.Email
 {
     public static class SendMailFctory
     {
+
         /// <summary>
         /// 系统自动回收到期虚拟机发送邮件
         /// </summary>
         /// <param name="info"></param>
-        public static async Task SysSendMailAsync(ReturnMachineInfoApplyData info) 
+        public static async Task<MessageWarn> SysSendMailAsync(ReturnMachineInfoApplyData info)
         {
             if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
             {
@@ -23,14 +25,21 @@ namespace Moetech.Zhuangzhou.Email
                 EmailHelper helper = new EmailHelper();
                 var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
                 await helper.SendEMailAsync(subject, content, address);
+                MessageWarn messageWarn = GetMessageWarn(info.CommonPersonnelInfo, subject, content);
+                return messageWarn;
             }
+            else
+            {
+                return new MessageWarn();
+            }
+
         }
 
         /// <summary>
         /// 系统提醒虚拟机即将到期发送邮件（3天）
         /// </summary>
         /// <param name="info"></param>
-        public static async Task RemindSendMailAsync(ReturnMachineInfoApplyData info)
+        public static async Task<MessageWarn> RemindSendMailAsync(ReturnMachineInfoApplyData info)
         {
             if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
             {
@@ -39,14 +48,20 @@ namespace Moetech.Zhuangzhou.Email
                 EmailHelper helper = new EmailHelper();
                 var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
                 await helper.SendEMailAsync(subject, content, address);
+                MessageWarn messageWarn = GetMessageWarn(info.CommonPersonnelInfo, subject, content);
+                return messageWarn;
             }
-        }    
+            else
+            {
+                return new MessageWarn();
+            }
+        }
 
         /// <summary>
         /// 管理员强制回收虚拟机发送邮件
         /// </summary>
 
-        public static async Task AdminiSendMailAsync(ReturnMachineInfoApplyData info) 
+        public static async Task<MessageWarn> AdminiSendMailAsync(ReturnMachineInfoApplyData info)
         {
             if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
             {
@@ -55,6 +70,12 @@ namespace Moetech.Zhuangzhou.Email
                 EmailHelper helper = new EmailHelper();
                 var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
                 await helper.SendEMailAsync(subject, content, address);
+                MessageWarn messageWarn = GetMessageWarn(info.CommonPersonnelInfo, subject, content);
+                return messageWarn;
+            }
+            else
+            {
+                return new MessageWarn();
             }
         }
 
@@ -62,7 +83,7 @@ namespace Moetech.Zhuangzhou.Email
         /// 新增员工时发送邮件
         /// </summary>
         /// <param name="info"></param>
-        public static async Task PersonalSendMailAsync(CommonPersonnelInfo info)
+        public static async Task<MessageWarn> PersonalSendMailAsync(CommonPersonnelInfo info)
         {
             if (!string.IsNullOrWhiteSpace(info.Mailbox))
             {
@@ -72,6 +93,12 @@ namespace Moetech.Zhuangzhou.Email
                 EmailHelper helper = new EmailHelper();
                 var address = new MailboxAddress[] { new MailboxAddress(info.Mailbox) };
                 await helper.SendEMailAsync(subject, content, address);
+                MessageWarn messageWarn = GetMessageWarn(info, subject, content);
+                return messageWarn;
+            }
+            else
+            {
+                return new MessageWarn();
             }
         }
 
@@ -79,16 +106,22 @@ namespace Moetech.Zhuangzhou.Email
         /// 审批发送邮件
         /// </summary>
         /// <param name="info"></param>
-        public static async Task ApprovalSendMailAsync(ReturnMachineInfoApplyData info,int resultInt)
+        public static async Task<MessageWarn> ApprovalSendMailAsync(ReturnMachineInfoApplyData info, int resultInt)
         {
             string resultStr = resultInt == 2 ? "同意" : "拒绝";
             if (!string.IsNullOrWhiteSpace(info.CommonPersonnelInfo.Mailbox))
             {
                 string subject = "审批结果通知";
-                string content =   $"管理员已{resultStr}你对虚拟机的申请。";
+                string content = $"管理员已{resultStr}你对虚拟机的申请。";
                 EmailHelper helper = new EmailHelper();
                 var address = new MailboxAddress[] { new MailboxAddress(info.CommonPersonnelInfo.Mailbox) };
                 await helper.SendEMailAsync(subject, content, address);
+                MessageWarn messageWarn = GetMessageWarn(info.CommonPersonnelInfo, subject, content);
+                return messageWarn;
+            }
+            else
+            {
+                return new MessageWarn();
             }
         }
 
@@ -96,7 +129,7 @@ namespace Moetech.Zhuangzhou.Email
         /// 审批提醒管理员
         /// </summary>
         /// <param name="info"></param>
-        public static async Task ApprovalSendMailManageAsync(CommonPersonnelInfo info)
+        public static async Task<MessageWarn> ApprovalSendMailManageAsync(CommonPersonnelInfo info)
         {
             if (!string.IsNullOrWhiteSpace(info.Mailbox))
             {
@@ -105,7 +138,30 @@ namespace Moetech.Zhuangzhou.Email
                 EmailHelper helper = new EmailHelper();
                 var address = new MailboxAddress[] { new MailboxAddress(info.Mailbox) };
                 await helper.SendEMailAsync(subject, content, address);
+                MessageWarn messageWarn = GetMessageWarn(info, subject, content);
+                return messageWarn;
             }
+            else 
+            {
+                return new MessageWarn();
+            }
+        }
+
+        /// <summary>
+        /// 获取消息提醒类
+        /// </summary>
+        /// <returns></returns>
+        private static MessageWarn GetMessageWarn(CommonPersonnelInfo info, string subject, string content)
+        {
+            MessageWarn messageWarn = new MessageWarn()
+            {
+                MessageTitle = subject,
+                MessageContent = content,
+                PonsonalId = info.PersonnelId,
+                MessageWarnDate = DateTime.Now,
+                MessageType = 0
+            };
+            return messageWarn;
         }
     }
 }

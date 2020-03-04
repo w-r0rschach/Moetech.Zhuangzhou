@@ -45,15 +45,38 @@
                         }
                         else
                         {
-                    <li class="nav-item">
-                         <a class="nav-link text-dark" asp-area="" asp-controller="Reset" asp-action="Reset">@ViewBag.User.PersonnelName</a>
-                    </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" data-toggle="dropdown" href="#">
+                                    <i class="far fa-comments"></i>
+                                    <span class="badge badge-danger navbar-badge">1</span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                                    <a href="#" class="dropdown-item">
+                                        <!-- 消息开始 -->
+                                        <div class="media">
+                                            <div class="media-body">
+                                                <h6 class="dropdown-item-title">
+                                                    虚拟机申请通知
+                                                </h6>
+                                                <p style="font-size:12px;color:#a5a5a5">管理员已同意你的虚拟机申请</p>
+                                                <p> 4小时前</p>
+                                            </div>
+                                        </div>
+                                        <!-- 消息结束 -->
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Reset" asp-action="Reset">@ViewBag.User.PersonnelName</a>
+                            </li>
 
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="LoginOut">退出</a>
                             </li>
-                        }
-                    </ul>
+                            }
+                        </ul>
                 </div>
             </div>
         </nav>

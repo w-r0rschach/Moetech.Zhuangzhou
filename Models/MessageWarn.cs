@@ -51,6 +51,6 @@ namespace Moetech.Zhuangzhou.Models
         /// 已读时间
         /// </summary>
         [Display(Name = "已读时间")]
-        public DateTime MessageReadDate { set; get; }
+        public DateTime? MessageReadDate { set; get; }
     }
 }

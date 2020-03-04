@@ -72,8 +72,11 @@ namespace Moetech.Zhuangzhou.Service
                         //获取到人员信息
                         var data = personInfo.ToList().ElementAt(0);
                         //发送邮件
-                        await SendMailFctory.RemindSendMailAsync(data);
-                        //添加日志记录 TODO
+                        MessageWarn messageWarn = await SendMailFctory.RemindSendMailAsync(data);
+                        //添加提醒记录信息
+                        //_context.MessageWarns.Add(messageWarn);
+                        //await _context.SaveChangesAsync();
+
                     }
                 }
             }
@@ -114,8 +117,11 @@ namespace Moetech.Zhuangzhou.Service
                     //发送邮件
                     if (result == 1) 
                     {
-                        await SendMailFctory.SysSendMailAsync(data);
-                        //添加日志信息 TODO
+                        //发送邮件
+                        MessageWarn messageWarn = await SendMailFctory.SysSendMailAsync(data);
+                        //添加提醒记录信息
+                        //_context.MessageWarns.Add(messageWarn);
+                        //await _context.SaveChangesAsync();
                     }
                 }
                 

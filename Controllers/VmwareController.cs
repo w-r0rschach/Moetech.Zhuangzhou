@@ -114,7 +114,8 @@ namespace Moetech.Zhuangzhou.Controllers
                 {
                     ViewData["Title"] = "申请成功";
                     ViewData["Message"] = "申请虚拟机数量超过设定值，需要等待管理员审批！ 查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
-                    await SendMailFctory.ApprovalSendMailManageAsync(userInfo);                      //发送邮件提醒管理员
+                    MessageWarn messageWarn =  await SendMailFctory.ApprovalSendMailManageAsync(userInfo); //发送邮件提醒管理员
+                    //await _vmware.SaveMesageWarn(messageWarn); //保存消息记录
                     return View("Views/Shared/Tip.cshtml");
                 }
                 else

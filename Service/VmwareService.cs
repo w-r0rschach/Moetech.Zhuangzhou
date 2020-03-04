@@ -203,5 +203,15 @@ namespace Moetech.Zhuangzhou.Service
             await _context.SaveChangesAsync();
             return true;
         }
+
+        /// <summary>
+        /// 保存提醒消息记录
+        /// </summary>
+        /// <param name="messageWarn"></param>
+        public async Task SaveMesageWarn(MessageWarn messageWarn)
+        {
+            _context.MessageWarns.Add(messageWarn);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -17,7 +17,8 @@ namespace Moetech.Zhuangzhou.Service
     /// 日志信息实现
     /// </summary>
     public class LoggerService : ILogs
-    {  /// <summary>
+    {  
+        /// <summary>
        /// 数据量上下文
        /// </summary>
         private readonly VirtualMachineDB _context;

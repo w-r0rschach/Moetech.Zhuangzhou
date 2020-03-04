@@ -321,7 +321,7 @@ namespace Moetech.Zhuangzhou.Migrations
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4")
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("MessageReadDate")
+                    b.Property<DateTime?>("MessageReadDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("MessageTitle")
