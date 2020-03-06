@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moetech.Zhuangzhou.Models;
 using Moetech.Zhuangzhou.Common;
+using Moetech.Zhuangzhou.Data;
+using Moetech.Zhuangzhou.Email;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -26,7 +28,6 @@ namespace Moetech.Zhuangzhou.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             string userJson = context.HttpContext.Session.GetString("User");
-
             if (string.IsNullOrWhiteSpace(userJson))
             {
                 context.Result = RedirectToAction("Login", "User");
@@ -49,7 +50,15 @@ namespace Moetech.Zhuangzhou.Controllers
                 else
                 {
                     // _Layout.cshtml页面使用
-                    ViewBag.User = commonPersonnelInfo; 
+                    ViewBag.User = commonPersonnelInfo;
+                    List<MessageWarn> messageWarns = JsonConvert.DeserializeObject<List<MessageWarn>>(SendMailFctory.MessageWarns);
+                    if (messageWarns != null)
+                    {
+                        ViewData["MessageWarns"] = messageWarns;
+                    }
+                    else {
+                        ViewData["MessageWarns"] = null;
+                    }
                     base.OnActionExecuting(context);
                 }
             }

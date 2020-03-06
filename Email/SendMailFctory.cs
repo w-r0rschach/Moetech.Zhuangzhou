@@ -10,6 +10,8 @@ namespace Moetech.Zhuangzhou.Email
     public static class SendMailFctory
     {
 
+        public static string MessageWarns { set; get; }
+
         /// <summary>
         /// 系统自动回收到期虚拟机发送邮件
         /// </summary>

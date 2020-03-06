@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Threading.Tasks;
@@ -93,6 +94,23 @@ namespace Moetech.Zhuangzhou
             app.UseRouting();
             app.UseAuthorization(); // 身份验证
             app.UseSession();
+            app.UseWebSockets();            //websocket
+            app.Use(async (context, next) =>
+            {
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    using (IServiceScope scope = app.ApplicationServices.CreateScope())
+                    {
+                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        await SocketHandler.SocketConnect(context, webSocket);
+                    }
+                }
+                else
+                {
+                    await next();
+                }
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

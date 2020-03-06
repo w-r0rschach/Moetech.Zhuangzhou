@@ -37,6 +37,10 @@ namespace Moetech.Zhuangzhou.Service
             _logs = logs;
         }
 
+        public UserService()
+        {
+        }
+
         /// <summary>
         /// 登录
         /// </summary>
@@ -216,6 +220,31 @@ namespace Moetech.Zhuangzhou.Service
 
             _context.Update(commonPersonnel); 
             return  _context.SaveChanges();
+        }
+
+        /// <summary>
+        /// 消息提醒记录
+        /// </summary>
+        /// <param name="personnelInfo"></param>
+        public List<MessageWarn> SelevtMessageWarn(CommonPersonnelInfo personnelInfo)
+        {
+            if (personnelInfo != null)
+            {
+                var messageWarns = from m in _context.MessageWarns
+                                   where m.PonsonalId == personnelInfo.PersonnelId && m.MessageType == 0
+                                   select m;
+
+                var ss = messageWarns.ToList();
+                if (messageWarns.ToList().Count > 0)
+                {
+                    return messageWarns.ToList();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            return null;
         }
     }
 }

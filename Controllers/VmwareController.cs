@@ -40,8 +40,8 @@ namespace Moetech.Zhuangzhou.Controllers
         /// </summary>
         /// <returns>IActionResult</returns>
         public async Task<IActionResult> Index()
-        {
-            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
+        {          
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));           
             return View(await _vmware.SelectVmware(userInfo).ToListAsync());
         }
 
