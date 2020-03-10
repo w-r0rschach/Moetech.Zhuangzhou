@@ -331,7 +331,7 @@ namespace Moetech.Zhuangzhou.Migrations
                     b.Property<int>("MessageType")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("MessageWarnDate")
+                    b.Property<DateTime>("MessageWarnDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<int>("PonsonalId")

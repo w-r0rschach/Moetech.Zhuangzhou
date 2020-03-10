@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Moetech.Zhuangzhou.Models;
 using Moetech.Zhuangzhou.Interface;
 using Moetech.Zhuangzhou.Email;
+using Moetech.Zhuangzhou.Common;
 
 namespace Moetech.Zhuangzhou.Controllers
 {
@@ -30,7 +31,7 @@ namespace Moetech.Zhuangzhou.Controllers
         public VmwareController(IVmware vmware)
         {
             _vmware = vmware;
-           
+
         }
 
         /// <summary>
@@ -40,8 +41,8 @@ namespace Moetech.Zhuangzhou.Controllers
         /// </summary>
         /// <returns>IActionResult</returns>
         public async Task<IActionResult> Index()
-        {          
-            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));           
+        {
+            CommonPersonnelInfo userInfo; userInfo = JsonConvert.DeserializeObject<CommonPersonnelInfo>(HttpContext.Session.GetString("User"));
             return View(await _vmware.SelectVmware(userInfo).ToListAsync());
         }
 
@@ -115,7 +116,7 @@ namespace Moetech.Zhuangzhou.Controllers
                     ViewData["Title"] = "申请成功";
                     ViewData["Message"] = "申请虚拟机数量超过设定值，需要等待管理员审批！ 查看<a href='/Vmware/MyVmware'>我的虚拟机</a>";
                     List<CommonPersonnelInfo> infos = await _vmware.GetAdminInfo(); //获取所有管理员的信息
-                    List<MessageWarn> messageWarn =  await SendMailFctory.ApprovalSendMailManageAsync(infos); //发送邮件提醒管理员
+                    List<MessageWarn> messageWarn = await SendMailFctory.ApprovalSendMailManageAsync(infos); //发送邮件提醒管理员
                     await _vmware.SaveMesageWarn(messageWarn); //保存消息记录
                     return View("Views/Shared/Tip.cshtml");
                 }
@@ -200,6 +201,24 @@ namespace Moetech.Zhuangzhou.Controllers
                     return View("Views/Shared/Tip.cshtml");
                 }
             }
+        }
+
+        /// <summary>
+        /// 修改提醒记录
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult RedateRemain(int id)
+        {
+            List<MessageWarn> messageWarns = _vmware.UpdateRemain(id);
+            if (messageWarns != null)
+            {
+                CommonUserInfo.MessageWarns = JsonConvert.SerializeObject(messageWarns) ;
+            }
+            else
+            {
+                CommonUserInfo.MessageWarns = null;
+            }
+            return RedirectToAction(nameof(MyVmware));
         }
     }
 }

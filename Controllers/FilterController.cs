@@ -51,7 +51,9 @@ namespace Moetech.Zhuangzhou.Controllers
                 {
                     // _Layout.cshtml页面使用
                     ViewBag.User = commonPersonnelInfo;
-                    List<MessageWarn> messageWarns = JsonConvert.DeserializeObject<List<MessageWarn>>(SendMailFctory.MessageWarns);
+                    CommonUserInfo.UserInfo = commonPersonnelInfo;
+
+                    List<MessageWarn> messageWarns = JsonConvert.DeserializeObject<List<MessageWarn>>(CommonUserInfo.MessageWarns);
                     if (messageWarns != null)
                     {
                         ViewData["MessageWarns"] = messageWarns;

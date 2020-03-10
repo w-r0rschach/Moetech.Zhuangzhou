@@ -163,6 +163,8 @@ namespace Moetech.Zhuangzhou.Service
             MessageWarn messageWarn = await SendMailFctory.PersonalSendMailAsync(info);
             _context.MessageWarns.Add(messageWarn);
             await _context.SaveChangesAsync();
+            //发送给前面显示
+            await WebSocketHandle.SendAsync(messageWarn, CommonUserInfo.WebSocket);
         }
 
         /// <summary>

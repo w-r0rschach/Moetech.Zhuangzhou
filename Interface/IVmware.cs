@@ -63,5 +63,11 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <param name="messageWarn"></param>
         Task<List<CommonPersonnelInfo>> GetAdminInfo();
+
+        /// <summary>
+        /// 修改记录
+        /// </summary>
+        /// <returns></returns>
+        List<MessageWarn> UpdateRemain(int id);
     }
 }

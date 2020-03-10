@@ -11,6 +11,7 @@ using log4net.Config;
 using log4net.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +53,7 @@ namespace Moetech.Zhuangzhou
 
             services.AddControllersWithViews();
             // 注册数据库上下文
-            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("TestDefault")));
+            services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("LocalMysql")));
             //services.AddDbContext<VirtualMachineDB>(options => options.UseMySql(Configuration.GetConnectionString("MySqlDefault")));
             // HTML编码
             services.Configure<WebEncoderOptions>(options => options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs));
@@ -73,10 +74,11 @@ namespace Moetech.Zhuangzhou
             // 注入定时任务
             services.AddHostedService<StartTimedTask>();
             services.AddScoped<ITimedTask, TimedTaskService>();
+
         }
 
         // 此方法由运行时调用。使用此方法配置HTTP请求管道。
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -94,23 +96,23 @@ namespace Moetech.Zhuangzhou
             app.UseRouting();
             app.UseAuthorization(); // 身份验证
             app.UseSession();
-            app.UseWebSockets();            //websocket
-            app.Use(async (context, next) =>
-            {
-                if (context.WebSockets.IsWebSocketRequest)
-                {
-                    using (IServiceScope scope = app.ApplicationServices.CreateScope())
-                    {
-                        WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                        await SocketHandler.SocketConnect(context, webSocket);
-                    }
-                }
-                else
-                {
-                    await next();
-                }
-            });
-
+            //app.UseWebSockets();            //websocket
+            //app.Use(async (context, next) =>
+            //{
+            //    if (context.WebSockets.IsWebSocketRequest)
+            //    {
+            //        using (IServiceScope scope = app.ApplicationServices.CreateScope())
+            //        {
+            //            WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            //            await SocketHandler.SocketConnect(context, webSocket, scope);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        await next();
+            //    }
+            //});
+            app.Map("/WebSocketHandle", WebSocketHandle.Map);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

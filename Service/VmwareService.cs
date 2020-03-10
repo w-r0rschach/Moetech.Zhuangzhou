@@ -256,6 +256,8 @@ namespace Moetech.Zhuangzhou.Service
                 {
                     _context.MessageWarns.Add(messageWarn[i]);
                     await _context.SaveChangesAsync();
+                    //发送给前面显示
+                    await WebSocketHandle.SendAsync(messageWarn[i], CommonUserInfo.WebSocket);
                 }
             }
         }
@@ -270,6 +272,23 @@ namespace Moetech.Zhuangzhou.Service
                        where n.DepId == 1
                        select n;
             return info.ToListAsync();
+        }
+
+        /// <summary>
+        /// 修改记录
+        /// </summary>
+        /// <returns></returns>
+        public List<MessageWarn> UpdateRemain(int id)
+        {
+            var messageWarn = from m in _context.MessageWarns
+                              where m.PonsonalId == CommonUserInfo.UserInfo.PersonnelId
+                              select m;
+            MessageWarn warn = messageWarn.ToList().Find(o=> o.MessageId == id);
+            warn.MessageType = 1;warn.MessageReadDate = DateTime.Now;
+            _context.Update(warn);
+            _context.SaveChanges();
+            List<MessageWarn> MessageWarns = messageWarn.ToList().FindAll(o => o.MessageType == 0);
+            return MessageWarns;
         }
     }
 }

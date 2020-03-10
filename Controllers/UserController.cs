@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MimeKit;
+using Moetech.Zhuangzhou.Common;
 using Moetech.Zhuangzhou.Common.EnumDefine;
 using Moetech.Zhuangzhou.Data;
 using Moetech.Zhuangzhou.Email;
@@ -65,13 +66,13 @@ namespace Moetech.Zhuangzhou.Controllers
             var messageWarns = _user.SelevtMessageWarn(user);
             if (messageWarns != null)
             {
-                SendMailFctory.MessageWarns = JsonConvert.SerializeObject(messageWarns);
+                CommonUserInfo.MessageWarns = JsonConvert.SerializeObject(messageWarns);
             }
             else 
             {
-                SendMailFctory.MessageWarns = JsonConvert.SerializeObject(new List<MessageWarn>());
+                CommonUserInfo.MessageWarns = JsonConvert.SerializeObject(new List<MessageWarn>());
             }
-            TempData["MessageWarns"] = SendMailFctory.MessageWarns;
+            TempData["MessageWarns"] = CommonUserInfo.MessageWarns;
             if (user == null)
             {
                 ViewData["Message"] = "账号或密码错误。";

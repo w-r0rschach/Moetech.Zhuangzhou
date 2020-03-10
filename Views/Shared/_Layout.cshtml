@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body>
+<body onload="start()">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -56,11 +56,11 @@
                                     <i class="far fa-comments"></i>
                                     <span class="badge badge-danger navbar-badge">@messageWarns.Count</span>
                                 </a>
-                       
-                                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+
+                                <div id="warns" class="dropdown-menu dropdown-menu-lg dropdown-menu-right" >
                                     @for (int i = 0; i < messageWarns.Count; i++)
                                     {
-                                        <a href="#" class="dropdown-item">
+                                        <a asp-controller="Vmware" asp-action="RedateRemain" asp-route-id="@messageWarns[i].MessageId"  class="dropdown-item">
                                             <!-- 消息开始 -->
                                             <div class="media">
                                                 <div class="media-body">

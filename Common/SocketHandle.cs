@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Moetech.Zhuangzhou.Data;
+using Moetech.Zhuangzhou.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,59 +17,26 @@ using System.Threading.Tasks;
 
 namespace Moetech.Zhuangzhou.Common
 {
-    public class SocketHandler
+    public static class SocketHandler
     {
-        public async static Task SocketConnect(HttpContext context, WebSocket webSocket)
-        {
-            await RecvAsync(webSocket, CancellationToken.None);
-        }
-
-        public static async Task RecvAsync(WebSocket webSocket, CancellationToken cancellationToken)
-        {
-            WebSocketReceiveResult result;
-            do
-            {
-                var ms = new MemoryStream();
-                var buffer = new ArraySegment<byte>(new byte[1024 * 8]);
-                result = await webSocket.ReceiveAsync(buffer, cancellationToken);
-                if (result.MessageType.ToString() == "Close")
-                {
-                    break;
-                }
-                ms.Write(buffer.Array, buffer.Offset, result.Count - buffer.Offset);
-                ms.Seek(0, SeekOrigin.Begin);
-                var reader = new StreamReader(ms);
-                var s = reader.ReadToEnd();
-                reader.Dispose();
-                ms.Dispose();
-                if (!string.IsNullOrEmpty(s))
-                {
-                    await SendAsync(s, webSocket);
-                }
-            } while (result.EndOfMessage);
-        }
-
+        /// <summary>
+        /// 数据库实体
+        /// </summary>
+        public static VirtualMachineDB db;
 
         /// <summary>
-        /// 向客户端发送数据 
+        /// 接受socket,并连接
         /// </summary>
-        /// <param name="msg">数据</param>
-        /// <param name="webSocket">socket对象  sleep 心跳周期</param>
+        /// <param name="context"></param>
+        /// <param name="webSocket"></param>
+        /// <param name="scope"></param>
         /// <returns></returns>
-        public static async Task SendAsync(string msg, WebSocket webSocket)
+        public async static Task SocketConnect(HttpContext context, WebSocket webSocket, IServiceScope scope)
         {
-            try
-            {
-                //业务逻辑
-                CancellationToken cancellation = default(CancellationToken);
-                var buf = Encoding.UTF8.GetBytes("213645");
-                var segment = new ArraySegment<byte>(buf);
-                await webSocket.SendAsync(segment, WebSocketMessageType.Text, true, cancellation);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            db = new VirtualMachineDB(scope.ServiceProvider.GetRequiredService<DbContextOptions<VirtualMachineDB>>());
+            var buffer = new byte[1024 * 4];
+            WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            CommonUserInfo.ReceiveResult = result;
         }
     }
 }
