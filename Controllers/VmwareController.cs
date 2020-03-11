@@ -210,15 +210,32 @@ namespace Moetech.Zhuangzhou.Controllers
         public IActionResult RedateRemain(int id)
         {
             List<MessageWarn> messageWarns = _vmware.UpdateRemain(id);
-            if (messageWarns != null)
+            return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
+        /// 获取对应的提醒消息
+        /// </summary>
+        public IActionResult SelectRemain() 
+        {
+            List<MessageWarn> messageWarns = new List<MessageWarn>();
+            if (CommonUserInfo.MessageWarnList.Count() > 0)
             {
-                CommonUserInfo.MessageWarns = JsonConvert.SerializeObject(messageWarns) ;
+                //获取对应的提醒消息并删除缓存中对应的提醒消息
+                for (int i = 0; i < CommonUserInfo.MessageWarnList.Count(); i++)
+                {
+                    if (CommonUserInfo.MessageWarnList[i].PonsonalId == CommonUserInfo.UserInfo.PersonnelId)
+                    {
+                        messageWarns.Add(CommonUserInfo.MessageWarnList[i]);
+                        CommonUserInfo.MessageWarnList.Remove(CommonUserInfo.MessageWarnList[i]);
+                    }
+                }
             }
-            else
+            else 
             {
-                CommonUserInfo.MessageWarns = null;
+                messageWarns = _vmware.SelevtMessageWarn(CommonUserInfo.UserInfo);
             }
-            return RedirectToAction(nameof(MyVmware));
+            return Json(messageWarns);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Moetech.Zhuangzhou.Controllers
                     ViewData["Message"] = "<p>您的权限不足...</p>"
                                         + "<p>哎呀！您不能操作此模块，</p>"
                                         + "<p>建议您联系管理员开通此模块的操作权限！</p>"
-                                        + "<a href='javascript: history.back(-1)'>点击返回</a>" ;
+                                        + "<a href='javascript: history.back(-1)'>点击返回</a>";
 
                     context.Result = View("Views/Shared/Tip.cshtml");
                 }
@@ -52,15 +52,6 @@ namespace Moetech.Zhuangzhou.Controllers
                     // _Layout.cshtml页面使用
                     ViewBag.User = commonPersonnelInfo;
                     CommonUserInfo.UserInfo = commonPersonnelInfo;
-
-                    List<MessageWarn> messageWarns = JsonConvert.DeserializeObject<List<MessageWarn>>(CommonUserInfo.MessageWarns);
-                    if (messageWarns != null)
-                    {
-                        ViewData["MessageWarns"] = messageWarns;
-                    }
-                    else {
-                        ViewData["MessageWarns"] = null;
-                    }
                     base.OnActionExecuting(context);
                 }
             }

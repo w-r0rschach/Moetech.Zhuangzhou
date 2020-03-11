@@ -347,8 +347,8 @@ namespace Moetech.Zhuangzhou.Service
                 MessageWarn messageWarn = await SendMailFctory.ApprovalSendMailAsync(MachApplyAndReturnInfo.ToList()[0], state);
                 _context.MessageWarns.Add(messageWarn);
                 await _context.SaveChangesAsync();
-                //发送给前面显示
-                await WebSocketHandle.SendAsync(messageWarn, CommonUserInfo.WebSocket);
+                //添加进缓存等待读取
+                CommonUserInfo.MessageWarnList.Add(messageWarn);
             }
 
             return rsultInt > 0 ? true : false;
@@ -413,8 +413,8 @@ namespace Moetech.Zhuangzhou.Service
                 //添加提醒记录信息
                 _context.MessageWarns.Add(messageWarn);
                 _context.SaveChanges();
-                //发送给前面显示
-                await WebSocketHandle.SendAsync(messageWarn, CommonUserInfo.WebSocket);
+                //添加进缓存等待读取
+                CommonUserInfo.MessageWarnList.Add(messageWarn);
             }
         }
     }

@@ -69,5 +69,12 @@ namespace Moetech.Zhuangzhou.Interface
         /// </summary>
         /// <returns></returns>
         List<MessageWarn> UpdateRemain(int id);
+
+
+        /// <summary>
+        /// 查找消息提醒记录
+        /// </summary>
+        /// <param name="personnelInfo"></param>
+        List<MessageWarn> SelevtMessageWarn(CommonPersonnelInfo personnelInfo);
     }
 }

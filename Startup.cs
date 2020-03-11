@@ -95,24 +95,7 @@ namespace Moetech.Zhuangzhou
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization(); // 身份验证
-            app.UseSession();
-            //app.UseWebSockets();            //websocket
-            //app.Use(async (context, next) =>
-            //{
-            //    if (context.WebSockets.IsWebSocketRequest)
-            //    {
-            //        using (IServiceScope scope = app.ApplicationServices.CreateScope())
-            //        {
-            //            WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-            //            await SocketHandler.SocketConnect(context, webSocket, scope);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        await next();
-            //    }
-            //});
-            app.Map("/WebSocketHandle", WebSocketHandle.Map);
+            app.UseSession();           
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

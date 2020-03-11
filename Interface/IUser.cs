@@ -92,11 +92,5 @@ namespace Moetech.Zhuangzhou.Interface
         /// <param name="personnelInfo">当前操作用户</param>
         /// <returns></returns>
         int ModifyPassWord(CommonPersonnelInfo personnelInfo,int id, string password);
-
-        /// <summary>
-        /// 查找消息提醒记录
-        /// </summary>
-        /// <param name="personnelInfo"></param>
-        List<MessageWarn> SelevtMessageWarn(CommonPersonnelInfo personnelInfo);
     }
 }

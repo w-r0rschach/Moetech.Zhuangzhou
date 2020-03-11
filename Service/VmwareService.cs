@@ -256,8 +256,8 @@ namespace Moetech.Zhuangzhou.Service
                 {
                     _context.MessageWarns.Add(messageWarn[i]);
                     await _context.SaveChangesAsync();
-                    //发送给前面显示
-                    await WebSocketHandle.SendAsync(messageWarn[i], CommonUserInfo.WebSocket);
+                    //添加进缓存等待读取
+                    CommonUserInfo.MessageWarnList.Add(messageWarn[i]);
                 }
             }
         }
@@ -283,12 +283,35 @@ namespace Moetech.Zhuangzhou.Service
             var messageWarn = from m in _context.MessageWarns
                               where m.PonsonalId == CommonUserInfo.UserInfo.PersonnelId
                               select m;
+            var ss = messageWarn.ToList();
             MessageWarn warn = messageWarn.ToList().Find(o=> o.MessageId == id);
-            warn.MessageType = 1;warn.MessageReadDate = DateTime.Now;
+            warn.MessageType = 1;
+            warn.MessageReadDate = DateTime.Now;
             _context.Update(warn);
             _context.SaveChanges();
             List<MessageWarn> MessageWarns = messageWarn.ToList().FindAll(o => o.MessageType == 0);
             return MessageWarns;
+        }
+
+        /// <summary>
+        /// 消息提醒记录
+        /// </summary>
+        /// <param name="personnelInfo"></param>
+        public List<MessageWarn> SelevtMessageWarn(CommonPersonnelInfo personnelInfo)
+        {
+            if (personnelInfo != null)
+            {
+                var messageWarns = from m in _context.MessageWarns
+                                   where m.PonsonalId == personnelInfo.PersonnelId && m.MessageType == 0
+                                   select m;
+
+                var ss = messageWarns.ToList();
+                if (messageWarns.ToList().Count > 0)
+                {
+                    return messageWarns.ToList();
+                }
+            }
+            return null;
         }
     }
 }

@@ -62,17 +62,6 @@ namespace Moetech.Zhuangzhou.Controllers
             }
 
             var user = _user.Login(userName, userPwd);
-            //根据用户信息找到消息提醒记录
-            var messageWarns = _user.SelevtMessageWarn(user);
-            if (messageWarns != null)
-            {
-                CommonUserInfo.MessageWarns = JsonConvert.SerializeObject(messageWarns);
-            }
-            else 
-            {
-                CommonUserInfo.MessageWarns = JsonConvert.SerializeObject(new List<MessageWarn>());
-            }
-            TempData["MessageWarns"] = CommonUserInfo.MessageWarns;
             if (user == null)
             {
                 ViewData["Message"] = "账号或密码错误。";

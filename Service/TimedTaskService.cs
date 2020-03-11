@@ -78,8 +78,8 @@ namespace Moetech.Zhuangzhou.Service
                         //添加提醒记录信息
                         _context.MessageWarns.Add(messageWarn);
                         await _context.SaveChangesAsync();
-                        //发送给前面显示
-                        await WebSocketHandle.SendAsync(messageWarn, CommonUserInfo.WebSocket);
+                        //添加进缓存等待读取
+                        CommonUserInfo.MessageWarnList.Add(messageWarn);
                     }
                 }
             }
@@ -126,8 +126,8 @@ namespace Moetech.Zhuangzhou.Service
                         //添加提醒记录信息
                         _context.MessageWarns.Add(messageWarn);
                         await _context.SaveChangesAsync();
-                        //发送给前面显示
-                        await WebSocketHandle.SendAsync(messageWarn, CommonUserInfo.WebSocket);
+                        //添加进缓存等待读取
+                        CommonUserInfo.MessageWarnList.Add(messageWarn);
                     }
                 }
                 

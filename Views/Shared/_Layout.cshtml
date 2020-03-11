@@ -1,8 +1,4 @@
-﻿@{ 
-    List<MessageWarn> messageWarns = ViewData["MessageWarns"] as List<MessageWarn>;
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -11,7 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body onload="start()">
+<body onload="Init()">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -49,34 +45,26 @@
                         }
                         else
                         {
-                            @if (messageWarns != null)
-                            {
                             <li class="nav-item dropdown">
                                 <a class="nav-link" data-toggle="dropdown" href="#">
                                     <i class="far fa-comments"></i>
-                                    <span class="badge badge-danger navbar-badge">@messageWarns.Count</span>
+                                    <span id="messageWarns" class="badge badge-danger navbar-badge">0</span>
                                 </a>
-
-                                <div id="warns" class="dropdown-menu dropdown-menu-lg dropdown-menu-right" >
-                                    @for (int i = 0; i < messageWarns.Count; i++)
-                                    {
-                                        <a asp-controller="Vmware" asp-action="RedateRemain" asp-route-id="@messageWarns[i].MessageId"  class="dropdown-item">
-                                            <!-- 消息开始 -->
-                                            <div class="media">
-                                                <div class="media-body">
-                                                    <h6 class="dropdown-item-title">
-                                                        @messageWarns[i].MessageTitle
-                                                    </h6>
-                                                    <p style="font-size:12px;color:#a5a5a5">@messageWarns[i].MessageContent</p>
-                                                    <p> @messageWarns[i].MessageWarnDate</p>
-                                                </div>
+                                <div id="warns" class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+                                    <a href="#" class="dropdown-item">
+                                        <!-- 消息开始 -->
+                                        <div class="media">
+                                            <div class="media-body">
+                                                <h6 class="dropdown-item-title"></h6>
+                                                <p style="font-size:12px;color:#a5a5a5"></p>
+                                                <p></p>
                                             </div>
-                                            <!-- 消息结束 -->
-                                        </a>
-                                    }
+                                        </div>
+                                        <!-- 消息结束 -->
+                                    </a>
                                 </div>
                             </li>
-                            }
+
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Reset" asp-action="Reset">@ViewBag.User.PersonnelName</a>
                             </li>
@@ -84,8 +72,8 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="LoginOut">退出</a>
                             </li>
-                            }
-                        </ul>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>

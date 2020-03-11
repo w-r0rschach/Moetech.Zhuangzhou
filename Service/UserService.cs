@@ -163,8 +163,8 @@ namespace Moetech.Zhuangzhou.Service
             MessageWarn messageWarn = await SendMailFctory.PersonalSendMailAsync(info);
             _context.MessageWarns.Add(messageWarn);
             await _context.SaveChangesAsync();
-            //发送给前面显示
-            await WebSocketHandle.SendAsync(messageWarn, CommonUserInfo.WebSocket);
+            //添加进缓存等待读取
+            CommonUserInfo.MessageWarnList.Add(messageWarn);
         }
 
         /// <summary>
@@ -222,31 +222,6 @@ namespace Moetech.Zhuangzhou.Service
 
             _context.Update(commonPersonnel); 
             return  _context.SaveChanges();
-        }
-
-        /// <summary>
-        /// 消息提醒记录
-        /// </summary>
-        /// <param name="personnelInfo"></param>
-        public List<MessageWarn> SelevtMessageWarn(CommonPersonnelInfo personnelInfo)
-        {
-            if (personnelInfo != null)
-            {
-                var messageWarns = from m in _context.MessageWarns
-                                   where m.PonsonalId == personnelInfo.PersonnelId && m.MessageType == 0
-                                   select m;
-
-                var ss = messageWarns.ToList();
-                if (messageWarns.ToList().Count > 0)
-                {
-                    return messageWarns.ToList();
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            return null;
         }
     }
 }

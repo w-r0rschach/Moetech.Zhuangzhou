@@ -1,32 +1,25 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-var scheme = document.location.protocol == "https:" ? "wss" : "ws";
-var port = document.location.port ? (":" + document.location.port) : "";
-var url = scheme + "://" + document.location.hostname + port +"/WebSocketHandle";
-var socket;
-var warns = document.getElementById("warns");
-function start() {
-    socket = new WebSocket(url);
-    socket.onopen = function (event) {
-        socket.send(123);
-        alert("连接成功")
-    }
-
-    socket.onclose = function (event) {
-        socket = new WebSocket(url);//断开后重连
-        alert("连接断开")
-    }
-
-    socket.onmessage = function (event) {
-        var datas = event.data;   
-        var jsonObj = JSON.parse(datas);
-        //warns.innerHTML += '<a href="#" class="dropdown-item">'
-        //    + '<div class="media"><div class="media-body">'
-        //    + '<h6 class="dropdown-item-title">' + jsonObj[i].MessageTitle + '</h6>'
-        //    + '<p style="font-size:12px;color:#a5a5a5">' + jsonObj[i].MessageContent + '</p>'
-        //    + '<p>' + jsonObj[i].MessageWarnDate + '</p>'
-        //    + '</div></div></a>';
-    }
+﻿var port = document.location.port ? (":" + document.location.port) : "";
+var url = "https://" + document.location.hostname + port;
+var MessageWarns = document.getElementById("messageWarns");
+var Warns = document.getElementById("warns");
+function Init() {
+    setTimeout(Init, 10 * 1000);
+    $.ajax({
+        url: url + "/Vmware/SelectRemain",
+        type: "post",
+        dataType: "json",
+        success: function (data) {
+            var j = data.length;
+            MessageWarns.innerText = j;
+            Warns.innerHTML = "";
+            for (var i = 0; i < data.length; i++) {
+                Warns.innerHTML += '<a href="/Vmware/RedateRemain?id=' + data[i].messageId + '" class="dropdown-item">'
+                    + '<div class="media"><div class="media-body">'
+                    + '<h6 class="dropdown-item-title">' + data[i].messageTitle + '</h6>'
+                    + '<p style="font-size:12px;color:#a5a5a5">' + data[i].messageContent + '</p>'
+                    + '<p> ' + data[i].messageWarnDate + '</p>'
+                    + '</div></div></a>';
+            }
+        }
+    });
 }

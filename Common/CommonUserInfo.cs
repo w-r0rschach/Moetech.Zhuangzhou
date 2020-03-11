@@ -9,12 +9,14 @@ namespace Moetech.Zhuangzhou.Common
 {
     public static class CommonUserInfo
     {
+        /// <summary>
+        /// 个人信息
+        /// </summary>
         public static CommonPersonnelInfo UserInfo { set; get; }
 
-        public static WebSocketReceiveResult ReceiveResult { set; get; }
-
-        public static WebSocket WebSocket { set; get; }
-
-        public static string MessageWarns { set; get; }
+        /// <summary>
+        /// 消息提醒缓存信息
+        /// </summary>
+        internal static List<MessageWarn> MessageWarnList = new List<MessageWarn>();
     }
 }
